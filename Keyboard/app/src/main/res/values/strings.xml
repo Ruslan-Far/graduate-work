@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Клавиатура</string>
+
+    <string name="subtype_en_US">English</string>
+    <string name="subtype_ru_RU">Русский</string>
+    
+    <string name="ime_settings_activity">Настройки</string>
+</resources>
