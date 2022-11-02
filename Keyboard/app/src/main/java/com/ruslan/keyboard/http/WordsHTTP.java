@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WordsHTTP {
-    private String mGetURL = Constants.IP + "words?userId=";
-    private String mPostURL = Constants.IP + "words";
+    private String mGetURL = Constants.API_BASE_URL + "words?userId=";
+    private String mPostURL = Constants.API_BASE_URL + "words";
 
     public WordsHTTP(int userId) {
         mGetURL += userId;

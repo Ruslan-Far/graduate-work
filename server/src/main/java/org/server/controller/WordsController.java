@@ -31,7 +31,7 @@ public class WordsController
     WordResource[] getAll(@RequestParam(required = false) Integer userId,
                           @RequestParam(required = false) Object expand)
     {
-        System.out.println("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
+        System.out.println("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
         Word[] wordEntities = userId == null ?
                 wordsRepository.select() :
                 wordsRepository.selectByUserId(userId);
