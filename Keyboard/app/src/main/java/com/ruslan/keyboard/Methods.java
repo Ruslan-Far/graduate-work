@@ -36,4 +36,8 @@ public class Methods {
                 connection.disconnect();
         }
     }
+
+    public static String postContent(String path, String body) {
+        return "";
+    }
 }

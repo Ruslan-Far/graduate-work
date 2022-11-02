@@ -35,22 +35,34 @@ import java.util.List;
 
 public class Orthocorrector {
 
-    private int userId;
+    private WordsHTTP wordsHTTP;
 
-    public Orthocorrector(int userId) {
-        this.userId = userId;
+    public Orthocorrector(WordsHTTP wordsHTTP) {
+        this.wordsHTTP = wordsHTTP;
     }
 
     public void downloadInfo() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                WordsHTTP wordsHTTP = new WordsHTTP(userId);
                 List<Word> words = wordsHTTP.get();
                 if (words != null)
                     System.out.println(words.get(0).getWord());
                 else
                     System.out.println("Null");
+            }
+        }).start();
+    }
+
+    public void uploadInfo(Word word) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Word w = wordsHTTP.post(word);
+                if (w != null)
+                    System.out.println(w.getWord());
+                else
+                    System.out.println("nULL");
             }
         }).start();
     }

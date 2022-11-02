@@ -3,8 +3,7 @@ package com.ruslan.keyboard;
 public class Constants {
 
     public static final String IP = "http://192.168.1.101:8080/";
-//    public static final String IP = "http://192.168.1.101:8080/words?userId=3";
-    //        public static final String IP = "http://192.168.161.71:8080/words?userId=3";
+    // public static final String IP = "http://192.168.161.71:8080/";
 
     public static class KeyCode {
 

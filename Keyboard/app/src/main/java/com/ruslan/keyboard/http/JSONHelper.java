@@ -2,7 +2,6 @@ package com.ruslan.keyboard.http;
 
 import com.google.gson.Gson;
 import com.ruslan.keyboard.entities.BaseEntity;
-import com.ruslan.keyboard.entities.Word;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -10,12 +9,9 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class JSONHelper<T extends BaseEntity> {
-    public String exportToJSON(List<T> dataList) {
+    public String exportToJSON(T t) {
         Gson gson = new Gson();
-//        Gson gson = new GsonBuilder()
-//                .setPrettyPrinting()
-//                .create();
-        return gson.toJson(new Word(60, 2, "Привет", 1));
+        return gson.toJson(t);
     }
 
     public List<T> importFromJSON(String jsonString, T t) {

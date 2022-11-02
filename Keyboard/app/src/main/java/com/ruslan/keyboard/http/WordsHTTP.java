@@ -14,42 +14,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WordsHTTP {
-    private String mURL = Constants.IP + "words?userId=";
+    private String mGetURL = Constants.IP + "words?userId=";
+    private String mPostURL = Constants.IP + "words";
 
     public WordsHTTP(int userId) {
-        mURL += userId;
+        mGetURL += userId;
     }
 
     public List<Word> get() {
-//        Thread thread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    String jsonString = Methods.getContent(mURL);
-//                    mWords = new JSONHelper<Word>().importFromJSON(jsonString, new Word());
-////                    List<Word> words = new ArrayList<>();
-////                    words.add(new Word(60, 2, "Привет", 1));
-////                    System.out.println("))))))))))))))))))))))))))))) " + new JSONHelper<Word>().exportToJSON(words));
-////                    System.out.println(mWords.get(0).getWord());
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//        thread.start();
-//        try {
-//            thread.join();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
         String jsonString = "";
+
         try {
-            jsonString = Methods.getContent(mURL);
+            jsonString = Methods.getContent(mGetURL);
         } catch (IOException e) {
             e.printStackTrace();
         }
         if (jsonString.length() > 0)
             return new JSONHelper<Word>().importFromJSON(jsonString, new Word());
+        return null;
+    }
+
+    public Word post(Word word) {
+        String jsonString = new JSONHelper<Word>().exportToJSON(word);
+
+//        try {
+            jsonString = Methods.postContent(mPostURL, jsonString);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        if (jsonString.length() > 0)
+            return new JSONHelper<Word>().importFromJSON(jsonString, new Word()).get(0);
         return null;
     }
 }
