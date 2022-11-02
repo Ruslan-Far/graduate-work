@@ -14,6 +14,7 @@ import android.widget.Button;
 
 import com.ruslan.keyboard.entities.Word;
 import com.ruslan.keyboard.http.WordsHTTP;
+import com.ruslan.keyboard.linguistic_services.Orthocorrector;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,6 +40,8 @@ public class IME extends InputMethodService
     private View mCandidateView;
     private Button btn;
     private Button btn3;
+
+    private Orthocorrector mOrthocorrector;
 
     @SuppressLint("InflateParams")
     @Override
@@ -68,19 +71,26 @@ public class IME extends InputMethodService
     @Override
     public void onStartInputView(EditorInfo info, boolean restarting) {
         super.onStartInputView(info, restarting);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                WordsHTTP wordsHTTP = new WordsHTTP(3);
-                List<Word> words = wordsHTTP.get();
-                btn.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        btn.setText(words.get(0).getWord());
-                    }
-                });
-            }
-        }).start();
+
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                WordsHTTP wordsHTTP = new WordsHTTP(3);
+//                List<Word> words = wordsHTTP.get();
+//                btn.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if (words != null)
+//                            btn.setText(words.get(0).getWord());
+//                        else
+//                            btn.setText("Null");
+//                    }
+//                });
+//            }
+//        }).start();
+
+        mOrthocorrector = new Orthocorrector(3);
+        mOrthocorrector.downloadInfo();
         btn.setText("Я иду дальше");
     }
 

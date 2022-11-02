@@ -48,6 +48,8 @@ public class WordsHTTP {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return new JSONHelper<Word>().importFromJSON(jsonString, new Word());
+        if (jsonString.length() > 0)
+            return new JSONHelper<Word>().importFromJSON(jsonString, new Word());
+        return null;
     }
 }

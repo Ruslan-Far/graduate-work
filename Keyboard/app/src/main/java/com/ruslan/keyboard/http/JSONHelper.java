@@ -31,7 +31,6 @@ public class JSONHelper<T extends BaseEntity> {
             t = gson.fromJson(jsonArray[i], (Type) t.getClass());
             list.add(t);
         }
-//        t = gson.fromJson("{\"id\":51,\"userId\":3,\"word\":\"Руслан\",\"count\":1}", (Type) t.getClass());
         return list;
     }
 }
