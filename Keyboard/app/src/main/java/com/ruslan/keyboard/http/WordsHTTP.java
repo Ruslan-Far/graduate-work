@@ -37,11 +37,12 @@ public class WordsHTTP {
     public Word post(Word word) {
         String jsonString = new JSONHelper<Word>().exportToJSON(word);
 
-//        try {
+        try {
+            jsonString = "";
             jsonString = Methods.postContent(mPostURL, jsonString);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (jsonString.length() > 0)
             return new JSONHelper<Word>().importFromJSON(jsonString, new Word()).get(0);
         return null;

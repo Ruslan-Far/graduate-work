@@ -41,7 +41,7 @@ public class Orthocorrector {
         this.wordsHTTP = wordsHTTP;
     }
 
-    public void downloadInfo() {
+    public void getInfo() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -54,7 +54,7 @@ public class Orthocorrector {
         }).start();
     }
 
-    public void uploadInfo(Word word) {
+    public void postInfo(Word word) {
         new Thread(new Runnable() {
             @Override
             public void run() {

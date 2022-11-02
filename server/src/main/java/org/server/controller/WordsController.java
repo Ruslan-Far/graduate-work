@@ -75,6 +75,8 @@ public class WordsController
     @RequestMapping(value = "", method = RequestMethod.POST)
     WordResource post(@RequestBody WordResource wordResource)
     {
+        System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
+        System.out.println(wordResource);
         Word wordEntity = wordsRepository.insert(wordResource.toEntity());
         if (wordEntity == null)
             return null;

@@ -17,7 +17,8 @@ public class JSONHelper<T extends BaseEntity> {
     public List<T> importFromJSON(String jsonString, T t) {
         Gson gson = new Gson();
         List<T> list = new ArrayList<>();
-        jsonString = jsonString.substring(1, jsonString.length() - 1);
+        if (jsonString.charAt(0) == '[')
+            jsonString = jsonString.substring(1, jsonString.length() - 1);
         String[] jsonArray = jsonString.split(Pattern.quote("}"));
 
         for (int i = 0; i < jsonArray.length - 1; i++) {

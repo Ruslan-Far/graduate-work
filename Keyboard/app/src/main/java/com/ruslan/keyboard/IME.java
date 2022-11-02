@@ -73,8 +73,8 @@ public class IME extends InputMethodService
         super.onStartInputView(info, restarting);
 
         mOrthocorrector = new Orthocorrector(new WordsHTTP(3));
-        mOrthocorrector.downloadInfo();
-        mOrthocorrector.uploadInfo(new Word(62, 3, "конфета", 1));
+        mOrthocorrector.getInfo();
+        mOrthocorrector.postInfo(new Word(62, 3, "конфета", 1));
         btn.setText("Я иду дальше");
     }
 
