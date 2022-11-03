@@ -68,7 +68,7 @@ public class IME extends InputMethodService
 
         mOrthocorrector = new Orthocorrector(new WordClientImpl());
         mOrthocorrector.getInfo(3);
-        mOrthocorrector.postInfo(new Word(62, 3, "конфета", 1));
+        mOrthocorrector.postInfo(new Word(62, 3, "пряник", 1));
         btn.setText("Я иду дальше");
     }
 

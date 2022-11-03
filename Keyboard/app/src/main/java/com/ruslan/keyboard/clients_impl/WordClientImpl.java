@@ -13,8 +13,7 @@ public class WordClientImpl extends ClientImpl {
     private Call<Word> mCallPost;
 
     public WordClientImpl() {
-//        super("words/");
-        super("");
+        super();
         mWordClient = retrofit.create(WordClient.class);
     }
 
@@ -23,7 +22,7 @@ public class WordClientImpl extends ClientImpl {
     }
 
     public void setCallGet(Integer userId) {
-        mCallGet = mWordClient.get();
+        mCallGet = mWordClient.get(userId);
     }
 
     public Call<Word> getCallPost() {
@@ -33,6 +32,4 @@ public class WordClientImpl extends ClientImpl {
     public void setCallPost(Word word) {
         mCallPost = mWordClient.post(word);
     }
-
-//    Call<Word[]> call = wordClient.get(3);
 }
