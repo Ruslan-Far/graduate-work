@@ -2,7 +2,6 @@ package com.ruslan.keyboard;
 
 import android.annotation.SuppressLint;
 import android.inputmethodservice.InputMethodService;
-import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
 import android.util.Log;
@@ -12,20 +11,10 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.Button;
 
+import com.ruslan.keyboard.clients_impl.ClientImpl;
+import com.ruslan.keyboard.clients_impl.WordClientImpl;
 import com.ruslan.keyboard.entities.Word;
-import com.ruslan.keyboard.http.WordsHTTP;
 import com.ruslan.keyboard.linguistic_services.Orthocorrector;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -77,34 +66,10 @@ public class IME extends InputMethodService
     public void onStartInputView(EditorInfo info, boolean restarting) {
         super.onStartInputView(info, restarting);
 
-//        mOrthocorrector = new Orthocorrector(new WordsHTTP(3));
-//        mOrthocorrector.getInfo();
-//        mOrthocorrector.postInfo(new Word(62, 3, "конфета", 1));
-//        btn.setText("Я иду дальше");
-
-        WordClientImpl wordClient = new WordClientImpl();
-        wordClient.call.enqueue(new Callback<Word[]>() {
-            @Override
-            public void onResponse(Call<Word[]> call, Response<Word[]> response) {
-                if (response.isSuccessful()) {
-                    System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
-//                    System.out.println(Arrays.toString(response.body()));
-                    Word[] words = response.body();
-                    for (int i = 0; i < words.length; i++) {
-                        System.out.println(words[i].getWord());
-                    }
-                }
-                else {
-                    System.out.println("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Word[]> call, Throwable t) {
-                System.out.println("FFFFFFFFFFFFFFFFFFAAAAAAAAAAAAAAAAAAAAAAA");
-            }
-        });
-        System.out.println("NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
+        mOrthocorrector = new Orthocorrector(new WordClientImpl());
+        mOrthocorrector.getInfo(3);
+        mOrthocorrector.postInfo(new Word(62, 3, "конфета", 1));
+        btn.setText("Я иду дальше");
     }
 
     /**

@@ -5,10 +5,14 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import com.ruslan.keyboard.IME;
+import com.ruslan.keyboard.clients_impl.WordClientImpl;
 import com.ruslan.keyboard.entities.Word;
-import com.ruslan.keyboard.http.WordsHTTP;
 
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 //public class Orthocorrector extends Service {
 //    @Override
@@ -35,35 +39,57 @@ import java.util.List;
 
 public class Orthocorrector {
 
-    private WordsHTTP wordsHTTP;
+    private WordClientImpl mWordClientImpl;
 
-    public Orthocorrector(WordsHTTP wordsHTTP) {
-        this.wordsHTTP = wordsHTTP;
+    public Orthocorrector(WordClientImpl wordClientImpl) {
+        mWordClientImpl = wordClientImpl;
     }
 
-    public void getInfo() {
-        new Thread(new Runnable() {
+    public void getInfo(Integer userId) {
+        mWordClientImpl.setCallGet(userId);
+        mWordClientImpl.getCallGet().enqueue(new Callback<Word[]>() {
             @Override
-            public void run() {
-                List<Word> words = wordsHTTP.get();
-                if (words != null)
-                    System.out.println(words.get(0).getWord());
-                else
-                    System.out.println("Null");
+            public void onResponse(Call<Word[]> call, Response<Word[]> response) {
+                if (response.isSuccessful()) {
+                    System.out.println("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
+                    Word[] words = response.body();
+                    for (int i = 0; i < words.length; i++) {
+                        System.out.println(words[i].getWord());
+                    }
+                }
+                else {
+                    System.out.println("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+                }
             }
-        }).start();
+
+            @Override
+            public void onFailure(Call<Word[]> call, Throwable t) {
+                System.out.println("FFFFFFFFFFFFFFFFFFAAAAAAAAAAAAAAAAAAAAAAA");
+            }
+        });
+        System.out.println("NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
     }
 
     public void postInfo(Word word) {
-        new Thread(new Runnable() {
+        mWordClientImpl.setCallPost(word);
+        mWordClientImpl.getCallPost().enqueue(new Callback<Word>() {
             @Override
-            public void run() {
-                Word w = wordsHTTP.post(word);
-                if (w != null)
+            public void onResponse(Call<Word> call, Response<Word> response) {
+                if (response.isSuccessful()) {
+                    System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
+                    Word w = response.body();
                     System.out.println(w.getWord());
-                else
-                    System.out.println("nULL");
+                }
+                else {
+                    System.out.println("2222222222222222222EEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+                }
             }
-        }).start();
+
+            @Override
+            public void onFailure(Call<Word> call, Throwable t) {
+                System.out.println("2222222222FFFFFFFFFFFFFFAAAAAAAAAAAAA");
+            }
+        });
+        System.out.println("222222222222222222222222222222222222NNNNNNNNNNNNNNNNNNN");
     }
 }
