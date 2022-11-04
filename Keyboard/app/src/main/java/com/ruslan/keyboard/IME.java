@@ -15,6 +15,7 @@ import com.ruslan.keyboard.clients_impl.ClientImpl;
 import com.ruslan.keyboard.clients_impl.WordClientImpl;
 import com.ruslan.keyboard.entities.Word;
 import com.ruslan.keyboard.linguistic_services.Orthocorrector;
+import com.ruslan.keyboard.repos.WordRepo;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -66,9 +67,14 @@ public class IME extends InputMethodService
     public void onStartInputView(EditorInfo info, boolean restarting) {
         super.onStartInputView(info, restarting);
 
-        mOrthocorrector = new Orthocorrector(new WordClientImpl());
-        mOrthocorrector.getInfo(3);
-        mOrthocorrector.postInfo(new Word(62, 3, "пряник", 1));
+//        mOrthocorrector = new Orthocorrector(new WordClientImpl());
+//        mOrthocorrector.getInfo(3);
+//        mOrthocorrector.postInfo(new Word(62, 3, "пряник", 1));
+
+        WordRepo wordRepo = new WordRepo(this);
+        wordRepo.open();
+        wordRepo.close();
+
         btn.setText("Я иду дальше");
     }
 
