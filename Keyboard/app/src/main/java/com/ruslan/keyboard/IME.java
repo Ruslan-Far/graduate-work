@@ -67,14 +67,9 @@ public class IME extends InputMethodService
     public void onStartInputView(EditorInfo info, boolean restarting) {
         super.onStartInputView(info, restarting);
 
-//        mOrthocorrector = new Orthocorrector(new WordClientImpl());
-//        mOrthocorrector.getInfo(3);
+        mOrthocorrector = new Orthocorrector(new WordClientImpl(), new WordRepo(this));
+        mOrthocorrector.getInfo(3);
 //        mOrthocorrector.postInfo(new Word(62, 3, "пряник", 1));
-
-        WordRepo wordRepo = new WordRepo(this);
-        wordRepo.open();
-        wordRepo.close();
-
         btn.setText("Я иду дальше");
     }
 

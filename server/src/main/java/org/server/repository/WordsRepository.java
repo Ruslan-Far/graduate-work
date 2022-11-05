@@ -16,7 +16,8 @@ public class WordsRepository implements IRestRepository<Word>
                                         "ORDER BY \"id\"";
 
     private static String selectByUserIdQuery = "SELECT * FROM \"words\" " +
-                                                 "WHERE \"userId\" = ?";
+                                                "WHERE \"userId\" = ? " +
+                                                "ORDER BY \"id\"";
 
     private static String selectByIdQuery = "SELECT * FROM \"words\" " +
                                             "WHERE \"id\" = ?";

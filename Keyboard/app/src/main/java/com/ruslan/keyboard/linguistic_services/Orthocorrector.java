@@ -7,7 +7,9 @@ import android.os.IBinder;
 import com.ruslan.keyboard.IME;
 import com.ruslan.keyboard.clients_impl.WordClientImpl;
 import com.ruslan.keyboard.entities.Word;
+import com.ruslan.keyboard.repos.WordRepo;
 
+import java.util.Arrays;
 import java.util.List;
 
 import retrofit2.Call;
@@ -40,9 +42,11 @@ import retrofit2.Response;
 public class Orthocorrector {
 
     private WordClientImpl mWordClientImpl;
+    private WordRepo mWordRepo;
 
-    public Orthocorrector(WordClientImpl wordClientImpl) {
+    public Orthocorrector(WordClientImpl wordClientImpl, WordRepo wordRepo) {
         mWordClientImpl = wordClientImpl;
+        mWordRepo = wordRepo;
     }
 
     public void getInfo(Integer userId) {
@@ -56,6 +60,16 @@ public class Orthocorrector {
                     for (int i = 0; i < words.length; i++) {
                         System.out.println(words[i].getWord());
                     }
+                    mWordRepo.open();
+                    for (int i = 0; i < words.length; i++) {
+                        mWordRepo.insert(words[i]);
+                    }
+                    words = mWordRepo.select();
+                    System.out.println("WAAAAAAAAARRRRNING" + words);
+                    for (int i = 0; i < words.length; i++) {
+                        System.out.println(words[i].getWord());
+                    }
+                    mWordRepo.close();
                 }
                 else {
                     System.out.println("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");

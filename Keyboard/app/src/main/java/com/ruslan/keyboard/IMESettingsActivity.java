@@ -13,11 +13,6 @@ public class IMESettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ime_settings);
         setTitle(R.string.ime_settings_activity);
-
-//        WordRepo wordRepo = new WordRepo(this);
-//        wordRepo.open();
-//        wordRepo.close();
-
         Intent intent = new Intent(this, IME.class);
         startService(intent);
     }

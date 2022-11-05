@@ -28,14 +28,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private String createUsersQuery =
         "CREATE TABLE " + USERS_TABLE +
         "(" +
-            USERS_COLUMN_ID + " SERIAL PRIMARY KEY," +
+            USERS_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
             USERS_COLUMN_LOGIN + " TEXT DEFAULT '' NOT NULL," +
             USERS_COLUMN_PASSWORD + " TEXT DEFAULT '' NOT NULL" +
         ")";
     private String createWordsQuery =
         "CREATE TABLE " + WORDS_TABLE +
         "(" +
-            WORDS_COLUMN_ID + " SERIAL PRIMARY KEY," +
+            WORDS_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
             WORDS_COLUMN_USERID + " INTEGER REFERENCES \"" + USERS_TABLE + "\" (\"" + USERS_COLUMN_ID + "\")," +
             WORDS_COLUMN_WORD + " TEXT DEFAULT '' NOT NULL," +
             WORDS_COLUMN_COUNT + " INTEGER NOT NULL" +
@@ -43,7 +43,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private String createCollocationsQuery =
         "CREATE TABLE " + COLLOCATIONS_TABLE +
         "(" +
-            COLLOCATIONS_COLUMN_ID + " SERIAL PRIMARY KEY," +
+            COLLOCATIONS_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
             COLLOCATIONS_COLUMN_PREVID + " INTEGER REFERENCES \"" + WORDS_TABLE + "\" (\"" + WORDS_COLUMN_ID + "\")," +
             COLLOCATIONS_COLUMN_NEXTID + " INTEGER REFERENCES \"" + WORDS_TABLE + "\" (\"" + WORDS_COLUMN_ID + "\")," +
             COLLOCATIONS_COLUMN_COUNT + " INTEGER NOT NULL" +
