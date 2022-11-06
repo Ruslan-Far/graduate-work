@@ -13,8 +13,10 @@ import android.widget.Button;
 
 import com.ruslan.keyboard.clients_impl.ClientImpl;
 import com.ruslan.keyboard.clients_impl.WordClientImpl;
+import com.ruslan.keyboard.entities.User;
 import com.ruslan.keyboard.entities.Word;
 import com.ruslan.keyboard.linguistic_services.Orthocorrector;
+import com.ruslan.keyboard.repos.UserRepo;
 import com.ruslan.keyboard.repos.WordRepo;
 
 import retrofit2.Call;
@@ -37,6 +39,8 @@ public class IME extends InputMethodService
     private Button btn3;
 
     private Orthocorrector mOrthocorrector;
+
+    private UserRepo mUserRepo;
 
     @SuppressLint("InflateParams")
     @Override
@@ -66,9 +70,13 @@ public class IME extends InputMethodService
     @Override
     public void onStartInputView(EditorInfo info, boolean restarting) {
         super.onStartInputView(info, restarting);
-
-        mOrthocorrector = new Orthocorrector(new WordClientImpl(), new WordRepo(this));
-        mOrthocorrector.getInfo(3);
+        mUserRepo = new UserRepo(this);
+        mUserRepo.open();
+//        mUserRepo.insert(new User(3, "r", "49"));
+        Store.user = mUserRepo.select();
+        mUserRepo.close();
+        mOrthocorrector = new Orthocorrector(new WordClientImpl());
+        mOrthocorrector.getInfo(Store.user.getId());
 //        mOrthocorrector.postInfo(new Word(62, 3, "пряник", 1));
         btn.setText("Я иду дальше");
     }

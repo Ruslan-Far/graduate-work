@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import com.ruslan.keyboard.IME;
+import com.ruslan.keyboard.Store;
 import com.ruslan.keyboard.clients_impl.WordClientImpl;
 import com.ruslan.keyboard.entities.Word;
 import com.ruslan.keyboard.repos.WordRepo;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,11 +44,9 @@ import retrofit2.Response;
 public class Orthocorrector {
 
     private WordClientImpl mWordClientImpl;
-    private WordRepo mWordRepo;
 
-    public Orthocorrector(WordClientImpl wordClientImpl, WordRepo wordRepo) {
+    public Orthocorrector(WordClientImpl wordClientImpl) {
         mWordClientImpl = wordClientImpl;
-        mWordRepo = wordRepo;
     }
 
     public void getInfo(Integer userId) {
@@ -56,20 +56,24 @@ public class Orthocorrector {
             public void onResponse(Call<Word[]> call, Response<Word[]> response) {
                 if (response.isSuccessful()) {
                     System.out.println("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
-                    Word[] words = response.body();
-                    for (int i = 0; i < words.length; i++) {
-                        System.out.println(words[i].getWord());
+//                    Word[] words = response.body();
+                    Store.words = Arrays.asList(response.body());
+//                    for (int i = 0; i < words.length; i++) {
+//                        System.out.println(words[i].getWord());
+//                    }
+                    for (int i = 0; i < Store.words.size(); i++) {
+                        System.out.println(Store.words.get(i).getWord());
                     }
-                    mWordRepo.open();
-                    for (int i = 0; i < words.length; i++) {
-                        mWordRepo.insert(words[i]);
-                    }
-                    words = mWordRepo.select();
-                    System.out.println("WAAAAAAAAARRRRNING" + words);
-                    for (int i = 0; i < words.length; i++) {
-                        System.out.println(words[i].getWord());
-                    }
-                    mWordRepo.close();
+//                    mWordRepo.open();
+//                    for (int i = 0; i < words.length; i++) {
+//                        mWordRepo.insert(words[i]);
+//                    }
+//                    words = mWordRepo.select();
+//                    System.out.println("WAAAAAAAAARRRRNING" + words);
+//                    for (int i = 0; i < words.length; i++) {
+//                        System.out.println(words[i].getWord());
+//                    }
+//                    mWordRepo.close();
                 }
                 else {
                     System.out.println("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");

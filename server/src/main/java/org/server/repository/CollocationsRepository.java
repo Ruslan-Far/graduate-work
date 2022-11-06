@@ -27,7 +27,7 @@ public class CollocationsRepository implements IRestRepository<Collocation>
 
     private static String selectByPrevIdNextIdQuery = "SELECT * FROM \"collocations\" " +
                                                         "WHERE \"prevId\" = ? OR \"nextId\" = ? " +
-                                                        "ORDER BY \"count\" DESC";
+                                                        "ORDER BY \"count\" DESC";//////////////////////////////
 
     private static String insertQuery = "INSERT INTO \"collocations\" (\"prevId\", \"nextId\", \"count\") " +
             "VALUES (?, ?, ?) " +
