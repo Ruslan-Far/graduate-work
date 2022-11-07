@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.ruslan.keyboard.DatabaseHelper;
 import com.ruslan.keyboard.entities.User;
-import com.ruslan.keyboard.entities.Word;
 
 public class UserRepo {
 

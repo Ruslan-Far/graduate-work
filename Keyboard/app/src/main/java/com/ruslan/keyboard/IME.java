@@ -11,17 +11,10 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.Button;
 
-import com.ruslan.keyboard.clients_impl.ClientImpl;
 import com.ruslan.keyboard.clients_impl.WordClientImpl;
-import com.ruslan.keyboard.entities.User;
-import com.ruslan.keyboard.entities.Word;
 import com.ruslan.keyboard.linguistic_services.Orthocorrector;
 import com.ruslan.keyboard.repos.UserRepo;
-import com.ruslan.keyboard.repos.WordRepo;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import com.ruslan.keyboard.stores.UserStore;
 
 public class IME extends InputMethodService
         implements KeyboardView.OnKeyboardActionListener {
@@ -73,10 +66,10 @@ public class IME extends InputMethodService
         mUserRepo = new UserRepo(this);
         mUserRepo.open();
 //        mUserRepo.insert(new User(3, "r", "49"));
-        Store.user = mUserRepo.select();
+        UserStore.user = mUserRepo.select();
         mUserRepo.close();
         mOrthocorrector = new Orthocorrector(new WordClientImpl());
-        mOrthocorrector.getInfo(Store.user.getId());
+        mOrthocorrector.getInfo(UserStore.user.getId());
 //        mOrthocorrector.postInfo(new Word(62, 3, "пряник", 1));
         btn.setText("Я иду дальше");
     }
