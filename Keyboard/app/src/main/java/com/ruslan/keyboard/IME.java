@@ -4,12 +4,16 @@ import android.annotation.SuppressLint;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
+import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.Button;
+
+import androidx.annotation.RequiresApi;
 
 import com.ruslan.keyboard.clients_impl.WordClientImpl;
 import com.ruslan.keyboard.linguistic_services.Orthocorrector;
@@ -26,10 +30,12 @@ public class IME extends InputMethodService
     private Constants.KEYS_TYPE mCurrentLocale;
     private Constants.KEYS_TYPE mPreviousLocale;
     private boolean isCapsOn = true;
+    private int mLimitMaxChars = 1000000;
 
     private View mCandidateView;
-    private Button btn;
-    private Button btn3;
+    private Button mBtn;
+    private Button mBtn2;
+    private Button mBtn3;
 
     private Orthocorrector mOrthocorrector;
 
@@ -52,8 +58,9 @@ public class IME extends InputMethodService
     @Override
     public View onCreateCandidatesView() {
         mCandidateView = getLayoutInflater().inflate(R.layout.candidate, null);
-        btn = mCandidateView.findViewById(R.id.btn);
-        btn3 = mCandidateView.findViewById(R.id.btn3);
+        mBtn = mCandidateView.findViewById(R.id.btn);
+        mBtn2 = mCandidateView.findViewById(R.id.btn2);
+        mBtn3 = mCandidateView.findViewById(R.id.btn3);
 
         setCandidatesViewShown(true);
 
@@ -68,10 +75,10 @@ public class IME extends InputMethodService
 //        mUserRepo.insert(new User(3, "r", "49"));
         UserStore.user = mUserRepo.select();
         mUserRepo.close();
-        mOrthocorrector = new Orthocorrector(new WordClientImpl());
-        mOrthocorrector.getInfo(UserStore.user.getId());
-//        mOrthocorrector.postInfo(new Word(62, 3, "пряник", 1));
-        btn.setText("Я иду дальше");
+        mOrthocorrector = new Orthocorrector(new WordClientImpl(), mBtn, mBtn2, mBtn3);
+        mOrthocorrector.getFromApi(UserStore.user.getId());
+//        mOrthocorrector.postToApi(new Word(62, 3, "пряник", 1));
+        mBtn.setText("Я иду дальше");
     }
 
     /**
@@ -155,13 +162,14 @@ public class IME extends InputMethodService
                     code = Character.toUpperCase(code);
                 }
                 ic.commitText(String.valueOf(code), 1);
+                mOrthocorrector.process(ic.getTextBeforeCursor(mLimitMaxChars, 0).toString());
                 break;
         }
     }
 
     @Override
     public void onText(CharSequence charSequence) {
-        Log.d(TAG, "onText ");
+        Log.d(TAG, "onText " + charSequence);
     }
 
     @Override

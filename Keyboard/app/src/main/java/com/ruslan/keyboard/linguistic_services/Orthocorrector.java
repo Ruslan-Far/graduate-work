@@ -1,5 +1,9 @@
 package com.ruslan.keyboard.linguistic_services;
 
+import android.util.Log;
+import android.widget.Button;
+
+import com.ruslan.keyboard.IME;
 import com.ruslan.keyboard.stores.WordStore;
 import com.ruslan.keyboard.clients_impl.WordClientImpl;
 import com.ruslan.keyboard.entities.Word;
@@ -14,11 +18,21 @@ public class Orthocorrector {
 
     private WordClientImpl mWordClientImpl;
 
-    public Orthocorrector(WordClientImpl wordClientImpl) {
+    private Button mBtn;
+    private Button mBtn2;
+    private Button mBtn3;
+
+    private String mLastWord;
+    private String mLastOtherChars;
+
+    public Orthocorrector(WordClientImpl wordClientImpl, Button btn, Button btn2, Button btn3) {
         mWordClientImpl = wordClientImpl;
+        mBtn = btn;
+        mBtn2 = btn2;
+        mBtn3 = btn3;
     }
 
-    public void getInfo(Integer userId) {
+    public void getFromApi(Integer userId) {
         mWordClientImpl.setCallGet(userId);
         mWordClientImpl.getCallGet().enqueue(new Callback<Word[]>() {
             @Override
@@ -42,7 +56,7 @@ public class Orthocorrector {
         System.out.println("NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
     }
 
-    public void postInfo(Word word) {
+    public void postToApi(Word word) {
         mWordClientImpl.setCallPost(word);
         mWordClientImpl.getCallPost().enqueue(new Callback<Word>() {
             @Override
@@ -62,5 +76,14 @@ public class Orthocorrector {
             }
         });
         System.out.println("222222222222222222222222222222222222NNNNNNNNNNNNNNNNNNN");
+    }
+
+    public void process(String textBeforeCursor) {
+//        System.out.println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ" + (char) primaryCode);
+//        mBtn.setText(String.valueOf((char) primaryCode));
+//        mBtn2.setText(WordStore.words.get(0).getWord());
+//        mBtn3.setText(WordStore.words.get(1).getWord());
+        System.out.println(Log.d("PROCESS", textBeforeCursor));
+        System.out.println(Log.d("PROCESS", textBeforeCursor.length() + ""));
     }
 }
