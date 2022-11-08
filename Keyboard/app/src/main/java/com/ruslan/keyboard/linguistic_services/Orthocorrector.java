@@ -32,7 +32,6 @@ public class Orthocorrector {
         mBtn = btn;
         mBtn2 = btn2;
         mBtn3 = btn3;
-        mLastWord = new StringBuilder();
     }
 
     public void getFromApi(Integer userId) {
@@ -82,15 +81,22 @@ public class Orthocorrector {
     }
 
     public void process(String textBeforeCursor) {
+        String[] hints;
+
+        mLastWord = new StringBuilder();
+        hints = new String[Constants.NUMBER_OF_HINTS];
         if (!Character.isLetter(textBeforeCursor.charAt(textBeforeCursor.length() - 1))) {
             getLastWord(textBeforeCursor);
-
+            hints = checkForSpelling();
             Log.d("PROCESS", mLastWord.toString() + "=Length=" + mLastWord.length());
         }
-        else {
-            mLastWord = new StringBuilder();
-            Log.d("PROCESS2", mLastWord.toString() + "=Length=" + mLastWord.length());
-        }
+        System.out.println("HINTS");
+        System.out.println(hints[0]);
+        System.out.println(hints[1]);
+        System.out.println(hints[2]);
+        mBtn.setText(hints[0]);
+        mBtn2.setText(hints[1]);
+        mBtn3.setText(hints[2]);
     }
 
     private void getLastWord(String textBeforeCursor) {
@@ -100,44 +106,40 @@ public class Orthocorrector {
         for (; i >= 0 && Character.isLetter(textBeforeCursor.charAt(i)); i--) {
             mLastWord.append(textBeforeCursor.charAt(i));
         }
-        mLastWord = mLastWord.reverse();
+        mLastWord.reverse();
     }
 
     private String[] checkForSpelling() {
-        String[] hints = new String[Constants.NUMBER_OF_HINTS];
-
         for (int i = 0; i < WordStore.words.size(); i++) {
             if (mLastWord.toString().equals(WordStore.words.get(i).getWord())) {
                 if (WordStore.words.get(i).getCount() == Constants.LIMIT_MAX_WORDS_COUNT)
-                    break;
-//                List<Word> dupWords = new ArrayList<>(WordStore.words);
-//                for (int j = 0; j < hints.length; j++) {
-//                    hints[j] = getApproximateWord(dupWords);
-//                }
-                hints = getApproximateWords();
-                break;
+                    return new String[Constants.NUMBER_OF_HINTS];
+                return getApproximateWords();
             }
         }
-        return hints;
+        return getApproximateWords();
     }
 
     private String[] getApproximateWords() {
+        int min = 999999999;
+        int min2 = min;
+        int min3 = min;
         int iMin = -1;
         int iMin2 = iMin;
         int iMin3 = iMin;
+        int radius = 1;
+        int countLetters;
+        StringBuilder wordFromStore;
         String[] hints = new String[Constants.NUMBER_OF_HINTS];
 
         if (WordStore.words.size() == 0)
             return hints;
         for (int i = 0; i < WordStore.words.size(); i++) {
-            if (WordStore.words.get(i).getCount() < Constants.LIMIT_MAX_WORDS_COUNT || WordStore.words.get(i).getWord().length() == 0)
+            if (WordStore.words.get(i).getCount() < Constants.LIMIT_MAX_WORDS_COUNT
+                    || WordStore.words.get(i).getWord().length() == 0)
                 continue;
-            int min = 999999999;
-            int min2 = min;
-            int min3 = min;
-            int radius = 1;
-            int countLetters = 0;
-            StringBuilder wordFromStore = new StringBuilder(WordStore.words.get(i).getWord());
+            countLetters = 0;
+            wordFromStore = new StringBuilder(WordStore.words.get(i).getWord());
             for (int j = 0; j < mLastWord.length(); j++) {
                 for (int k = 0; k < wordFromStore.length(); k++) {
                     if (Math.abs(k - j) > radius)
@@ -158,10 +160,16 @@ public class Orthocorrector {
             else
                 e = Math.abs(countLetters - wordFromStore.length());
             if (e < min) {
+                min3 = min2;
+                iMin3 = iMin2;
+                min2 = min;
+                iMin2 = iMin;
                 min = e;
                 iMin = i;
             }
             else if (e < min2) {
+                min3 = min2;
+                iMin3 = iMin2;
                 min2 = e;
                 iMin2 = i;
             }
