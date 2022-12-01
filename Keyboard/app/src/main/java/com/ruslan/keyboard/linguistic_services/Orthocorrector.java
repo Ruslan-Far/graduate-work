@@ -1,10 +1,13 @@
 package com.ruslan.keyboard.linguistic_services;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
+import android.view.inputmethod.InputConnection;
 import android.widget.Button;
 
 import com.ruslan.keyboard.Constants;
 import com.ruslan.keyboard.IME;
+import com.ruslan.keyboard.R;
 import com.ruslan.keyboard.stores.WordStore;
 import com.ruslan.keyboard.clients_impl.WordClientImpl;
 import com.ruslan.keyboard.entities.Word;
@@ -25,6 +28,9 @@ public class Orthocorrector {
     private Button mBtn2;
     private Button mBtn3;
 
+    private InputConnection mIc;
+
+    private StringBuilder mLastOther;
     private StringBuilder mLastWord;
 
     public Orthocorrector(WordClientImpl wordClientImpl, Button btn, Button btn2, Button btn3) {
@@ -32,6 +38,14 @@ public class Orthocorrector {
         mBtn = btn;
         mBtn2 = btn2;
         mBtn3 = btn3;
+    }
+
+    public InputConnection getIc() {
+        return mIc;
+    }
+
+    public void setIc(InputConnection ic) {
+        mIc = ic;
     }
 
     public void getFromApi(Integer userId) {
@@ -80,13 +94,19 @@ public class Orthocorrector {
         System.out.println("222222222222222222222222222222222222NNNNNNNNNNNNNNNNNNN");
     }
 
-    public void process(String textBeforeCursor) {
+    @SuppressLint("ResourceAsColor")
+    public void process() {
+        String textBeforeCursor;
         String[] hints;
 
-        mLastWord = new StringBuilder();
+        textBeforeCursor = mIc.getTextBeforeCursor(IME.sLimitMaxChars, 0).toString();
         hints = new String[Constants.NUMBER_OF_HINTS];
+        mLastOther = new StringBuilder();
+        mLastWord = new StringBuilder();
+        if (textBeforeCursor.length() == 0)
+            return;
         if (!Character.isLetter(textBeforeCursor.charAt(textBeforeCursor.length() - 1))) {
-            getLastWord(textBeforeCursor);
+            searchLastWordAndOther(textBeforeCursor);
             hints = checkForSpelling();
             Log.d("PROCESS", mLastWord.toString() + "=Length=" + mLastWord.length());
         }
@@ -94,18 +114,24 @@ public class Orthocorrector {
         System.out.println(hints[0]);
         System.out.println(hints[1]);
         System.out.println(hints[2]);
+        IME.sLingServNum = 0;
         mBtn.setText(hints[0]);
         mBtn2.setText(hints[1]);
         mBtn3.setText(hints[2]);
+        mBtn.setTextColor(R.color.green);
+        mBtn2.setTextColor(R.color.green);
+        mBtn3.setTextColor(R.color.green);
     }
 
-    private void getLastWord(String textBeforeCursor) {
+    private void searchLastWordAndOther(String textBeforeCursor) {
         int i;
 
-        for (i = textBeforeCursor.length() - 1; i >= 0 && !Character.isLetter(textBeforeCursor.charAt(i)); i--);
-        for (; i >= 0 && Character.isLetter(textBeforeCursor.charAt(i)); i--) {
+        for (i = textBeforeCursor.length() - 1; i >= 0
+                && !Character.isLetter(textBeforeCursor.charAt(i)); i--)
+            mLastOther.append(textBeforeCursor.charAt(i));
+        mLastOther.reverse();
+        for (; i >= 0 && Character.isLetter(textBeforeCursor.charAt(i)); i--)
             mLastWord.append(textBeforeCursor.charAt(i));
-        }
         mLastWord.reverse();
     }
 
@@ -193,5 +219,16 @@ public class Orthocorrector {
         hints[1] = WordStore.words.get(iMin2).getWord();
         hints[2] = WordStore.words.get(iMin3).getWord();
         return hints;
+    }
+
+    public void clickBtnAny(Button btnAny) {
+        CharSequence hint;
+
+        hint = btnAny.getText();
+        if (hint == "")
+            return;
+        searchLastWordAndOther(mIc.getTextBeforeCursor(IME.sLimitMaxChars, 0).toString());
+        mIc.deleteSurroundingText(mLastOther.length() + mLastWord.length(), 0);
+        mIc.commitText(hint.toString() + mLastOther, IME.sLimitMaxChars);
     }
 }

@@ -1,6 +1,7 @@
 package com.ruslan.keyboard;
 
 import android.annotation.SuppressLint;
+import android.graphics.Rect;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
@@ -9,6 +10,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.Button;
@@ -25,12 +27,14 @@ public class IME extends InputMethodService
 
     public static final String TAG = "KEYBOARD";
 
+    public static int sLimitMaxChars = 1000000;
+    public static int sLingServNum = -1; // 0 - ortho, 1 - predicVvod
+
     private KeyboardView mKeyboardView;
     private android.inputmethodservice.Keyboard mKeyboard;
     private Constants.KEYS_TYPE mCurrentLocale;
     private Constants.KEYS_TYPE mPreviousLocale;
     private boolean isCapsOn = true;
-    private int mLimitMaxChars = 1000000;
 
     private View mCandidateView;
     private Button mBtn;
@@ -62,23 +66,42 @@ public class IME extends InputMethodService
         mBtn2 = mCandidateView.findViewById(R.id.btn2);
         mBtn3 = mCandidateView.findViewById(R.id.btn3);
 
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (sLingServNum == 0) {
+                    mOrthocorrector.clickBtnAny((Button) v);
+                }
+            }
+        };
+        mBtn.setOnClickListener(listener);
+        mBtn2.setOnClickListener(listener);
+        mBtn3.setOnClickListener(listener);
+
         setCandidatesViewShown(true);
 
         return mCandidateView;
     }
 
-    @Override
-    public void onStartInputView(EditorInfo info, boolean restarting) {
-        super.onStartInputView(info, restarting);
+    private void initUserStore() {
         mUserRepo = new UserRepo(this);
         mUserRepo.open();
 //        mUserRepo.insert(new User(3, "r", "49"));
         UserStore.user = mUserRepo.select();
         mUserRepo.close();
+    }
+
+    private void initOrthocorrector() {
         mOrthocorrector = new Orthocorrector(new WordClientImpl(), mBtn, mBtn2, mBtn3);
         mOrthocorrector.getFromApi(UserStore.user.getId());
 //        mOrthocorrector.postToApi(new Word(62, 3, "пряник", 1));
-        mBtn.setText("Я иду дальше");
+    }
+
+    @Override
+    public void onStartInputView(EditorInfo info, boolean restarting) {
+        super.onStartInputView(info, restarting);
+        initUserStore();
+        initOrthocorrector();
     }
 
     /**
@@ -138,12 +161,10 @@ public class IME extends InputMethodService
     public void onKey(int primaryCode, int[] ints) {
         Log.d(TAG, "onKey " + primaryCode);
         InputConnection ic = getCurrentInputConnection();
+        mOrthocorrector.setIc(ic);
         playClick(primaryCode);
 
         switch (primaryCode) {
-            case android.inputmethodservice.Keyboard.KEYCODE_DELETE:
-                ic.deleteSurroundingText(1, 0);
-                break;
             case android.inputmethodservice.Keyboard.KEYCODE_SHIFT:
                 handleShift();
                 break;
@@ -157,12 +178,16 @@ public class IME extends InputMethodService
                 handleLanguageSwitch();
                 break;
             default:
-                char code = (char) primaryCode;
-                if (Character.isLetter(code) && isCapsOn) {
-                    code = Character.toUpperCase(code);
+                if (primaryCode == android.inputmethodservice.Keyboard.KEYCODE_DELETE)
+                    ic.deleteSurroundingText(1, 0);
+                else {
+                    char code = (char) primaryCode;
+                    if (Character.isLetter(code) && isCapsOn) {
+                        code = Character.toUpperCase(code);
+                    }
+                    ic.commitText(String.valueOf(code), 1);
                 }
-                ic.commitText(String.valueOf(code), 1);
-                mOrthocorrector.process(ic.getTextBeforeCursor(mLimitMaxChars, 0).toString());
+                mOrthocorrector.process();
                 break;
         }
     }

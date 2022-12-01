@@ -9,7 +9,6 @@
         android:id="@+id/btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent" />
 
@@ -17,7 +16,6 @@
         android:id="@+id/btn2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button2"
         app:layout_constraintLeft_toRightOf="@id/btn"
         app:layout_constraintRight_toLeftOf="@+id/btn3"
         app:layout_constraintBottom_toBottomOf="parent"/>
@@ -26,7 +24,6 @@
         android:id="@+id/btn3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button3"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
