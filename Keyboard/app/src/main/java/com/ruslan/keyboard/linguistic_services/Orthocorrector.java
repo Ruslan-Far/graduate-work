@@ -8,6 +8,7 @@ import android.widget.Button;
 import com.ruslan.keyboard.Constants;
 import com.ruslan.keyboard.IME;
 import com.ruslan.keyboard.R;
+import com.ruslan.keyboard.stores.UserStore;
 import com.ruslan.keyboard.stores.WordStore;
 import com.ruslan.keyboard.clients_impl.WordClientImpl;
 import com.ruslan.keyboard.entities.Word;
@@ -32,12 +33,14 @@ public class Orthocorrector {
 
     private StringBuilder mLastOther;
     private StringBuilder mLastWord;
+    private int mIndexInWordStore;
 
     public Orthocorrector(WordClientImpl wordClientImpl, Button btn, Button btn2, Button btn3) {
         mWordClientImpl = wordClientImpl;
         mBtn = btn;
         mBtn2 = btn2;
         mBtn3 = btn3;
+        resetFields();
     }
 
     public InputConnection getIc() {
@@ -55,7 +58,7 @@ public class Orthocorrector {
             public void onResponse(Call<Word[]> call, Response<Word[]> response) {
                 if (response.isSuccessful()) {
                     System.out.println("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
-                    WordStore.words = Arrays.asList(response.body());
+                    WordStore.words = new ArrayList<>(Arrays.asList(response.body()));
                     for (int i = 0; i < WordStore.words.size(); i++) {
                         System.out.println(WordStore.words.get(i).getWord());
                     }
@@ -81,6 +84,7 @@ public class Orthocorrector {
                     System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
                     Word w = response.body();
                     System.out.println(w.getWord());
+                    WordStore.postToStore(w);
                 }
                 else {
                     System.out.println("2222222222222222222EEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
@@ -94,21 +98,62 @@ public class Orthocorrector {
         System.out.println("222222222222222222222222222222222222NNNNNNNNNNNNNNNNNNN");
     }
 
+    public void putToApi(Integer id, Word word) {
+        mWordClientImpl.setCallPut(id, word);
+        mWordClientImpl.getCallPut().enqueue(new Callback<Word>() {
+            @Override
+            public void onResponse(Call<Word> call, Response<Word> response) {
+                if (response.isSuccessful()) {
+                    System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPUUUUUUUUUUUUUUUUUTTTTTTTTTTTTTTTTTTT");
+                    Word w = response.body();
+                    System.out.println(w.getWord());
+                    WordStore.putToStore(id, w);
+                }
+                else {
+                    System.out.println("333333333333333333333333EEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+                }
+            }
+            @Override
+            public void onFailure(Call<Word> call, Throwable t) {
+                System.out.println("33333333333333333FFFFFFFFFFFFFFAAAAAAAAAAAAA");
+            }
+        });
+        System.out.println("33333333333333333333333333333333NNNNNNNNNNNNNNNNNNN");
+    }
+
     @SuppressLint("ResourceAsColor")
-    public void process() {
+    public void process(boolean isDel) {
         String textBeforeCursor;
         String[] hints;
 
         textBeforeCursor = mIc.getTextBeforeCursor(IME.sLimitMaxChars, 0).toString();
         hints = new String[Constants.NUMBER_OF_HINTS];
-        mLastOther = new StringBuilder();
-        mLastWord = new StringBuilder();
         if (textBeforeCursor.length() == 0)
             return;
         if (!Character.isLetter(textBeforeCursor.charAt(textBeforeCursor.length() - 1))) {
             searchLastWordAndOther(textBeforeCursor);
+            if (mLastWord.length() == 0)
+                return;
             hints = checkForSpelling();
             Log.d("PROCESS", mLastWord.toString() + "=Length=" + mLastWord.length());
+        }
+        else if (!isDel && mLastWord.length() != 0 && mLastOther.length() != 0) {
+            if (mIndexInWordStore == -1) {
+                Word word = new Word();
+                word.setUserId(UserStore.user.getId());
+                word.setWord(mLastWord.toString());
+                word.setCount(1);
+                postToApi(word);
+            }
+            else if (mIndexInWordStore > -1) {
+                Word word = new Word();
+                word.setId(WordStore.words.get(mIndexInWordStore).getId());
+                word.setUserId(WordStore.words.get(mIndexInWordStore).getUserId());
+                word.setWord(WordStore.words.get(mIndexInWordStore).getWord());
+                word.setCount(WordStore.words.get(mIndexInWordStore).getCount() + 1);
+                putToApi(word.getId(), word);
+            }
+            resetFields();
         }
         System.out.println("HINTS");
         System.out.println(hints[0]);
@@ -123,9 +168,16 @@ public class Orthocorrector {
         mBtn3.setTextColor(R.color.green);
     }
 
+    private void resetFields() {
+        mLastOther = new StringBuilder();
+        mLastWord = new StringBuilder();
+        mIndexInWordStore = -2;
+    }
+
     private void searchLastWordAndOther(String textBeforeCursor) {
         int i;
 
+        resetFields();
         for (i = textBeforeCursor.length() - 1; i >= 0
                 && !Character.isLetter(textBeforeCursor.charAt(i)); i--)
             mLastOther.append(textBeforeCursor.charAt(i));
@@ -138,11 +190,13 @@ public class Orthocorrector {
     private String[] checkForSpelling() {
         for (int i = 0; i < WordStore.words.size(); i++) {
             if (mLastWord.toString().equals(WordStore.words.get(i).getWord())) {
-                if (WordStore.words.get(i).getCount() == Constants.LIMIT_MAX_WORDS_COUNT)
+                if (WordStore.words.get(i).getCount() >= Constants.LIMIT_MAX_WORDS_COUNT)
                     return new String[Constants.NUMBER_OF_HINTS];
+                mIndexInWordStore = i;
                 return getApproximateWords();
             }
         }
+        mIndexInWordStore = -1;
         return getApproximateWords();
     }
 
@@ -229,6 +283,7 @@ public class Orthocorrector {
             return;
         searchLastWordAndOther(mIc.getTextBeforeCursor(IME.sLimitMaxChars, 0).toString());
         mIc.deleteSurroundingText(mLastOther.length() + mLastWord.length(), 0);
-        mIc.commitText(hint.toString() + mLastOther, IME.sLimitMaxChars);
+//        mIc.commitText(hint.toString() + mLastOther, IME.sLimitMaxChars);
+        mIc.commitText(hint.toString() + mLastOther, 0);
     }
 }

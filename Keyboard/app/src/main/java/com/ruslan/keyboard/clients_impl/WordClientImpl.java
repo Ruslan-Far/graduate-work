@@ -11,6 +11,7 @@ public class WordClientImpl extends ClientImpl {
 
     private Call<Word[]> mCallGet;
     private Call<Word> mCallPost;
+    private Call<Word> mCallPut;
 
     public WordClientImpl() {
         super();
@@ -31,5 +32,13 @@ public class WordClientImpl extends ClientImpl {
 
     public void setCallPost(Word word) {
         mCallPost = mWordClient.post(word);
+    }
+
+    public Call<Word> getCallPut() {
+        return mCallPut;
+    }
+
+    public void setCallPut(Integer id, Word word) {
+        mCallPut = mWordClient.put(id, word);
     }
 }

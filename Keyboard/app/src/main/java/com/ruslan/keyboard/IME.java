@@ -94,7 +94,6 @@ public class IME extends InputMethodService
     private void initOrthocorrector() {
         mOrthocorrector = new Orthocorrector(new WordClientImpl(), mBtn, mBtn2, mBtn3);
         mOrthocorrector.getFromApi(UserStore.user.getId());
-//        mOrthocorrector.postToApi(new Word(62, 3, "пряник", 1));
     }
 
     @Override
@@ -178,16 +177,18 @@ public class IME extends InputMethodService
                 handleLanguageSwitch();
                 break;
             default:
-                if (primaryCode == android.inputmethodservice.Keyboard.KEYCODE_DELETE)
+                if (primaryCode == android.inputmethodservice.Keyboard.KEYCODE_DELETE) {
                     ic.deleteSurroundingText(1, 0);
+                    mOrthocorrector.process(true);
+                }
                 else {
                     char code = (char) primaryCode;
                     if (Character.isLetter(code) && isCapsOn) {
                         code = Character.toUpperCase(code);
                     }
                     ic.commitText(String.valueOf(code), 1);
+                    mOrthocorrector.process(false);
                 }
-                mOrthocorrector.process();
                 break;
         }
     }

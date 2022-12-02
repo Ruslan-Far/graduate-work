@@ -16,7 +16,7 @@ public class BaseEntity
         return id;
     }
 
-    public void setId()
+    public void setId(Integer id)
     {
         this.id = id;
     }
