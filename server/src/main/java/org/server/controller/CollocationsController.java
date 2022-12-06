@@ -30,6 +30,7 @@ public class CollocationsController
     CollocationResource[] getAll(@RequestParam(required = false) Integer userId,
                                  @RequestParam(required = false) Object expand)
     {
+        System.out.println("CCCCCCCCCCCCCCCCCCCGGGGGGGGGGGGGGGGGGGGGGGG_expand=" + expand);
         Collocation[] collocationEntities = userId == null ?
                 collocationsRepository.select() :
                 collocationsRepository.selectByUserId(userId);

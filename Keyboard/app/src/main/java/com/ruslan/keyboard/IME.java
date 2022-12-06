@@ -17,8 +17,10 @@ import android.widget.Button;
 
 import androidx.annotation.RequiresApi;
 
+import com.ruslan.keyboard.clients_impl.CollocationClientImpl;
 import com.ruslan.keyboard.clients_impl.WordClientImpl;
 import com.ruslan.keyboard.linguistic_services.Orthocorrector;
+import com.ruslan.keyboard.linguistic_services.PredictiveInput;
 import com.ruslan.keyboard.repos.UserRepo;
 import com.ruslan.keyboard.stores.UserStore;
 
@@ -28,7 +30,7 @@ public class IME extends InputMethodService
     public static final String TAG = "KEYBOARD";
 
     public static int sLimitMaxChars = 1000000;
-    public static int sLingServNum = -1; // 0 - ortho, 1 - predicVvod
+    public static int sLingServNum = -1; // 0 - Orthocorrector, 1 - PredictiveInput
 
     private KeyboardView mKeyboardView;
     private android.inputmethodservice.Keyboard mKeyboard;
@@ -42,6 +44,7 @@ public class IME extends InputMethodService
     private Button mBtn3;
 
     private Orthocorrector mOrthocorrector;
+    private PredictiveInput mPredictiveInput;
 
     private UserRepo mUserRepo;
 
@@ -69,6 +72,8 @@ public class IME extends InputMethodService
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (((Button) v).getText() == "")
+                    return;
                 if (sLingServNum == 0) {
                     mOrthocorrector.clickBtnAny((Button) v);
                 }
@@ -96,11 +101,17 @@ public class IME extends InputMethodService
         mOrthocorrector.getFromApi(UserStore.user.getId());
     }
 
+    private void initPredictiveInput() {
+        mPredictiveInput = new PredictiveInput(new CollocationClientImpl(), mBtn, mBtn2, mBtn3);
+        mPredictiveInput.getFromApi(UserStore.user.getId(), Constants.EXPAND);
+    }
+
     @Override
     public void onStartInputView(EditorInfo info, boolean restarting) {
         super.onStartInputView(info, restarting);
         initUserStore();
         initOrthocorrector();
+        initPredictiveInput();
     }
 
     /**

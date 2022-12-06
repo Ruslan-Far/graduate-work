@@ -7,6 +7,7 @@ public class Constants {
 
     public static final int LIMIT_MAX_WORDS_COUNT = 3;
     public static final int NUMBER_OF_HINTS = 3;
+    public static final String EXPAND = "expand";
 
     public static class KeyCode {
 

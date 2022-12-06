@@ -279,8 +279,6 @@ public class Orthocorrector {
         CharSequence hint;
 
         hint = btnAny.getText();
-        if (hint == "")
-            return;
         searchLastWordAndOther(mIc.getTextBeforeCursor(IME.sLimitMaxChars, 0).toString());
         mIc.deleteSurroundingText(mLastOther.length() + mLastWord.length(), 0);
 //        mIc.commitText(hint.toString() + mLastOther, IME.sLimitMaxChars);
