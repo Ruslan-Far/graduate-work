@@ -5,4 +5,6 @@
     <string name="subtype_ru_RU">Русский</string>
     
     <string name="ime_settings_activity">Настройки</string>
+
+    <string name="hint_add_to_dictionary">\u2190 Touch again to save</string>
 </resources>

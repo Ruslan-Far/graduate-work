@@ -11,4 +11,8 @@
         <item name="android:textAllCaps">false</item>
     </style>
 
+    <style name="KeyPreviewAnimation">
+        <item name="android:windowEnterAnimation">@anim/key_preview_fadein</item>
+        <item name="android:windowExitAnimation">@anim/key_preview_fadeout</item>
+    </style>
 </resources>

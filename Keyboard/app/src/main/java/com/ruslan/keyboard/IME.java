@@ -39,9 +39,9 @@ public class IME extends InputMethodService
     private android.inputmethodservice.Keyboard mKeyboard;
     private Constants.KEYS_TYPE mCurrentLocale;
     private Constants.KEYS_TYPE mPreviousLocale;
-    private boolean isCapsOn = true;
+    private boolean mIsCapsOn = true;
 
-    private View mCandidateView;
+//    private View mCandidateView;
     private Button mBtn;
     private Button mBtn2;
     private Button mBtn3;
@@ -57,7 +57,7 @@ public class IME extends InputMethodService
         mKeyboardView = (KeyboardView) getLayoutInflater().inflate(R.layout.keyboard, null);
         mCurrentLocale = Constants.KEYS_TYPE.RUSSIAN;
         mKeyboard = getKeyboard(mCurrentLocale);
-        mKeyboard.setShifted(isCapsOn);
+        mKeyboard.setShifted(mIsCapsOn);
         mKeyboardView.setKeyboard(mKeyboard);
         mKeyboardView.setOnKeyboardActionListener(this);
 
@@ -94,26 +94,36 @@ public class IME extends InputMethodService
 //        return mCandidateView;
 //    }
 
-    @SuppressLint("InflateParams")
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    @Override
-    public View onCreateCandidatesView() {
-        LayoutInflater li = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//    @SuppressLint("InflateParams")
+//    @RequiresApi(api = Build.VERSION_CODES.M)
+//    @Override
+//    public View onCreateCandidatesView() {
+//        LayoutInflater li = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 //        View wordBar = li.inflate(R.layout.wordbar, null);
 //        LinearLayout ll = (LinearLayout) wordBar.findViewById(R.id.words);
 //        Button btn = (Button) wordBar.findViewById(R.id.button1);
 //        btn.setOnClickListener(this);
-        mCandidateView = li.inflate(R.layout.candidate, null);
-        mBtn = mCandidateView.findViewById(R.id.btn);
-        mBtn2 = mCandidateView.findViewById(R.id.btn2);
-        mBtn3 = mCandidateView.findViewById(R.id.btn3);
 //        mCandidateView = new CandidateView(this);
-//        mCandidateView.setSe
-        setCandidatesViewShown(true);
-        mCandidateView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+//        mCandidateView.setService(this);
+//        setCandidatesViewShown(true);
+//        mCandidateView.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
 //        ll.addView(mCandidateView);
 //        return wordBar;
-        return mCandidateView;
+//    }
+
+    private LinearLayout mCandidateViewContainer;
+    private CandidateView mCandidateView;
+
+    @SuppressLint("InflateParams")
+    @Override
+    public View onCreateCandidatesView() {
+//        mKeyboardSwitcher.makeKeyboards(true);
+        mCandidateViewContainer = (LinearLayout) getLayoutInflater().inflate(
+                R.layout.candidates, null);
+        mCandidateView = (CandidateView) mCandidateViewContainer.findViewById(R.id.candidates);
+        mCandidateView.setService(this);
+        setCandidatesViewShown(true);
+        return mCandidateViewContainer;
     }
 
     private void initUserStore() {
@@ -230,7 +240,7 @@ public class IME extends InputMethodService
                 }
                 else {
                     char code = (char) primaryCode;
-                    if (Character.isLetter(code) && isCapsOn) {
+                    if (Character.isLetter(code) && mIsCapsOn) {
                         code = Character.toUpperCase(code);
                     }
                     ic.commitText(String.valueOf(code), 1);
@@ -273,15 +283,15 @@ public class IME extends InputMethodService
         } else {
             mKeyboard = getKeyboard(mPreviousLocale);
             mCurrentLocale = mPreviousLocale;
-            mKeyboard.setShifted(isCapsOn);
+            mKeyboard.setShifted(mIsCapsOn);
         }
         mKeyboardView.setKeyboard(mKeyboard);
         mKeyboardView.invalidateAllKeys();
     }
 
     private void handleShift() {
-        isCapsOn = !isCapsOn;
-        mKeyboard.setShifted(isCapsOn);
+        mIsCapsOn = !mIsCapsOn;
+        mKeyboard.setShifted(mIsCapsOn);
         mKeyboardView.invalidateAllKeys();
     }
 
@@ -295,7 +305,7 @@ public class IME extends InputMethodService
         }
 
         mKeyboardView.setKeyboard(mKeyboard);
-        mKeyboard.setShifted(isCapsOn);
+        mKeyboard.setShifted(mIsCapsOn);
         mKeyboardView.invalidateAllKeys();
     }
 
