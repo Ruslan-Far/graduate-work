@@ -25,7 +25,9 @@ import com.ruslan.keyboard.clients_impl.WordClientImpl;
 import com.ruslan.keyboard.linguistic_services.Orthocorrector;
 import com.ruslan.keyboard.linguistic_services.PredictiveInput;
 import com.ruslan.keyboard.repos.UserRepo;
+import com.ruslan.keyboard.stores.CollocationStore;
 import com.ruslan.keyboard.stores.UserStore;
+import com.ruslan.keyboard.stores.WordStore;
 
 public class IME extends InputMethodService
         implements KeyboardView.OnKeyboardActionListener {
@@ -39,7 +41,7 @@ public class IME extends InputMethodService
     private android.inputmethodservice.Keyboard mKeyboard;
     private Constants.KEYS_TYPE mCurrentLocale;
     private Constants.KEYS_TYPE mPreviousLocale;
-    private boolean isCapsOn = true;
+    private boolean mIsCapsOn = true;
 
     private View mCandidateView;
     private Button mBtn;
@@ -57,7 +59,7 @@ public class IME extends InputMethodService
         mKeyboardView = (KeyboardView) getLayoutInflater().inflate(R.layout.keyboard, null);
         mCurrentLocale = Constants.KEYS_TYPE.RUSSIAN;
         mKeyboard = getKeyboard(mCurrentLocale);
-        mKeyboard.setShifted(isCapsOn);
+        mKeyboard.setShifted(mIsCapsOn);
         mKeyboardView.setKeyboard(mKeyboard);
         mKeyboardView.setOnKeyboardActionListener(this);
 
@@ -147,6 +149,15 @@ public class IME extends InputMethodService
         initPredictiveInput();
     }
 
+    @Override
+    public void onFinishInputView(boolean finishingInput) {
+        System.out.println("FFFFIIIIIIIINNNNNNNNNNNNNIIIIIIIIIIIISSSSSSSSSSSHHHHHHHHHHHH");
+        UserStore.user = null;
+        WordStore.words = null;
+        CollocationStore.collocations = null;
+        super.onFinishInputView(finishingInput);
+    }
+
     /**
      * @param locale - keys of keyboard
      * @return localized keyboard
@@ -230,7 +241,7 @@ public class IME extends InputMethodService
                 }
                 else {
                     char code = (char) primaryCode;
-                    if (Character.isLetter(code) && isCapsOn) {
+                    if (Character.isLetter(code) && mIsCapsOn) {
                         code = Character.toUpperCase(code);
                     }
                     ic.commitText(String.valueOf(code), 1);
@@ -273,15 +284,15 @@ public class IME extends InputMethodService
         } else {
             mKeyboard = getKeyboard(mPreviousLocale);
             mCurrentLocale = mPreviousLocale;
-            mKeyboard.setShifted(isCapsOn);
+            mKeyboard.setShifted(mIsCapsOn);
         }
         mKeyboardView.setKeyboard(mKeyboard);
         mKeyboardView.invalidateAllKeys();
     }
 
     private void handleShift() {
-        isCapsOn = !isCapsOn;
-        mKeyboard.setShifted(isCapsOn);
+        mIsCapsOn = !mIsCapsOn;
+        mKeyboard.setShifted(mIsCapsOn);
         mKeyboardView.invalidateAllKeys();
     }
 
@@ -295,7 +306,7 @@ public class IME extends InputMethodService
         }
 
         mKeyboardView.setKeyboard(mKeyboard);
-        mKeyboard.setShifted(isCapsOn);
+        mKeyboard.setShifted(mIsCapsOn);
         mKeyboardView.invalidateAllKeys();
     }
 
