@@ -20,7 +20,7 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- key_height + key_bottom_gap = popup_key_height -->
-    <dimen name="key_height" tools:ignore="InOrMmUsage">0.290in</dimen>
+<!--    <dimen name="key_height" tools:ignore="InOrMmUsage">0.290in</dimen>-->
     <dimen name="key_bottom_gap" tools:ignore="InOrMmUsage">0.035in</dimen>
     <dimen name="popup_key_height" tools:ignore="InOrMmUsage">0.325in</dimen>
     <dimen name="keyboard_bottom_padding" tools:ignore="InOrMmUsage">0.06in</dimen>
@@ -47,4 +47,8 @@
          to user's finger. -->
     <dimen name="keyboard_vertical_correction">-0.05in</dimen>
     <dimen name="candidate_min_touchable_width" tools:ignore="InOrMmUsage">0.3in</dimen>
+
+    <dimen name="key_height">50dip</dimen>
+    <dimen name="candidate_font_height">16sp</dimen>
+    <dimen name="candidate_vertical_padding">6sp</dimen>
 </resources>

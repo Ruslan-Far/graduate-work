@@ -12,12 +12,14 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import com.ruslan.keyboard.clients_impl.CollocationClientImpl;
@@ -111,19 +113,31 @@ public class IME extends InputMethodService
 //        return wordBar;
 //    }
 
-    private LinearLayout mCandidateViewContainer;
     private CandidateView mCandidateView;
 
-    @SuppressLint("InflateParams")
+    @NonNull
+    Context getDisplayContext() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            // createDisplayContext is not available.
+            return this;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // IME context sources is now managed by WindowProviderService from Android 12L.
+            return this;
+        }
+        // An issue in Q that non-activity components Resources / DisplayMetrics in
+        // Context doesn't well updated when the IME window moving to external display.
+        // Currently we do a workaround is to create new display context directly and re-init
+        // keyboard layout with this context.
+        final WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        return createDisplayContext(wm.getDefaultDisplay());
+    }
+
     @Override
     public View onCreateCandidatesView() {
-//        mKeyboardSwitcher.makeKeyboards(true);
-        mCandidateViewContainer = (LinearLayout) getLayoutInflater().inflate(
-                R.layout.candidates, null);
-        mCandidateView = (CandidateView) mCandidateViewContainer.findViewById(R.id.candidates);
+        mCandidateView = new CandidateView(getDisplayContext());
         mCandidateView.setService(this);
-        setCandidatesViewShown(true);
-        return mCandidateViewContainer;
+        return mCandidateView;
     }
 
     private void initUserStore() {
@@ -142,6 +156,12 @@ public class IME extends InputMethodService
     private void initPredictiveInput() {
         mPredictiveInput = new PredictiveInput(new CollocationClientImpl(), mBtn, mBtn2, mBtn3);
         mPredictiveInput.getFromApi(UserStore.user.getId(), Constants.EXPAND);
+    }
+
+    @Override
+    public void onStartInput(EditorInfo attribute, boolean restarting) {
+        super.onStartInput(attribute, restarting);
+        setCandidatesViewShown(true);
     }
 
 //    @RequiresApi(api = Build.VERSION_CODES.P)
@@ -345,6 +365,8 @@ public class IME extends InputMethodService
                                    int newSelEnd,
                                    int candidatesStart,
                                    int candidatesEnd) {
+        super.onUpdateSelection(oldSelStart, oldSelEnd, newSelStart, newSelEnd,
+                candidatesStart, candidatesEnd);
         System.out.println("555555555555555555555555555555555555onUpdateSelection");
     }
 

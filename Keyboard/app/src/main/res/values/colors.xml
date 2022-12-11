@@ -17,7 +17,8 @@
     <color name="key_preview_background">@android:color/darker_gray</color>
     <color name="key_preview_text_color">@android:color/black</color>
 
-    <color name="candidate_normal">#FFFFFFFF</color>
-    <color name="candidate_recommended">#FFFCAE00</color>
-    <color name="candidate_other">#FFFCAE00</color>
+    <color name="candidate_normal">#FF000000</color>
+    <color name="candidate_recommended">#FFE35900</color>
+    <color name="candidate_other">#ff808080</color>
+    <color name="candidate_background">#bbffffff</color>
 </resources>
