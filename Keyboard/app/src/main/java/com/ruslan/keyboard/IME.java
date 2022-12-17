@@ -2,17 +2,14 @@ package com.ruslan.keyboard;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Rect;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
 import android.os.Build;
-import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.Button;
@@ -105,7 +102,7 @@ public class IME extends InputMethodService
 //        LinearLayout ll = (LinearLayout) wordBar.findViewById(R.id.words);
 //        Button btn = (Button) wordBar.findViewById(R.id.button1);
 //        btn.setOnClickListener(this);
-        mCandidateView = li.inflate(R.layout.candidate, null);
+        mCandidateView = li.inflate(R.layout.candidates, null);
         mBtn = mCandidateView.findViewById(R.id.btn);
         mBtn2 = mCandidateView.findViewById(R.id.btn2);
         mBtn3 = mCandidateView.findViewById(R.id.btn3);

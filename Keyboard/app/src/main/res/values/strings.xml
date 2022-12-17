@@ -5,4 +5,9 @@
     <string name="subtype_ru_RU">Русский</string>
     
     <string name="ime_settings_activity">Настройки</string>
+
+    <string name="auth">Авторизация</string>
+    <string name="enter">Войти</string>
+    <string name="registration">Регистрация</string>
+    <string name="register">Зарегистрироваться</string>
 </resources>
