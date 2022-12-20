@@ -7,12 +7,18 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.ruslan.keyboard.repos.UserRepo;
+import com.ruslan.keyboard.stores.UserStore;
 
 public class IMESettingsActivity extends AppCompatActivity {
 
     private final static String TAG = "IMESettingsActivity";
+
+    private UserRepo mUserRepo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,21 +26,17 @@ public class IMESettingsActivity extends AppCompatActivity {
         Intent intent = new Intent(this, IME.class);
         startService(intent);
 
-        setContentView(R.layout.activity_ime_settings);
         setTitle(R.string.ime_settings_activity);
-        String[] imeSettings = new String[] { "Шрифт", "Тема" };
-        ListView imeSettingsList = findViewById(R.id.imeSettingsList);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, imeSettings);
-        imeSettingsList.setAdapter(adapter);
-        Button authButton = findViewById(R.id.authButton);
-        authButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentActivity = new Intent(IMESettingsActivity.this, AuthActivity.class);
-                startActivity(intentActivity);
-            }
-        });
+        initUserStore();
         Log.d(TAG, "onCreate");
+    }
+
+    private void initUserStore() {
+        mUserRepo = new UserRepo(this);
+        mUserRepo.open();
+//        mUserRepo.insert(new User(3, "r", "49"));
+        UserStore.user = mUserRepo.select();
+        mUserRepo.close();
     }
 
     @Override
@@ -62,9 +64,40 @@ public class IMESettingsActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
+        if (UserStore.user != null) {
+            setContentView(R.layout.activity_ime_settings_user);
+            TextView userLogin = findViewById(R.id.userLogin);
+            userLogin.setText(UserStore.user.getLogin());
+            Button exitButton = findViewById(R.id.exitButton);
+            exitButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //...
+                    UserStore.user = null;
+                    Intent intentActivity = new Intent(IMESettingsActivity.this, IMESettingsActivity.class);
+                    intentActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intentActivity);
+                }
+            });
+        }
+        else {
+            setContentView(R.layout.activity_ime_settings);
+            Button authButton = findViewById(R.id.authButton);
+            authButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intentActivity = new Intent(IMESettingsActivity.this, AuthActivity.class);
+                    startActivity(intentActivity);
+                }
+            });
+        }
+        String[] imeSettings = new String[] { "Шрифт", "Тема" };
+        ListView imeSettingsList = findViewById(R.id.imeSettingsList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, imeSettings);
+        imeSettingsList.setAdapter(adapter);
     }
 
     @Override
