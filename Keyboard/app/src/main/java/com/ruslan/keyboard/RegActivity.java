@@ -4,37 +4,28 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class IMESettingsActivity extends AppCompatActivity {
+public class RegActivity extends AppCompatActivity {
 
-    private final static String TAG = "IMESettingsActivity";
+    private final static String TAG = "RegActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = new Intent(this, IME.class);
-        startService(intent);
-
-        setContentView(R.layout.activity_ime_settings);
-        setTitle(R.string.ime_settings_activity);
-        String[] imeSettings = new String[] { "Шрифт", "Тема" };
-        ListView imeSettingsList = findViewById(R.id.imeSettingsList);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, imeSettings);
-        imeSettingsList.setAdapter(adapter);
-        Button authButton = findViewById(R.id.authButton);
-        authButton.setOnClickListener(new View.OnClickListener() {
+        setContentView(R.layout.activity_reg);
+        Log.d(TAG, "onCreate");
+        Button regButton = findViewById(R.id.regButton);
+        regButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentActivity = new Intent(IMESettingsActivity.this, AuthActivity.class);
+                Intent intentActivity = new Intent(RegActivity.this, IMESettingsActivity.class);
+                intentActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intentActivity);
             }
         });
-        Log.d(TAG, "onCreate");
     }
 
     @Override
