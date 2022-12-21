@@ -2,6 +2,7 @@ package com.ruslan.keyboard;
 
 import android.content.Context;
 
+import com.ruslan.keyboard.entities.User;
 import com.ruslan.keyboard.repos.UserRepo;
 import com.ruslan.keyboard.stores.UserStore;
 
@@ -19,8 +20,9 @@ public class DatabaseInteraction {
         mUserRepo.close();
     }
 
-    public void insertUser() {
+    public void insertUser(User user) {
         mUserRepo.open();
+        mUserRepo.insert(user);
 //        mUserRepo.insert(new User(3, "r", "49"));
         mUserRepo.close();
     }
