@@ -11,14 +11,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String USER_TABLE = "user";
     public static final String USER_COLUMN_ID = "id";
     public static final String USER_COLUMN_LOGIN = "login";
-    public static final String USER_COLUMN_PASSWORD = "password";
 
     private String createUserQuery =
             "CREATE TABLE " + USER_TABLE +
                 "(" +
                     USER_COLUMN_ID + " SERIAL PRIMARY KEY," +
-                    USER_COLUMN_LOGIN + " TEXT DEFAULT '' NOT NULL," +
-                    USER_COLUMN_PASSWORD + " TEXT DEFAULT '' NOT NULL" +
+                    USER_COLUMN_LOGIN + " TEXT DEFAULT '' NOT NULL" +
                 ")";
 
     public DatabaseHelper(Context context) {

@@ -23,7 +23,6 @@ public class DatabaseInteraction {
     public void insertUser(User user) {
         mUserRepo.open();
         mUserRepo.insert(user);
-//        mUserRepo.insert(new User(3, "r", "49"));
         mUserRepo.close();
     }
 

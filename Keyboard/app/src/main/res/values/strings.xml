@@ -5,10 +5,14 @@
     <string name="subtype_ru_RU">Русский</string>
     
     <string name="ime_settings_activity">Настройки</string>
+    <string name="auth_reg_activity">Вход в систему</string>
 
     <string name="auth">Авторизация</string>
     <string name="enter">Войти</string>
+    <string name="enter_to_system">Войти в систему</string>
     <string name="registration">Регистрация</string>
     <string name="register">Зарегистрироваться</string>
     <string name="exit">Выйти</string>
+    <string name="login_hint">Логин</string>
+    <string name="password_hint">Пароль</string>
 </resources>

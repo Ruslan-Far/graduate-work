@@ -23,13 +23,12 @@ public class IMESettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
         Intent intent = new Intent(this, IME.class);
         startService(intent);
 
         setTitle(R.string.ime_settings_activity);
         mDatabaseInteraction = new DatabaseInteraction(this);
-        mDatabaseInteraction.selectUser();
-        Log.d(TAG, "onCreate");
     }
 
     @Override
@@ -60,6 +59,7 @@ public class IMESettingsActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
+        mDatabaseInteraction.selectUser();
         if (UserStore.user != null) {
             setContentView(R.layout.activity_ime_settings_user);
             TextView userLogin = findViewById(R.id.userLogin);

@@ -133,6 +133,7 @@ public class IME extends InputMethodService
 //        System.out.println("FULL" + isFullscreenMode());
 //        if (isFullscreenMode())
 //            setExtractViewShown(false);
+        mDatabaseInteraction = new DatabaseInteraction(this);
         mDatabaseInteraction.selectUser();
         if (UserStore.user != null) {
             initOrthocorrector();

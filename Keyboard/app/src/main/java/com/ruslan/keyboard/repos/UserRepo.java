@@ -18,13 +18,13 @@ public class UserRepo extends Repo {
     @SuppressLint("Range")
     public User select() {
         User user = null;
-        String[] columns = new String[] { DatabaseHelper.USER_COLUMN_ID, DatabaseHelper.USER_COLUMN_LOGIN, DatabaseHelper.USER_COLUMN_PASSWORD };
+        String[] columns = new String[] { DatabaseHelper.USER_COLUMN_ID, DatabaseHelper.USER_COLUMN_LOGIN };
         Cursor cursor = database.query(DatabaseHelper.USER_TABLE, columns, null, null, null, null, null);
         if (cursor.moveToFirst()) {
             user = new User(
                 cursor.getInt(cursor.getColumnIndex(DatabaseHelper.USER_COLUMN_ID)),
                 cursor.getString(cursor.getColumnIndex(DatabaseHelper.USER_COLUMN_LOGIN)),
-                cursor.getString(cursor.getColumnIndex(DatabaseHelper.USER_COLUMN_PASSWORD))
+                null
             );
         }
         cursor.close();
@@ -35,7 +35,6 @@ public class UserRepo extends Repo {
         ContentValues cv = new ContentValues();
         cv.put(DatabaseHelper.USER_COLUMN_ID, user.getId());
         cv.put(DatabaseHelper.USER_COLUMN_LOGIN, user.getLogin());
-        cv.put(DatabaseHelper.USER_COLUMN_PASSWORD, user.getPassword());
         return database.insert(DatabaseHelper.USER_TABLE, null, cv);
     }
 

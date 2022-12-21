@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,23 +24,32 @@ public class AuthActivity extends AppCompatActivity {
 
     private final static String TAG = "AuthActivity";
 
+    private final String mMistakeLoginPassword = "Неверный логин и/или пароль";
+
     private UserClientImpl mUserClientImpl;
     private DatabaseInteraction mDatabaseInteraction;
+
+    private TextView mMistake;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
+        setTitle(R.string.auth_reg_activity);
         mUserClientImpl = new UserClientImpl();
         mDatabaseInteraction = new DatabaseInteraction(this);
         setContentView(R.layout.activity_auth);
-        Log.d(TAG, "onCreate");
+        EditText login = findViewById(R.id.login);
+        EditText password = findViewById(R.id.password);
+        mMistake = findViewById(R.id.mistake);
         Button authButton = findViewById(R.id.authButton);
         authButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentActivity = new Intent(AuthActivity.this, IMESettingsActivity.class);
-                intentActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intentActivity);
+                User user = new User();
+                user.setLogin(login.getText().toString());
+                user.setPassword(password.getText().toString());
+                postToApi(user);
             }
         });
         Button regButton = findViewById(R.id.regButton);
@@ -48,8 +58,6 @@ public class AuthActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intentActivity = new Intent(AuthActivity.this, RegActivity.class);
                 startActivity(intentActivity);
-//                TextView mistake = findViewById(R.id.mistake);
-//                mistake.setText("Ошибка");
             }
         });
     }
@@ -65,8 +73,13 @@ public class AuthActivity extends AppCompatActivity {
                     if (u.getId() != -1) {
                         mDatabaseInteraction.insertUser(u);
                         System.out.println(u.getLogin());
+                        Intent intentActivity = new Intent(AuthActivity.this, IMESettingsActivity.class);
+                        intentActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(intentActivity);
                     }
-                    mDatabaseInteraction.selectUser();
+                    else {
+                        mMistake.setText(mMistakeLoginPassword);
+                    }
                 }
                 else {
                     System.out.println("Error AuthPost UUUUSSSSEEEERRRR");
