@@ -9,21 +9,10 @@ import android.database.sqlite.SQLiteDatabase;
 import com.ruslan.keyboard.DatabaseHelper;
 import com.ruslan.keyboard.entities.User;
 
-public class UserRepo {
-
-    private DatabaseHelper databaseHelper;
-    private SQLiteDatabase database;
+public class UserRepo extends Repo {
 
     public UserRepo(Context context) {
-        databaseHelper = new DatabaseHelper(context.getApplicationContext());
-    }
-
-    public void open() {
-        database = databaseHelper.getWritableDatabase();
-    }
-
-    public void close() {
-        database.close();
+        super(context);
     }
 
     @SuppressLint("Range")

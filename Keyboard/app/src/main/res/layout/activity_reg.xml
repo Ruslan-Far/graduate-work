@@ -36,6 +36,17 @@
         app:layout_constraintTop_toBottomOf="@id/login"
         />
 
+    <TextView
+        android:id="@+id/mistake"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:textColor="@color/red"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/password"
+        />
+
     <Button
         android:id="@+id/regButton"
         android:layout_width="wrap_content"
@@ -43,7 +54,7 @@
         android:text="@string/register"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/password"
+        app:layout_constraintTop_toBottomOf="@id/mistake"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -48,7 +48,7 @@ public class IME extends InputMethodService
     private Orthocorrector mOrthocorrector;
     private PredictiveInput mPredictiveInput;
 
-    private UserRepo mUserRepo;
+    private DatabaseInteraction mDatabaseInteraction;
 
     @SuppressLint("InflateParams")
     @Override
@@ -115,14 +115,6 @@ public class IME extends InputMethodService
         return mCandidateView;
     }
 
-    private void initUserStore() {
-        mUserRepo = new UserRepo(this);
-        mUserRepo.open();
-//        mUserRepo.insert(new User(3, "r", "49"));
-        UserStore.user = mUserRepo.select();
-        mUserRepo.close();
-    }
-
     private void initOrthocorrector() {
         mOrthocorrector = new Orthocorrector(new WordClientImpl(), mBtn, mBtn2, mBtn3);
         mOrthocorrector.getFromApi(UserStore.user.getId());
@@ -141,9 +133,11 @@ public class IME extends InputMethodService
 //        System.out.println("FULL" + isFullscreenMode());
 //        if (isFullscreenMode())
 //            setExtractViewShown(false);
-        initUserStore();
-        initOrthocorrector();
-        initPredictiveInput();
+        mDatabaseInteraction.selectUser();
+        if (UserStore.user != null) {
+            initOrthocorrector();
+            initPredictiveInput();
+        }
     }
 
     @Override

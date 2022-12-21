@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -32,6 +33,8 @@ public class AuthActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intentActivity = new Intent(AuthActivity.this, RegActivity.class);
                 startActivity(intentActivity);
+//                TextView mistake = findViewById(R.id.mistake);
+//                mistake.setText("Ошибка");
             }
         });
     }

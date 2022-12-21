@@ -18,7 +18,7 @@ public class IMESettingsActivity extends AppCompatActivity {
 
     private final static String TAG = "IMESettingsActivity";
 
-    private UserRepo mUserRepo;
+    private DatabaseInteraction mDatabaseInteraction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,16 +27,9 @@ public class IMESettingsActivity extends AppCompatActivity {
         startService(intent);
 
         setTitle(R.string.ime_settings_activity);
-        initUserStore();
+        mDatabaseInteraction = new DatabaseInteraction(this);
+        mDatabaseInteraction.selectUser();
         Log.d(TAG, "onCreate");
-    }
-
-    private void initUserStore() {
-        mUserRepo = new UserRepo(this);
-        mUserRepo.open();
-//        mUserRepo.insert(new User(3, "r", "49"));
-        UserStore.user = mUserRepo.select();
-        mUserRepo.close();
     }
 
     @Override
@@ -75,8 +68,7 @@ public class IMESettingsActivity extends AppCompatActivity {
             exitButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //...
-                    UserStore.user = null;
+                    mDatabaseInteraction.deleteUser();
                     Intent intentActivity = new Intent(IMESettingsActivity.this, IMESettingsActivity.class);
                     intentActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(intentActivity);

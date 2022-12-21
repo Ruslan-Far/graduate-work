@@ -24,6 +24,8 @@ public class RegActivity extends AppCompatActivity {
                 Intent intentActivity = new Intent(RegActivity.this, IMESettingsActivity.class);
                 intentActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intentActivity);
+                //                TextView mistake = findViewById(R.id.mistake);
+//                mistake.setText("Ошибка");
             }
         });
     }
