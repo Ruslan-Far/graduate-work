@@ -82,11 +82,13 @@ public class AuthActivity extends AppCompatActivity {
                     }
                 }
                 else {
+                    mMistake.setText(Constants.ERROR_TRANSFER_DATA);
                     System.out.println("Error AuthPost UUUUSSSSEEEERRRR");
                 }
             }
             @Override
             public void onFailure(Call<User> call, Throwable t) {
+                mMistake.setText(Constants.ERROR_CONNECTION);
                 System.out.println("Failure AuthPost UUUUSSSSEEEERRRR");
             }
         });

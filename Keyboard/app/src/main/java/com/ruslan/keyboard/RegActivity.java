@@ -76,11 +76,13 @@ public class RegActivity extends AppCompatActivity {
                     }
                 }
                 else {
+                    mMistake.setText(Constants.ERROR_TRANSFER_DATA);
                     System.out.println("Error RegPost UUUUSSSSEEEERRRR");
                 }
             }
             @Override
             public void onFailure(Call<User> call, Throwable t) {
+                mMistake.setText(Constants.ERROR_CONNECTION);
                 System.out.println("Failure RegPost UUUUSSSSEEEERRRR");
             }
         });
