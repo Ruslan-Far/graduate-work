@@ -210,7 +210,8 @@ public class IME extends InputMethodService
 
         Log.d(TAG, "onKey " + primaryCode);
         InputConnection ic = getCurrentInputConnection();
-        mOrthocorrector.setIc(ic);
+        if (UserStore.user != null)
+            mOrthocorrector.setIc(ic);
         playClick(primaryCode);
 
         switch (primaryCode) {
@@ -229,7 +230,8 @@ public class IME extends InputMethodService
             default:
                 if (primaryCode == android.inputmethodservice.Keyboard.KEYCODE_DELETE) {
                     ic.deleteSurroundingText(1, 0);
-                    mOrthocorrector.process(true);
+                    if (UserStore.user != null)
+                        mOrthocorrector.process(true);
                 }
                 else {
                     char code = (char) primaryCode;
@@ -237,7 +239,8 @@ public class IME extends InputMethodService
                         code = Character.toUpperCase(code);
                     }
                     ic.commitText(String.valueOf(code), 1);
-                    mOrthocorrector.process(false);
+                    if (UserStore.user != null)
+                        mOrthocorrector.process(false);
                 }
                 break;
         }
