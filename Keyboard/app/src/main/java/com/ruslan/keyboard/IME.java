@@ -3,6 +3,7 @@ package com.ruslan.keyboard;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.inputmethodservice.InputMethodService;
+import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
 import android.os.Build;
@@ -25,6 +26,8 @@ import com.ruslan.keyboard.repos.UserRepo;
 import com.ruslan.keyboard.stores.CollocationStore;
 import com.ruslan.keyboard.stores.UserStore;
 import com.ruslan.keyboard.stores.WordStore;
+
+import java.util.List;
 
 public class IME extends InputMethodService
         implements KeyboardView.OnKeyboardActionListener {
@@ -93,27 +96,27 @@ public class IME extends InputMethodService
 //        return mCandidateView;
 //    }
 
-    @SuppressLint("InflateParams")
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    @Override
-    public View onCreateCandidatesView() {
-        LayoutInflater li = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        View wordBar = li.inflate(R.layout.wordbar, null);
-//        LinearLayout ll = (LinearLayout) wordBar.findViewById(R.id.words);
-//        Button btn = (Button) wordBar.findViewById(R.id.button1);
-//        btn.setOnClickListener(this);
-        mCandidateView = li.inflate(R.layout.candidates, null);
-        mBtn = mCandidateView.findViewById(R.id.btn);
-        mBtn2 = mCandidateView.findViewById(R.id.btn2);
-        mBtn3 = mCandidateView.findViewById(R.id.btn3);
-//        mCandidateView = new CandidateView(this);
-//        mCandidateView.setSe
-        setCandidatesViewShown(true);
-        mCandidateView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-//        ll.addView(mCandidateView);
-//        return wordBar;
-        return mCandidateView;
-    }
+//    @SuppressLint("InflateParams")
+//    @RequiresApi(api = Build.VERSION_CODES.M)
+//    @Override
+//    public View onCreateCandidatesView() {
+//        LayoutInflater li = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+////        View wordBar = li.inflate(R.layout.wordbar, null);
+////        LinearLayout ll = (LinearLayout) wordBar.findViewById(R.id.words);
+////        Button btn = (Button) wordBar.findViewById(R.id.button1);
+////        btn.setOnClickListener(this);
+//        mCandidateView = li.inflate(R.layout.candidates, null);
+//        mBtn = mCandidateView.findViewById(R.id.btn);
+//        mBtn2 = mCandidateView.findViewById(R.id.btn2);
+//        mBtn3 = mCandidateView.findViewById(R.id.btn3);
+////        mCandidateView = new CandidateView(this);
+////        mCandidateView.setSe
+//        setCandidatesViewShown(true);
+//        mCandidateView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+////        ll.addView(mCandidateView);
+////        return wordBar;
+//        return mCandidateView;
+//    }
 
     private void initOrthocorrector() {
         mOrthocorrector = new Orthocorrector(new WordClientImpl(), mBtn, mBtn2, mBtn3);
@@ -126,9 +129,9 @@ public class IME extends InputMethodService
     }
 
 //    @RequiresApi(api = Build.VERSION_CODES.P)
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onStartInputView(EditorInfo info, boolean restarting) {
-        super.onStartInputView(info, restarting);
 //        requestShowSelf(0);
 //        System.out.println("FULL" + isFullscreenMode());
 //        if (isFullscreenMode())
@@ -139,6 +142,8 @@ public class IME extends InputMethodService
             initOrthocorrector();
             initPredictiveInput();
         }
+        List<Keyboard.Key> keys = mKeyboard.getKeys();
+        keys.get(0).label = "Current";
     }
 
     @Override
@@ -311,29 +316,29 @@ public class IME extends InputMethodService
 //        System.out.println("CCCCCCCUUUUUUUUUUUUURRRRRRRRRRRSSSSSSSSSOOOOOOOOORRRRRRRRRRRRRRRR");
 //    }
 
-    @Override
-    public void onExtractedSelectionChanged (int start,
-                                             int end) {
-        System.out.println("111111111111111111111111111111111111111");
-    }
-
-    public void onExtractedTextClicked () {
-        System.out.println("222222222222222222222222222222222222222222");
-    }
-
-    public void onExtractingInputChanged (EditorInfo ei) {
-        System.out.println("33333333333333333333333333333333333333333333");
-    }
-
-//    @RequiresApi(api = Build.VERSION_CODES.R)
-    @RequiresApi(api = Build.VERSION_CODES.S)
-    public void onUpdateExtractingVisibility (EditorInfo ei) {
-//        super.onUpdateExtractingVisibility(ei);
-//        setExtractViewShown(true);
-        System.out.println("4444444444444444444444444444444444444444444444444");
-        System.out.println(ei.getInitialSelectedText(0).chars());
-        System.out.println(ei.getInitialSurroundingText(1, 0, 0).getText());
-    }
+//    @Override
+//    public void onExtractedSelectionChanged (int start,
+//                                             int end) {
+//        System.out.println("111111111111111111111111111111111111111");
+//    }
+//
+//    public void onExtractedTextClicked () {
+//        System.out.println("222222222222222222222222222222222222222222");
+//    }
+//
+//    public void onExtractingInputChanged (EditorInfo ei) {
+//        System.out.println("33333333333333333333333333333333333333333333");
+//    }
+//
+////    @RequiresApi(api = Build.VERSION_CODES.R)
+//    @RequiresApi(api = Build.VERSION_CODES.S)
+//    public void onUpdateExtractingVisibility (EditorInfo ei) {
+////        super.onUpdateExtractingVisibility(ei);
+////        setExtractViewShown(true);
+//        System.out.println("4444444444444444444444444444444444444444444444444");
+//        System.out.println(ei.getInitialSelectedText(0).chars());
+//        System.out.println(ei.getInitialSurroundingText(1, 0, 0).getText());
+//    }
 
     public void onUpdateSelection (int oldSelStart,
                                    int oldSelEnd,
@@ -344,8 +349,8 @@ public class IME extends InputMethodService
         System.out.println("555555555555555555555555555555555555onUpdateSelection");
     }
 
-    public void onExtractedCursorMovement (int dx,
-                                           int dy) {
-        System.out.println("66666666666666666666666666666666666666666666666_dx" + dx + "dy" + dy);
-    }
+//    public void onExtractedCursorMovement (int dx,
+//                                           int dy) {
+//        System.out.println("66666666666666666666666666666666666666666666666_dx" + dx + "dy" + dy);
+//    }
 }

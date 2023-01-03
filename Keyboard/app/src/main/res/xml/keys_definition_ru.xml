@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
     android:keyWidth="7.5%p"
-    android:horizontalGap="5px"
+    android:horizontalGap="2dp"
     android:verticalGap="0px"
     android:keyHeight="40dp">
+
+    <Row android:horizontalGap="1dp">
+        <Key android:codes="5001"
+            android:keyWidth="33%p" android:keyLabel="Hello" android:keyEdgeFlags="left" />
+        <Key android:codes="5002"
+            android:keyWidth="33%p" android:keyLabel="е" />
+        <Key android:codes="5003"
+            android:keyWidth="33%p" android:keyLabel="ъ0" android:keyEdgeFlags="right" />
+    </Row>
 
     <Row>
         <Key android:codes="1081" android:keyLabel="й" android:keyEdgeFlags="left" />
