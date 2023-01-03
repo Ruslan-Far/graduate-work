@@ -7,11 +7,11 @@
 
     <Row android:horizontalGap="1dp">
         <Key android:codes="5001"
-            android:keyWidth="33%p" android:keyLabel="Hello" android:keyEdgeFlags="left" />
+            android:keyWidth="33%p" android:keyLabel=" " android:keyEdgeFlags="left" />
         <Key android:codes="5002"
-            android:keyWidth="33%p" android:keyLabel="е" />
+            android:keyWidth="33%p" android:keyLabel=" " />
         <Key android:codes="5003"
-            android:keyWidth="33%p" android:keyLabel="ъ0" android:keyEdgeFlags="right" />
+            android:keyWidth="33%p" android:keyLabel=" " android:keyEdgeFlags="right" />
     </Row>
 
     <Row>

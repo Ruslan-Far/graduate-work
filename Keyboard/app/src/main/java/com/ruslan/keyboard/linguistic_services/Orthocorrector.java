@@ -1,6 +1,7 @@
 package com.ruslan.keyboard.linguistic_services;
 
 import android.annotation.SuppressLint;
+import android.inputmethodservice.Keyboard;
 import android.util.Log;
 import android.view.inputmethod.InputConnection;
 import android.widget.Button;
@@ -25,9 +26,9 @@ public class Orthocorrector {
 
     private WordClientImpl mWordClientImpl;
 
-    private Button mBtn;
-    private Button mBtn2;
-    private Button mBtn3;
+    private Keyboard.Key mCan;
+    private Keyboard.Key mCan2;
+    private Keyboard.Key mCan3;
 
     private InputConnection mIc;
 
@@ -35,11 +36,12 @@ public class Orthocorrector {
     private StringBuilder mLastWord;
     private int mIndexInWordStore;
 
-    public Orthocorrector(WordClientImpl wordClientImpl, Button btn, Button btn2, Button btn3) {
+    public Orthocorrector(WordClientImpl wordClientImpl,
+                          Keyboard.Key can, Keyboard.Key can2, Keyboard.Key can3) {
         mWordClientImpl = wordClientImpl;
-        mBtn = btn;
-        mBtn2 = btn2;
-        mBtn3 = btn3;
+        mCan = can;
+        mCan2 = can2;
+        mCan3 = can3;
         resetFields();
     }
 
@@ -121,13 +123,20 @@ public class Orthocorrector {
         System.out.println("33333333333333333333333333333333NNNNNNNNNNNNNNNNNNN");
     }
 
-    @SuppressLint("ResourceAsColor")
+    private void checkHintsOnNullAndEmpty(String[] hints) {
+        for (int i = 0; i < hints.length; i++) {
+            if (hints[i] == null || hints[i].length() == 0)
+                hints[i] = Constants.EMPTY_SYM;
+        }
+    }
+
+//    @SuppressLint("ResourceAsColor")
     public void process(boolean isDel) {
         String textBeforeCursor;
         String[] hints;
 
         textBeforeCursor = mIc.getTextBeforeCursor(IME.sLimitMaxChars, 0).toString();
-        hints = new String[Constants.NUMBER_OF_HINTS];
+//        hints = new String[Constants.NUMBER_OF_HINTS];
         if (textBeforeCursor.length() == 0)
             return;
         if (!Character.isLetter(textBeforeCursor.charAt(textBeforeCursor.length() - 1))) {
@@ -136,6 +145,20 @@ public class Orthocorrector {
                 return;
             hints = checkForSpelling();
             Log.d("PROCESS", mLastWord.toString() + "=Length=" + mLastWord.length());
+            if (mIndexInWordStore != -2) {
+                System.out.println("HINTS");
+                System.out.println(hints[0]);
+                System.out.println(hints[1]);
+                System.out.println(hints[2]);
+                IME.sLingServNum = Constants.ORTHO_LING_SERV_NUM;
+                checkHintsOnNullAndEmpty(hints);
+                mCan.label = hints[0];
+                mCan2.label = hints[1];
+                mCan3.label = hints[2];
+//        mBtn.setTextColor(R.color.green);
+//        mBtn2.setTextColor(R.color.green);
+//        mBtn3.setTextColor(R.color.green);
+            }
         }
         else if (!isDel && mLastWord.length() != 0 && mLastOther.length() != 0) {
             if (mIndexInWordStore == -1) {
@@ -155,17 +178,9 @@ public class Orthocorrector {
             }
             resetFields();
         }
-        System.out.println("HINTS");
-        System.out.println(hints[0]);
-        System.out.println(hints[1]);
-        System.out.println(hints[2]);
-        IME.sLingServNum = 0;
-        mBtn.setText(hints[0]);
-        mBtn2.setText(hints[1]);
-        mBtn3.setText(hints[2]);
-        mBtn.setTextColor(R.color.green);
-        mBtn2.setTextColor(R.color.green);
-        mBtn3.setTextColor(R.color.green);
+        else {
+            IME.sLingServNum = Constants.DEF_LING_SERV_NUM;
+        }
     }
 
     private void resetFields() {
@@ -275,10 +290,7 @@ public class Orthocorrector {
         return hints;
     }
 
-    public void clickBtnAny(Button btnAny) {
-        CharSequence hint;
-
-        hint = btnAny.getText();
+    public void clickCanAny(CharSequence hint) {
         searchLastWordAndOther(mIc.getTextBeforeCursor(IME.sLimitMaxChars, 0).toString());
         mIc.deleteSurroundingText(mLastOther.length() + mLastWord.length(), 0);
 //        mIc.commitText(hint.toString() + mLastOther, IME.sLimitMaxChars);
