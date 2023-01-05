@@ -1,7 +1,6 @@
 package com.ruslan.keyboard;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
@@ -9,12 +8,9 @@ import android.media.AudioManager;
 import android.os.Build;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
-import android.widget.Button;
-import android.widget.LinearLayout;
 
 import androidx.annotation.RequiresApi;
 
@@ -22,12 +18,10 @@ import com.ruslan.keyboard.clients_impl.CollocationClientImpl;
 import com.ruslan.keyboard.clients_impl.WordClientImpl;
 import com.ruslan.keyboard.linguistic_services.Orthocorrector;
 import com.ruslan.keyboard.linguistic_services.PredictiveInput;
-import com.ruslan.keyboard.repos.UserRepo;
 import com.ruslan.keyboard.stores.CollocationStore;
 import com.ruslan.keyboard.stores.UserStore;
 import com.ruslan.keyboard.stores.WordStore;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class IME extends InputMethodService
@@ -36,7 +30,7 @@ public class IME extends InputMethodService
     public static final String TAG = "KEYBOARD";
 
     public static int sLimitMaxChars = 1000000;
-    public static int sLingServNum = Constants.DEF_LING_SERV_NUM; // 0 - Orthocorrector, 1 - PredictiveInput
+    public static int sLingServNum = Constants.DEF_LING_SERV_NUM;
 
     private KeyboardView mKeyboardView;
     private android.inputmethodservice.Keyboard mKeyboard;
@@ -149,12 +143,16 @@ public class IME extends InputMethodService
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void selectLingServ(CharSequence candidate) {
         if (UserStore.user != null)
-            if (sLingServNum == 0)
+            if (sLingServNum == Constants.ORTHO_LING_SERV_NUM)
                 mOrthocorrector.clickCanAny(candidate);
+            else if (sLingServNum == Constants.PRED_LING_SERV_NUM)
+                mPredictiveInput.clickCanAny(candidate);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void candidatesListener(int primaryCode) {
         if (primaryCode == mCan.codes[0] && mCan.label != Constants.EMPTY_SYM)
             selectLingServ(mCan.label);
@@ -204,8 +202,9 @@ public class IME extends InputMethodService
             default:
                 if (primaryCode == android.inputmethodservice.Keyboard.KEYCODE_DELETE) {
                     ic.deleteSurroundingText(1, 0);
-                    if (UserStore.user != null)
-                        mOrthocorrector.process(true);
+                    if (sLingServNum == Constants.ORTHO_LING_SERV_NUM || sLingServNum == Constants.DEF_LING_SERV_NUM)
+                        if (UserStore.user != null)
+                            mOrthocorrector.process(true);
                 }
                 else {
                     char code = (char) primaryCode;
@@ -213,10 +212,11 @@ public class IME extends InputMethodService
                         code = Character.toUpperCase(code);
                     }
                     ic.commitText(String.valueOf(code), 1);
-                    if (UserStore.user != null)
-                        mOrthocorrector.process(false);
+                    if (sLingServNum == Constants.ORTHO_LING_SERV_NUM || sLingServNum == Constants.DEF_LING_SERV_NUM)
+                        if (UserStore.user != null)
+                            mOrthocorrector.process(false);
                 }
-                if (sLingServNum == Constants.DEF_LING_SERV_NUM) {
+                if (sLingServNum == Constants.PRED_LING_SERV_NUM || sLingServNum == Constants.DEF_LING_SERV_NUM) {
                     if (UserStore.user != null)
                         mPredictiveInput.process();
                 }

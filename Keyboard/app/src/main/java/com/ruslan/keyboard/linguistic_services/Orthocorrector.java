@@ -109,7 +109,7 @@ public class Orthocorrector {
                     System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPUUUUUUUUUUUUUUUUUTTTTTTTTTTTTTTTTTTT");
                     Word w = response.body();
                     System.out.println(w.getWord());
-                    WordStore.putToStore(id, w);
+                    WordStore.putToStore(w.getId(), w);
                 }
                 else {
                     System.out.println("333333333333333333333333EEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
@@ -130,13 +130,11 @@ public class Orthocorrector {
         }
     }
 
-//    @SuppressLint("ResourceAsColor")
     public void process(boolean isDel) {
         String textBeforeCursor;
         String[] hints;
 
         textBeforeCursor = mIc.getTextBeforeCursor(IME.sLimitMaxChars, 0).toString();
-//        hints = new String[Constants.NUMBER_OF_HINTS];
         if (textBeforeCursor.length() == 0)
             return;
         if (!Character.isLetter(textBeforeCursor.charAt(textBeforeCursor.length() - 1))) {
@@ -155,9 +153,6 @@ public class Orthocorrector {
                 mCan.label = hints[0];
                 mCan2.label = hints[1];
                 mCan3.label = hints[2];
-//        mBtn.setTextColor(R.color.green);
-//        mBtn2.setTextColor(R.color.green);
-//        mBtn3.setTextColor(R.color.green);
             }
         }
         else if (!isDel && mLastWord.length() != 0 && mLastOther.length() != 0) {
@@ -293,7 +288,6 @@ public class Orthocorrector {
     public void clickCanAny(CharSequence hint) {
         searchLastWordAndOther(mIc.getTextBeforeCursor(IME.sLimitMaxChars, 0).toString());
         mIc.deleteSurroundingText(mLastOther.length() + mLastWord.length(), 0);
-//        mIc.commitText(hint.toString() + mLastOther, IME.sLimitMaxChars);
         mIc.commitText(hint.toString() + mLastOther, 0);
     }
 }
