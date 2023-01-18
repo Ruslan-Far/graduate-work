@@ -97,7 +97,16 @@ public class IME extends InputMethodService
         UserStore.user = null;
         WordStore.words = null;
         CollocationStore.collocations = null;
+        clearHints();
         super.onFinishInputView(finishingInput);
+    }
+
+    private void clearHints() {
+        sLingServNum = Constants.DEF_LING_SERV_NUM;
+        System.out.println("Otpuskaet");
+        mCan.label = Constants.EMPTY_SYM;
+        mCan2.label = Constants.EMPTY_SYM;
+        mCan3.label = Constants.EMPTY_SYM;
     }
 
     /**
@@ -175,6 +184,7 @@ public class IME extends InputMethodService
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onKey(int primaryCode, int[] ints) {
+        mCan.label = "" + primaryCode;
         Log.d(TAG, "onKey " + primaryCode);
         InputConnection ic = getCurrentInputConnection();
         if (UserStore.user != null) {
@@ -224,22 +234,22 @@ public class IME extends InputMethodService
         }
     }
 
-    @Override
-    public void onUpdateSelection(int oldSelStart,
-                                   int oldSelEnd,
-                                   int newSelStart,
-                                   int newSelEnd,
-                                   int candidatesStart,
-                                   int candidatesEnd) {
-        System.out.println("555555555555555555555555555555555555onUpdateSelection");
-        System.out.println("oldSelStart:" + oldSelStart);
-        System.out.println("oldSelEnd:" + oldSelEnd);
-        System.out.println("newSelStart:" + newSelStart);
-        System.out.println("newSelEnd:" + newSelEnd);
-        System.out.println("candidatesStart:" + candidatesStart);
-        System.out.println("candidatesEnd:" + candidatesEnd);
-
-    }
+//    @Override
+//    public void onUpdateSelection(int oldSelStart,
+//                                   int oldSelEnd,
+//                                   int newSelStart,
+//                                   int newSelEnd,
+//                                   int candidatesStart,
+//                                   int candidatesEnd) {
+//        System.out.println("555555555555555555555555555555555555onUpdateSelection");
+//        System.out.println("oldSelStart:" + oldSelStart);
+//        System.out.println("oldSelEnd:" + oldSelEnd);
+//        System.out.println("newSelStart:" + newSelStart);
+//        System.out.println("newSelEnd:" + newSelEnd);
+//        System.out.println("candidatesStart:" + candidatesStart);
+//        System.out.println("candidatesEnd:" + candidatesEnd);
+//
+//    }
 
     @Override
     public void onText(CharSequence charSequence) {
@@ -294,7 +304,6 @@ public class IME extends InputMethodService
             mCurrentLocale = Constants.KEYS_TYPE.RUSSIAN;
             mKeyboard = getKeyboard(Constants.KEYS_TYPE.RUSSIAN);
         }
-
         mKeyboardView.setKeyboard(mKeyboard);
         mKeyboard.setShifted(mIsCapsOn);
         mKeyboardView.invalidateAllKeys();

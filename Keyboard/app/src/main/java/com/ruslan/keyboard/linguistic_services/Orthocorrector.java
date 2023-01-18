@@ -149,6 +149,7 @@ public class Orthocorrector {
                 System.out.println(hints[1]);
                 System.out.println(hints[2]);
                 IME.sLingServNum = Constants.ORTHO_LING_SERV_NUM;
+                System.out.println("Work ORTHO");
                 checkHintsOnNullAndEmpty(hints);
                 mCan.label = hints[0];
                 mCan2.label = hints[1];
@@ -175,6 +176,7 @@ public class Orthocorrector {
         }
         else {
             IME.sLingServNum = Constants.DEF_LING_SERV_NUM;
+            System.out.println("Otpuskaet ORTHO");
         }
     }
 
@@ -289,5 +291,7 @@ public class Orthocorrector {
         searchLastWordAndOther(mIc.getTextBeforeCursor(IME.sLimitMaxChars, 0).toString());
         mIc.deleteSurroundingText(mLastOther.length() + mLastWord.length(), 0);
         mIc.commitText(hint.toString() + mLastOther, 0);
+        IME.sLingServNum = Constants.DEF_LING_SERV_NUM;
+        System.out.println("Otpuskaet ORTHO");
     }
 }

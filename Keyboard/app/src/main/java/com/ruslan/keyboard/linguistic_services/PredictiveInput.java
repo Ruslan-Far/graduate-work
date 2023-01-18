@@ -127,6 +127,7 @@ public class PredictiveInput {
 
     private void clearHints() {
         IME.sLingServNum = Constants.DEF_LING_SERV_NUM;
+        System.out.println("Otpuskaet PRED");
         mCan.label = Constants.EMPTY_SYM;
         mCan2.label = Constants.EMPTY_SYM;
         mCan3.label = Constants.EMPTY_SYM;
@@ -168,12 +169,15 @@ public class PredictiveInput {
             }
         }
         searchLastWord(textBeforeCursor);
+        if (mLastWord.length() == 0)
+            return;
         hints = getWordsToContinue();
         System.out.println("CCCCCCCCCCCCCCHINTS");
         System.out.println(hints[0]);
         System.out.println(hints[1]);
         System.out.println(hints[2]);
         IME.sLingServNum = Constants.PRED_LING_SERV_NUM;
+        System.out.println("Work PRED");
         checkHintsOnNullAndEmpty(hints);
         mCan.label = hints[0];
         mCan2.label = hints[1];
