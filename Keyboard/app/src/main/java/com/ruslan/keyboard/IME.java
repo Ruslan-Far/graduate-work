@@ -2,14 +2,17 @@ package com.ruslan.keyboard;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.Button;
@@ -40,7 +43,7 @@ public class IME extends InputMethodService
     private Constants.KEYS_TYPE mPreviousLocale;
     private boolean mIsCapsOn = true;
 
-    private View mCandidateView;
+    private LinearLayout mCandidateView;
     private Button mBtn;
     private Button mBtn2;
     private Button mBtn3;
@@ -50,23 +53,69 @@ public class IME extends InputMethodService
 
     private DatabaseInteraction mDatabaseInteraction;
 
+//    KeyboardSwitcher mKeyboardSwitcher;
+
+    LinearLayout linearLayout;
+
     @SuppressLint("InflateParams")
     @Override
     public View onCreateInputView() {
         mKeyboardView = (KeyboardView) getLayoutInflater().inflate(R.layout.keyboard, null);
+
         mCurrentLocale = Constants.KEYS_TYPE.RUSSIAN;
         mKeyboard = getKeyboard(mCurrentLocale);
         mKeyboard.setShifted(mIsCapsOn);
         mKeyboardView.setKeyboard(mKeyboard);
+
         mKeyboardView.setOnKeyboardActionListener(this);
 
-        return mKeyboardView;
+//        setInputView(mKeyboardView);
+//        updateInputViewShown();
+
+        mCandidateView = (LinearLayout) getLayoutInflater().inflate(R.layout.candidates, null);
+
+        linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams
+                (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        mBtn = mCandidateView.findViewById(R.id.btn);
+        mBtn2 = mCandidateView.findViewById(R.id.btn2);
+        mBtn3 = mCandidateView.findViewById(R.id.btn3);
+
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("BBBBBUUUUUUUTTTTTTTTTOOOOOOOOONNNNNNNNNNN");
+                Button button = (Button) v;
+                button.setText("Hello");
+            }
+        };
+        mBtn.setOnClickListener(listener);
+        mBtn2.setOnClickListener(listener);
+        mBtn3.setOnClickListener(listener);
+        linearLayout.addView(mCandidateView, layoutParams);
+        linearLayout.addView(mKeyboardView, layoutParams);
+        return linearLayout;
+
+//        return mKeyboardView;
+//        return getLayoutInflater().inflate(R.layout.candidates, null);
     }
+//    @Override
+//    public View onCreateInputView() {
+//        mKeyboardSwitcher.recreateInputView();
+//        mKeyboardSwitcher.makeKeyboards(true);
+//        mKeyboardSwitcher.setKeyboardMode(
+//                KeyboardSwitcher.MODE_TEXT, 0,
+//                shouldShowVoiceButton(makeFieldContext(), getCurrentInputEditorInfo()));
+//        return mKeyboardSwitcher.getInputView();
+//    }
 
 //    @SuppressLint("InflateParams")
 //    @Override
 //    public View onCreateCandidatesView() {
-//        mCandidateView = getLayoutInflater().inflate(R.layout.candidate, null);
+////        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+////        mCandidateView = (LinearLayout) inflater.inflate(R.layout.candidates, null);
+//        mCandidateView = (LinearLayout) getLayoutInflater().inflate(R.layout.candidates, null);
 //        mBtn = mCandidateView.findViewById(R.id.btn);
 //        mBtn2 = mCandidateView.findViewById(R.id.btn2);
 //        mBtn3 = mCandidateView.findViewById(R.id.btn3);
@@ -93,27 +142,31 @@ public class IME extends InputMethodService
 //        return mCandidateView;
 //    }
 
-    @SuppressLint("InflateParams")
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    @Override
-    public View onCreateCandidatesView() {
-        LayoutInflater li = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        View wordBar = li.inflate(R.layout.wordbar, null);
-//        LinearLayout ll = (LinearLayout) wordBar.findViewById(R.id.words);
-//        Button btn = (Button) wordBar.findViewById(R.id.button1);
-//        btn.setOnClickListener(this);
-        mCandidateView = li.inflate(R.layout.candidates, null);
-        mBtn = mCandidateView.findViewById(R.id.btn);
-        mBtn2 = mCandidateView.findViewById(R.id.btn2);
-        mBtn3 = mCandidateView.findViewById(R.id.btn3);
-//        mCandidateView = new CandidateView(this);
-//        mCandidateView.setSe
-        setCandidatesViewShown(true);
-        mCandidateView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-//        ll.addView(mCandidateView);
-//        return wordBar;
-        return mCandidateView;
-    }
+//    @SuppressLint("InflateParams")
+//    @RequiresApi(api = Build.VERSION_CODES.M)
+//    @Override
+//    public View onCreateCandidatesView() {
+//        LayoutInflater li = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+////        View wordBar = li.inflate(R.layout.wordbar, null);
+////        LinearLayout ll = (LinearLayout) wordBar.findViewById(R.id.words);
+////        Button btn = (Button) wordBar.findViewById(R.id.button1);
+////        btn.setOnClickListener(this);
+//        mCandidateView = li.inflate(R.layout.candidates, null);
+//        mBtn = mCandidateView.findViewById(R.id.btn);
+//        mBtn2 = mCandidateView.findViewById(R.id.btn2);
+//        mBtn3 = mCandidateView.findViewById(R.id.btn3);
+////        mCandidateView = new CandidateView(this);
+////        mCandidateView.setSe
+//        setCandidatesViewShown(true);
+//        mCandidateView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+////        ll.addView(mCandidateView);
+////        return wordBar;
+//        return mCandidateView;
+//    }
+
+
+
+
 
     private void initOrthocorrector() {
         mOrthocorrector = new Orthocorrector(new WordClientImpl(), mBtn, mBtn2, mBtn3);
@@ -125,19 +178,30 @@ public class IME extends InputMethodService
         mPredictiveInput.getFromApi(UserStore.user.getId(), Constants.EXPAND);
     }
 
-//    @RequiresApi(api = Build.VERSION_CODES.P)
+    @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     public void onStartInputView(EditorInfo info, boolean restarting) {
-        super.onStartInputView(info, restarting);
-//        requestShowSelf(0);
-//        System.out.println("FULL" + isFullscreenMode());
-//        if (isFullscreenMode())
-//            setExtractViewShown(false);
-        mDatabaseInteraction = new DatabaseInteraction(this);
-        mDatabaseInteraction.selectUser();
-        if (UserStore.user != null) {
-            initOrthocorrector();
-            initPredictiveInput();
+//        mDatabaseInteraction = new DatabaseInteraction(this);
+//        mDatabaseInteraction.selectUser();
+//        if (UserStore.user != null) {
+//            initOrthocorrector();
+//            initPredictiveInput();
+//        }
+//        loadSettings();
+        setCandidatesViewShownInternal(true, true);
+    }
+
+//    private void loadSettings() {
+//        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+//        boolean mShowSuggestions = sp.getBoolean("show_suggestions", true);
+//        System.out.println("<<<<<<<<<<<>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<" + mShowSuggestions);
+//    }
+
+    private void setCandidatesViewShownInternal(boolean shown, boolean needsInputViewShown) {
+        // TODO: Remove this if we support candidates with hard keyboard
+        if (onEvaluateInputViewShown()) {
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            super.setCandidatesViewShown(true);
         }
     }
 
@@ -167,31 +231,31 @@ public class IME extends InputMethodService
         }
     }
 
-    /**
-     * Play sound on key press
-     *
-     * @param keyCode of pressed key
-     */
-    private void playClick(int keyCode) {
-        AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
-        switch (keyCode) {
-            case Constants.KeyCode.SPACE:
-                am.playSoundEffect(AudioManager.FX_KEYPRESS_SPACEBAR);
-                break;
-            case android.inputmethodservice.Keyboard.KEYCODE_DONE:
-                am.playSoundEffect(AudioManager.FX_KEYPRESS_RETURN);
-                break;
-            case Constants.KeyCode.RETURN:
-                am.playSoundEffect(AudioManager.FX_KEYPRESS_RETURN);
-                break;
-            case android.inputmethodservice.Keyboard.KEYCODE_DELETE:
-                am.playSoundEffect(AudioManager.FX_KEYPRESS_DELETE);
-                break;
-            default:
-                am.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD);
-                break;
-        }
-    }
+//    /**
+//     * Play sound on key press
+//     *
+//     * @param keyCode of pressed key
+//     */
+//    private void playClick(int keyCode) {
+//        AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
+//        switch (keyCode) {
+//            case Constants.KeyCode.SPACE:
+//                am.playSoundEffect(AudioManager.FX_KEYPRESS_SPACEBAR);
+//                break;
+//            case android.inputmethodservice.Keyboard.KEYCODE_DONE:
+//                am.playSoundEffect(AudioManager.FX_KEYPRESS_RETURN);
+//                break;
+//            case Constants.KeyCode.RETURN:
+//                am.playSoundEffect(AudioManager.FX_KEYPRESS_RETURN);
+//                break;
+//            case android.inputmethodservice.Keyboard.KEYCODE_DELETE:
+//                am.playSoundEffect(AudioManager.FX_KEYPRESS_DELETE);
+//                break;
+//            default:
+//                am.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD);
+//                break;
+//        }
+//    }
 
     @Override
     public void onPress(int i) {
@@ -205,45 +269,53 @@ public class IME extends InputMethodService
 
     @Override
     public void onKey(int primaryCode, int[] ints) {
+        char code = (char) primaryCode;
+        if (Character.isLetter(code)) {
+            linearLayout.removeView(mKeyboardView);
+            linearLayout.addView(mCandidateView);
+            linearLayout.addView(mKeyboardView);
+        }
+        else
+            linearLayout.removeView(mCandidateView);
 //        setCandidatesViewShown(true);
 //        requestHideSelf(0);
-
-        Log.d(TAG, "onKey " + primaryCode);
-        InputConnection ic = getCurrentInputConnection();
-        if (UserStore.user != null)
-            mOrthocorrector.setIc(ic);
-        playClick(primaryCode);
-
-        switch (primaryCode) {
-            case android.inputmethodservice.Keyboard.KEYCODE_SHIFT:
-                handleShift();
-                break;
-            case android.inputmethodservice.Keyboard.KEYCODE_DONE:
-                ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
-                break;
-            case android.inputmethodservice.Keyboard.KEYCODE_ALT:
-                handleSymbolsSwitch();
-                break;
-            case android.inputmethodservice.Keyboard.KEYCODE_MODE_CHANGE:
-                handleLanguageSwitch();
-                break;
-            default:
-                if (primaryCode == android.inputmethodservice.Keyboard.KEYCODE_DELETE) {
-                    ic.deleteSurroundingText(1, 0);
-                    if (UserStore.user != null)
-                        mOrthocorrector.process(true);
-                }
-                else {
-                    char code = (char) primaryCode;
-                    if (Character.isLetter(code) && mIsCapsOn) {
-                        code = Character.toUpperCase(code);
-                    }
-                    ic.commitText(String.valueOf(code), 1);
-                    if (UserStore.user != null)
-                        mOrthocorrector.process(false);
-                }
-                break;
-        }
+//
+//        Log.d(TAG, "onKey " + primaryCode);
+//        InputConnection ic = getCurrentInputConnection();
+//        if (UserStore.user != null)
+//            mOrthocorrector.setIc(ic);
+//        playClick(primaryCode);
+//
+//        switch (primaryCode) {
+//            case android.inputmethodservice.Keyboard.KEYCODE_SHIFT:
+//                handleShift();
+//                break;
+//            case android.inputmethodservice.Keyboard.KEYCODE_DONE:
+//                ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
+//                break;
+//            case android.inputmethodservice.Keyboard.KEYCODE_ALT:
+//                handleSymbolsSwitch();
+//                break;
+//            case android.inputmethodservice.Keyboard.KEYCODE_MODE_CHANGE:
+//                handleLanguageSwitch();
+//                break;
+//            default:
+//                if (primaryCode == android.inputmethodservice.Keyboard.KEYCODE_DELETE) {
+//                    ic.deleteSurroundingText(1, 0);
+//                    if (UserStore.user != null)
+//                        mOrthocorrector.process(true);
+//                }
+//                else {
+//                    char code = (char) primaryCode;
+//                    if (Character.isLetter(code) && mIsCapsOn) {
+//                        code = Character.toUpperCase(code);
+//                    }
+//                    ic.commitText(String.valueOf(code), 1);
+//                    if (UserStore.user != null)
+//                        mOrthocorrector.process(false);
+//                }
+//                break;
+//        }
     }
 
     @Override
@@ -271,39 +343,45 @@ public class IME extends InputMethodService
         Log.d(TAG, "swipeUp ");
     }
 
-    private void handleSymbolsSwitch() {
-        if (mCurrentLocale != Constants.KEYS_TYPE.SYMBOLS) {
-            mKeyboard = getKeyboard(Constants.KEYS_TYPE.SYMBOLS);
-            mPreviousLocale = mCurrentLocale;
-            mCurrentLocale = Constants.KEYS_TYPE.SYMBOLS;
-        } else {
-            mKeyboard = getKeyboard(mPreviousLocale);
-            mCurrentLocale = mPreviousLocale;
-            mKeyboard.setShifted(mIsCapsOn);
-        }
-        mKeyboardView.setKeyboard(mKeyboard);
-        mKeyboardView.invalidateAllKeys();
-    }
+//    private void handleSymbolsSwitch() {
+//        if (mCurrentLocale != Constants.KEYS_TYPE.SYMBOLS) {
+//            mKeyboard = getKeyboard(Constants.KEYS_TYPE.SYMBOLS);
+//            mPreviousLocale = mCurrentLocale;
+//            mCurrentLocale = Constants.KEYS_TYPE.SYMBOLS;
+//        } else {
+//            mKeyboard = getKeyboard(mPreviousLocale);
+//            mCurrentLocale = mPreviousLocale;
+//            mKeyboard.setShifted(mIsCapsOn);
+//        }
+//        mKeyboardView.setKeyboard(mKeyboard);
+//        mKeyboardView.invalidateAllKeys();
+//    }
+//
+//    private void handleShift() {
+//        mIsCapsOn = !mIsCapsOn;
+//        mKeyboard.setShifted(mIsCapsOn);
+//        mKeyboardView.invalidateAllKeys();
+//    }
+//
+//    private void handleLanguageSwitch() {
+//        if (mCurrentLocale == Constants.KEYS_TYPE.RUSSIAN) {
+//            mCurrentLocale = Constants.KEYS_TYPE.ENGLISH;
+//            mKeyboard = getKeyboard(Constants.KEYS_TYPE.ENGLISH);
+//        } else {
+//            mCurrentLocale = Constants.KEYS_TYPE.RUSSIAN;
+//            mKeyboard = getKeyboard(Constants.KEYS_TYPE.RUSSIAN);
+//        }
+//
+//        mKeyboardView.setKeyboard(mKeyboard);
+//        mKeyboard.setShifted(mIsCapsOn);
+//        mKeyboardView.invalidateAllKeys();
+//    }
 
-    private void handleShift() {
-        mIsCapsOn = !mIsCapsOn;
-        mKeyboard.setShifted(mIsCapsOn);
-        mKeyboardView.invalidateAllKeys();
-    }
 
-    private void handleLanguageSwitch() {
-        if (mCurrentLocale == Constants.KEYS_TYPE.RUSSIAN) {
-            mCurrentLocale = Constants.KEYS_TYPE.ENGLISH;
-            mKeyboard = getKeyboard(Constants.KEYS_TYPE.ENGLISH);
-        } else {
-            mCurrentLocale = Constants.KEYS_TYPE.RUSSIAN;
-            mKeyboard = getKeyboard(Constants.KEYS_TYPE.RUSSIAN);
-        }
 
-        mKeyboardView.setKeyboard(mKeyboard);
-        mKeyboard.setShifted(mIsCapsOn);
-        mKeyboardView.invalidateAllKeys();
-    }
+
+
+
 
 //    @Override
 //    public void onExtractedCursorMovement (int dx, int dy) {
@@ -311,41 +389,41 @@ public class IME extends InputMethodService
 //        System.out.println("CCCCCCCUUUUUUUUUUUUURRRRRRRRRRRSSSSSSSSSOOOOOOOOORRRRRRRRRRRRRRRR");
 //    }
 
-    @Override
-    public void onExtractedSelectionChanged (int start,
-                                             int end) {
-        System.out.println("111111111111111111111111111111111111111");
-    }
-
-    public void onExtractedTextClicked () {
-        System.out.println("222222222222222222222222222222222222222222");
-    }
-
-    public void onExtractingInputChanged (EditorInfo ei) {
-        System.out.println("33333333333333333333333333333333333333333333");
-    }
-
-//    @RequiresApi(api = Build.VERSION_CODES.R)
-    @RequiresApi(api = Build.VERSION_CODES.S)
-    public void onUpdateExtractingVisibility (EditorInfo ei) {
-//        super.onUpdateExtractingVisibility(ei);
-//        setExtractViewShown(true);
-        System.out.println("4444444444444444444444444444444444444444444444444");
-        System.out.println(ei.getInitialSelectedText(0).chars());
-        System.out.println(ei.getInitialSurroundingText(1, 0, 0).getText());
-    }
-
-    public void onUpdateSelection (int oldSelStart,
-                                   int oldSelEnd,
-                                   int newSelStart,
-                                   int newSelEnd,
-                                   int candidatesStart,
-                                   int candidatesEnd) {
-        System.out.println("555555555555555555555555555555555555onUpdateSelection");
-    }
-
-    public void onExtractedCursorMovement (int dx,
-                                           int dy) {
-        System.out.println("66666666666666666666666666666666666666666666666_dx" + dx + "dy" + dy);
-    }
+//    @Override
+//    public void onExtractedSelectionChanged (int start,
+//                                             int end) {
+//        System.out.println("111111111111111111111111111111111111111");
+//    }
+//
+//    public void onExtractedTextClicked () {
+//        System.out.println("222222222222222222222222222222222222222222");
+//    }
+//
+//    public void onExtractingInputChanged (EditorInfo ei) {
+//        System.out.println("33333333333333333333333333333333333333333333");
+//    }
+//
+////    @RequiresApi(api = Build.VERSION_CODES.R)
+//    @RequiresApi(api = Build.VERSION_CODES.S)
+//    public void onUpdateExtractingVisibility (EditorInfo ei) {
+////        super.onUpdateExtractingVisibility(ei);
+////        setExtractViewShown(true);
+//        System.out.println("4444444444444444444444444444444444444444444444444");
+//        System.out.println(ei.getInitialSelectedText(0).chars());
+//        System.out.println(ei.getInitialSurroundingText(1, 0, 0).getText());
+//    }
+//
+//    public void onUpdateSelection (int oldSelStart,
+//                                   int oldSelEnd,
+//                                   int newSelStart,
+//                                   int newSelEnd,
+//                                   int candidatesStart,
+//                                   int candidatesEnd) {
+//        System.out.println("555555555555555555555555555555555555onUpdateSelection");
+//    }
+//
+//    public void onExtractedCursorMovement (int dx,
+//                                           int dy) {
+//        System.out.println("66666666666666666666666666666666666666666666666_dx" + dx + "dy" + dy);
+//    }
 }

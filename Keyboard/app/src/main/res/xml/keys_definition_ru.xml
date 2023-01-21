@@ -5,7 +5,7 @@
     android:verticalGap="0px"
     android:keyHeight="40dp">
 
-    <Row>
+    <Row android:rowEdgeFlags="top">
         <Key android:codes="1081" android:keyLabel="й" android:keyEdgeFlags="left" />
         <Key android:codes="1094" android:keyLabel="ц" />
         <Key android:codes="1091" android:keyLabel="у" />
