@@ -26,9 +26,9 @@ public class Orthocorrector {
 
     private WordClientImpl mWordClientImpl;
 
-    private Keyboard.Key mCan;
-    private Keyboard.Key mCan2;
-    private Keyboard.Key mCan3;
+    private Button mBtn;
+    private Button mBtn2;
+    private Button mBtn3;
 
     private InputConnection mIc;
 
@@ -36,12 +36,11 @@ public class Orthocorrector {
     private StringBuilder mLastWord;
     private int mIndexInWordStore;
 
-    public Orthocorrector(WordClientImpl wordClientImpl,
-                          Keyboard.Key can, Keyboard.Key can2, Keyboard.Key can3) {
+    public Orthocorrector(WordClientImpl wordClientImpl, Button btn, Button btn2, Button btn3) {
         mWordClientImpl = wordClientImpl;
-        mCan = can;
-        mCan2 = can2;
-        mCan3 = can3;
+        mBtn = btn;
+        mBtn2 = btn2;
+        mBtn3 = btn3;
         resetFields();
     }
 
@@ -123,6 +122,12 @@ public class Orthocorrector {
         System.out.println("33333333333333333333333333333333NNNNNNNNNNNNNNNNNNN");
     }
 
+    private void clearHints() {
+        mBtn.setText(Constants.EMPTY_SYM);
+        mBtn2.setText(Constants.EMPTY_SYM);
+        mBtn3.setText(Constants.EMPTY_SYM);
+    }
+
     private void checkHintsOnNullAndEmpty(String[] hints) {
         for (int i = 0; i < hints.length; i++) {
             if (hints[i] == null || hints[i].length() == 0)
@@ -130,6 +135,16 @@ public class Orthocorrector {
         }
     }
 
+    private void setupColorHints() {
+        int color;
+
+        color = mBtn.getResources().getColor(R.color.green);
+        mBtn.setTextColor(color);
+        mBtn2.setTextColor(color);
+        mBtn3.setTextColor(color);
+    }
+
+    @SuppressLint("ResourceAsColor")
     public void process(boolean isDel) {
         String textBeforeCursor;
         String[] hints;
@@ -150,10 +165,11 @@ public class Orthocorrector {
                 System.out.println(hints[2]);
                 IME.sLingServNum = Constants.ORTHO_LING_SERV_NUM;
                 System.out.println("Work ORTHO");
+                setupColorHints();
                 checkHintsOnNullAndEmpty(hints);
-                mCan.label = hints[0];
-                mCan2.label = hints[1];
-                mCan3.label = hints[2];
+                mBtn.setText(hints[0]);
+                mBtn2.setText(hints[1]);
+                mBtn3.setText(hints[2]);
             }
         }
         else if (!isDel && mLastWord.length() != 0 && mLastOther.length() != 0) {
@@ -173,6 +189,7 @@ public class Orthocorrector {
                 putToApi(word.getId(), word);
             }
             resetFields();
+            clearHints();
         }
         else {
             IME.sLingServNum = Constants.DEF_LING_SERV_NUM;
@@ -287,7 +304,7 @@ public class Orthocorrector {
         return hints;
     }
 
-    public void clickCanAny(CharSequence hint) {
+    public void clickBtnAny(CharSequence hint) {
         searchLastWordAndOther(mIc.getTextBeforeCursor(IME.sLimitMaxChars, 0).toString());
         mIc.deleteSurroundingText(mLastOther.length() + mLastWord.length(), 0);
         mIc.commitText(hint.toString() + mLastOther, 0);

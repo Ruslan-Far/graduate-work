@@ -1,13 +1,17 @@
 package com.ruslan.keyboard.linguistic_services;
 
+import android.annotation.SuppressLint;
 import android.inputmethodservice.Keyboard;
 import android.os.Build;
 import android.view.inputmethod.InputConnection;
+import android.widget.Button;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 
 import com.ruslan.keyboard.Constants;
 import com.ruslan.keyboard.IME;
+import com.ruslan.keyboard.R;
 import com.ruslan.keyboard.clients_impl.CollocationClientImpl;
 import com.ruslan.keyboard.entities.Collocation;
 import com.ruslan.keyboard.stores.CollocationStore;
@@ -26,20 +30,19 @@ public class PredictiveInput {
 
     private CollocationClientImpl mCollocationClientImpl;
 
-    private Keyboard.Key mCan;
-    private Keyboard.Key mCan2;
-    private Keyboard.Key mCan3;
+    private Button mBtn;
+    private Button mBtn2;
+    private Button mBtn3;
 
     private InputConnection mIc;
 
     private StringBuilder mLastWord;
 
-    public PredictiveInput(CollocationClientImpl collocationClient,
-                           Keyboard.Key can, Keyboard.Key can2, Keyboard.Key can3) {
+    public PredictiveInput(CollocationClientImpl collocationClient, Button btn, Button btn2, Button btn3) {
         mCollocationClientImpl = collocationClient;
-        mCan = can;
-        mCan2 = can2;
-        mCan3 = can3;
+        mBtn = btn;
+        mBtn2 = btn2;
+        mBtn3 = btn3;
         resetFields();
     }
 
@@ -128,9 +131,9 @@ public class PredictiveInput {
     private void clearHints() {
         IME.sLingServNum = Constants.DEF_LING_SERV_NUM;
         System.out.println("Otpuskaet PRED");
-        mCan.label = Constants.EMPTY_SYM;
-        mCan2.label = Constants.EMPTY_SYM;
-        mCan3.label = Constants.EMPTY_SYM;
+        mBtn.setText(Constants.EMPTY_SYM);
+        mBtn2.setText(Constants.EMPTY_SYM);
+        mBtn3.setText(Constants.EMPTY_SYM);
     }
 
     private void checkHintsOnNullAndEmpty(String[] hints) {
@@ -140,6 +143,16 @@ public class PredictiveInput {
         }
     }
 
+    private void setupColorHints() {
+        int color;
+
+        color = mBtn.getResources().getColor(R.color.dark_blue);
+        mBtn.setTextColor(color);
+        mBtn2.setTextColor(color);
+        mBtn3.setTextColor(color);
+    }
+
+    @SuppressLint("ResourceAsColor")
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void process() {
         String textBeforeCursor;
@@ -154,15 +167,23 @@ public class PredictiveInput {
         }
         if (mLastWord.length() != 0) {
             StringBuilder penultimateWord = searchPenultimateWord(textBeforeCursor);
-            if (penultimateWord == mLastWord) {
+
+            System.out.println("penultimateWord=" + penultimateWord + ":len=" + penultimateWord.length());
+            System.out.println("lastWord=" + mLastWord + ":len=" + mLastWord.length());
+
+            if (penultimateWord.toString().equals(mLastWord.toString())) {
                 searchLastWord(textBeforeCursor);
                 List<Collocation> filteredCollocations
                         = filterCollocationsByTwoWords(penultimateWord.toString(), mLastWord.toString());
+                System.out.println("IIIIIIIIIIIIMMMMMMMMMMMMMMMHHHHHHHHHH");
+                System.out.println("lastWord=" + mLastWord + ":len=" + mLastWord.length());
                 if (filteredCollocations.size() == 0) {
                     Collocation collocation = prepareForPost(penultimateWord.toString());
                     postToApi(collocation);
                 }
                 else {
+                    System.out.println("1 filteredCollocations=" + filteredCollocations.get(0));
+                    System.out.println("2 filteredCollocations=" + filteredCollocations.get(1));
                     Collocation collocation = prepareForPut(filteredCollocations.get(0));
                     putToApi(collocation.getId(), collocation);
                 }
@@ -178,10 +199,11 @@ public class PredictiveInput {
         System.out.println(hints[2]);
         IME.sLingServNum = Constants.PRED_LING_SERV_NUM;
         System.out.println("Work PRED");
+        setupColorHints();
         checkHintsOnNullAndEmpty(hints);
-        mCan.label = hints[0];
-        mCan2.label = hints[1];
-        mCan3.label = hints[2];
+        mBtn.setText(hints[0]);
+        mBtn2.setText(hints[1]);
+        mBtn3.setText(hints[2]);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -271,7 +293,7 @@ public class PredictiveInput {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void clickCanAny(CharSequence hint) {
+    public void clickBtnAny(CharSequence hint) {
         List<Collocation> filteredCollocations = filterCollocationsByTwoWords(mLastWord.toString(), hint.toString());
         Collocation collocation = prepareForPut(filteredCollocations.get(0));
         putToApi(collocation.getId(), collocation);
