@@ -31,7 +31,7 @@ public class IME extends InputMethodService
     public static final String TAG = "KEYBOARD";
 
     public static int sLimitMaxChars = 1000000;
-    public static int sLingServNum = Constants.DEF_LING_SERV_NUM;
+    public static int sLingServNum = Constants.ADDIT_LING_SERV_NUM;
 
     private LinearLayout mGeneralContainer;
     private LinearLayout.LayoutParams mParamsGeneralContainer;
@@ -86,8 +86,7 @@ public class IME extends InputMethodService
                     return;
                 if (sLingServNum == Constants.ORTHO_LING_SERV_NUM) {
                     mOrthocorrector.clickBtnAny(button.getText());
-                    if (sLingServNum == Constants.PRED_LING_SERV_NUM || sLingServNum == Constants.DEF_LING_SERV_NUM) {
-//                        if (UserStore.user != null)
+                    if (sLingServNum == Constants.PRED_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM) {
                         mPredictiveInput.process();
                     }
                 }
@@ -117,11 +116,13 @@ public class IME extends InputMethodService
         mPredictiveInput.getFromApi(UserStore.user.getId(), Constants.EXPAND);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void initAddition() {
         mAddition = new Addition(new WordClientImpl(), mBtn, mBtn2, mBtn3);
         mAddition.start();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onStartInputView(EditorInfo info, boolean restarting) {
         if (mCandidateView == null)
@@ -146,7 +147,7 @@ public class IME extends InputMethodService
     }
 
     private void clearHints() {
-        sLingServNum = Constants.DEF_LING_SERV_NUM;
+        sLingServNum = Constants.ADDIT_LING_SERV_NUM;
         System.out.println("Otpuskaet");
         mBtn.setText(Constants.EMPTY_SYM);
         mBtn2.setText(Constants.EMPTY_SYM);
@@ -233,7 +234,7 @@ public class IME extends InputMethodService
             default:
                 if (primaryCode == Keyboard.KEYCODE_DELETE) {
                     ic.deleteSurroundingText(1, 0);
-                    if (sLingServNum == Constants.ORTHO_LING_SERV_NUM || sLingServNum == Constants.DEF_LING_SERV_NUM)
+                    if (sLingServNum == Constants.ORTHO_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
                         if (UserStore.user != null)
                             mOrthocorrector.process(true);
                 }
@@ -243,15 +244,15 @@ public class IME extends InputMethodService
                         code = Character.toUpperCase(code);
                     }
                     ic.commitText(String.valueOf(code), 1);
-                    if (sLingServNum == Constants.ORTHO_LING_SERV_NUM || sLingServNum == Constants.DEF_LING_SERV_NUM)
+                    if (sLingServNum == Constants.ORTHO_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
                         if (UserStore.user != null)
                             mOrthocorrector.process(false);
                 }
-                if (sLingServNum == Constants.PRED_LING_SERV_NUM || sLingServNum == Constants.DEF_LING_SERV_NUM) {
+                if (sLingServNum == Constants.PRED_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM) {
                     if (UserStore.user != null)
                         mPredictiveInput.process();
                 }
-                if (sLingServNum == Constants.DEF_LING_SERV_NUM)
+                if (sLingServNum == Constants.ADDIT_LING_SERV_NUM)
                     if (UserStore.user != null)
                         mAddition.process();
                 break;

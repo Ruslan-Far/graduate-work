@@ -127,7 +127,7 @@ public class PredictiveInput {
     }
 
     private void clearHints() {
-        IME.sLingServNum = Constants.DEF_LING_SERV_NUM;
+        IME.sLingServNum = Constants.ADDIT_LING_SERV_NUM;
         System.out.println("Otpuskaet PRED");
         mBtn.setText(Constants.EMPTY_SYM);
         mBtn2.setText(Constants.EMPTY_SYM);

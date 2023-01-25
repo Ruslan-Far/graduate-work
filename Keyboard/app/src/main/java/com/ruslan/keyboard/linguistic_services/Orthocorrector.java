@@ -121,6 +121,8 @@ public class Orthocorrector {
     }
 
     private void clearHints() {
+        IME.sLingServNum = Constants.ADDIT_LING_SERV_NUM;
+        System.out.println("Otpuskaet ORTHO");
         mBtn.setText(Constants.EMPTY_SYM);
         mBtn2.setText(Constants.EMPTY_SYM);
         mBtn3.setText(Constants.EMPTY_SYM);
@@ -190,8 +192,7 @@ public class Orthocorrector {
             clearHints();
         }
         else {
-            IME.sLingServNum = Constants.DEF_LING_SERV_NUM;
-            System.out.println("Otpuskaet ORTHO");
+            clearHints();
         }
     }
 
@@ -306,7 +307,6 @@ public class Orthocorrector {
         searchLastWordAndOther(mIc.getTextBeforeCursor(IME.sLimitMaxChars, 0).toString());
         mIc.deleteSurroundingText(mLastOther.length() + mLastWord.length(), 0);
         mIc.commitText(hint.toString() + mLastOther, 0);
-        IME.sLingServNum = Constants.DEF_LING_SERV_NUM;
-        System.out.println("Otpuskaet ORTHO");
+        clearHints();
     }
 }

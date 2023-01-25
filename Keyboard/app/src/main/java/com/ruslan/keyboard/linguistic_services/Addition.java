@@ -1,7 +1,10 @@
 package com.ruslan.keyboard.linguistic_services;
 
+import android.os.Build;
 import android.view.inputmethod.InputConnection;
 import android.widget.Button;
+
+import androidx.annotation.RequiresApi;
 
 import com.ruslan.keyboard.Constants;
 import com.ruslan.keyboard.IME;
@@ -12,6 +15,8 @@ import com.ruslan.keyboard.stores.WordStore;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,16 +32,11 @@ public class Addition {
 
     private InputConnection mIc;
 
-    private StringBuilder mLastOther;
-    private StringBuilder mLastWord;
-    private int mIndexInWordStore;
-
     public Addition(WordClientImpl wordClientImpl, Button btn, Button btn2, Button btn3) {
         mWordClientImpl = wordClientImpl;
         mBtn = btn;
         mBtn2 = btn2;
         mBtn3 = btn3;
-        resetFields();
     }
 
     public InputConnection getIc() {
@@ -46,30 +46,6 @@ public class Addition {
     public void setIc(InputConnection ic) {
         mIc = ic;
     }
-
-//    public void getFromApi(Integer userId) {
-//        mWordClientImpl.setCallGet(userId);
-//        mWordClientImpl.getCallGet().enqueue(new Callback<Word[]>() {
-//            @Override
-//            public void onResponse(Call<Word[]> call, Response<Word[]> response) {
-//                if (response.isSuccessful()) {
-//                    System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
-//                    WordStore.words = new ArrayList<>(Arrays.asList(response.body()));
-//                    for (int i = 0; i < WordStore.words.size(); i++) {
-//                        System.out.println(WordStore.words.get(i).getWord());
-//                    }
-//                }
-//                else {
-//                    System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-//                }
-//            }
-//            @Override
-//            public void onFailure(Call<Word[]> call, Throwable t) {
-//                System.out.println("AAAAAAAAAAAAAAAAAAAFFFFFFFFFFFFFFFFFFAAAAAAAAAAAAAAAAAAAAAAA");
-//            }
-//        });
-//        System.out.println("AAAAAAAAAAAAAAAAAAAAAAANNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
-//    }
 
     public void putToApi(Integer id, Word word) {
         mWordClientImpl.setCallPut(id, word);
@@ -94,12 +70,6 @@ public class Addition {
         System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA33333333333333333333333333333333NNNNNNNNNNNNNNNNNNN");
     }
 
-    private void clearHints() {
-        mBtn.setText(Constants.EMPTY_SYM);
-        mBtn2.setText(Constants.EMPTY_SYM);
-        mBtn3.setText(Constants.EMPTY_SYM);
-    }
-
     private void checkHintsOnNullAndEmpty(String[] hints) {
         for (int i = 0; i < hints.length; i++) {
             if (hints[i] == null || hints[i].length() == 0)
@@ -116,20 +86,114 @@ public class Addition {
         mBtn3.setTextColor(color);
     }
 
+    private void setupHints(String[] hints) {
+        System.out.println("AAAAAAAAAAA_HINTS");
+        System.out.println(hints[0]);
+        System.out.println(hints[1]);
+        System.out.println(hints[2]);
+        setupColorHints();
+        checkHintsOnNullAndEmpty(hints);
+        mBtn.setText(hints[0]);
+        mBtn2.setText(hints[1]);
+        mBtn3.setText(hints[2]);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private String[] getWordsWithMaxCount(List<Word> tmp) {
+        String[] hints;
+
+        hints = new String[Constants.NUMBER_OF_HINTS];
+        for (int i = 0; i < hints.length; i++) {
+            if (tmp.size() != 0) {
+                Word removedWord = tmp.stream().max((x, y) ->
+                {
+                    if (x.getCount() > y.getCount())
+                        return 1;
+                    return -1;
+                }).get();
+                hints[i] = removedWord.getWord();
+                tmp.remove(removedWord);
+            }
+            else break;
+        }
+        return hints;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void start() {
         // задержать время
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            System.out.println("ERERERERERERERE");
+            e.printStackTrace();
+        }
+        String[] hints;
+        hints = getWordsWithMaxCount(new ArrayList<>(WordStore.words));
+        System.out.println("START_AAAAAAAAAAA_HINTS");
+        setupHints(hints);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void process() {
+        String textBeforeCursor;
+        String lastWord;
+        String[] hints;
 
+        textBeforeCursor = mIc.getTextBeforeCursor(IME.sLimitMaxChars, 0).toString();
+        if (textBeforeCursor.length() == 0)
+            return;
+        lastWord = searchLastWord(textBeforeCursor);
+        if (lastWord.length() == 0)
+            return;
+        hints = getWordsWithMaxCount(
+                WordStore.words.stream()
+                    .filter(x -> x.getWord().startsWith(lastWord))
+                    .collect(Collectors.toList())
+        );
+        System.out.println("AAAAAAAAAAA_HINTS");
+        setupHints(hints);
     }
 
+    private String searchLastWord(String textBeforeCursor) {
+        StringBuilder lastWord;
+
+        lastWord = new StringBuilder();
+        for (int i = 0; i >= 0 && Character.isLetter(textBeforeCursor.charAt(i)); i--)
+            lastWord.append(textBeforeCursor.charAt(i));
+        lastWord.reverse();
+        return lastWord.toString();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private Word prepareForPut(String hint) {
+        Word word;
+
+        word = WordStore.words.stream()
+                .filter(x -> x.getWord().equals(hint))
+                .collect(Collectors.toList())
+                .get(0);
+        word.setCount(word.getCount() + 1);
+        return word;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void clickBtnAny(CharSequence hint) {
-        searchLastWordAndOther(mIc.getTextBeforeCursor(IME.sLimitMaxChars, 0).toString());
-        mIc.deleteSurroundingText(mLastOther.length() + mLastWord.length(), 0);
-        mIc.commitText(hint.toString() + mLastOther, 0);
-//        IME.sLingServNum = Constants.DEF_LING_SERV_NUM;
-//        System.out.println("Otpuskaet ADDIT");
+        String lastWord;
+        Word word;
+
+        lastWord = searchLastWord(mIc.getTextBeforeCursor(IME.sLimitMaxChars, 0).toString());
+        mIc.deleteSurroundingText(lastWord.length(), 0);
+        mIc.commitText(hint.toString(), 0);
+        word = prepareForPut(hint.toString());
+        putToApi(word.getId(), word);
+        // задержать время
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            System.out.println("ERERERERERERERE2222");
+            e.printStackTrace();
+        }
         process();
     }
 }

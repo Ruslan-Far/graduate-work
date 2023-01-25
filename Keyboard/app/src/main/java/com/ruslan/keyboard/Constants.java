@@ -13,10 +13,9 @@ public class Constants {
     public static final String ERROR_TRANSFER_DATA = "Ошибка в передачи данных. Повторите попытку позже";
     public static final String ERROR_CONNECTION = "Проблемы с соединением. Повторите попытку позже";
     public static final String EMPTY_SYM = "";
-    public static final int DEF_LING_SERV_NUM = -1;
-    public static final int ORTHO_LING_SERV_NUM = 0;
-    public static final int PRED_LING_SERV_NUM = 1;
-    public static final int ADDIT_LING_SERV_NUM = 2;
+    public static final int ADDIT_LING_SERV_NUM = 0;
+    public static final int ORTHO_LING_SERV_NUM = 1;
+    public static final int PRED_LING_SERV_NUM = 2;
 
     public static class KeyCode {
 
