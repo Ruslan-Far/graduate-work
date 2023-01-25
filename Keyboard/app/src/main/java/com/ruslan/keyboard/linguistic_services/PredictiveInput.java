@@ -1,13 +1,11 @@
 package com.ruslan.keyboard.linguistic_services;
 
 import android.annotation.SuppressLint;
-import android.inputmethodservice.Keyboard;
 import android.os.Build;
 import android.view.inputmethod.InputConnection;
 import android.widget.Button;
 
 import androidx.annotation.RequiresApi;
-import androidx.core.content.ContextCompat;
 
 import com.ruslan.keyboard.Constants;
 import com.ruslan.keyboard.IME;
@@ -63,7 +61,7 @@ public class PredictiveInput {
                     System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
                     CollocationStore.collocations = new ArrayList<>(Arrays.asList(response.body()));
                     for (int i = 0; i < CollocationStore.collocations.size(); i++) {
-                        System.out.println(CollocationStore.collocations.get(i).getNextId() + " " + CollocationStore.collocations.get(i).getPrevId());
+                        System.out.println(CollocationStore.collocations.get(i).getPrevId() + " " + CollocationStore.collocations.get(i).getNextId());
                         System.out.println(CollocationStore.collocations.get(i).getWordResources()[0].getWord());
                         System.out.println(CollocationStore.collocations.get(i).getWordResources()[1].getWord());
                     }

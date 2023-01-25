@@ -1,7 +1,6 @@
 package com.ruslan.keyboard.linguistic_services;
 
 import android.annotation.SuppressLint;
-import android.inputmethodservice.Keyboard;
 import android.util.Log;
 import android.view.inputmethod.InputConnection;
 import android.widget.Button;
@@ -16,7 +15,6 @@ import com.ruslan.keyboard.entities.Word;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;

@@ -18,6 +18,7 @@ import androidx.annotation.RequiresApi;
 
 import com.ruslan.keyboard.clients_impl.CollocationClientImpl;
 import com.ruslan.keyboard.clients_impl.WordClientImpl;
+import com.ruslan.keyboard.linguistic_services.Addition;
 import com.ruslan.keyboard.linguistic_services.Orthocorrector;
 import com.ruslan.keyboard.linguistic_services.PredictiveInput;
 import com.ruslan.keyboard.stores.CollocationStore;
@@ -48,6 +49,7 @@ public class IME extends InputMethodService
 
     private Orthocorrector mOrthocorrector;
     private PredictiveInput mPredictiveInput;
+    private Addition mAddition;
 
     private DatabaseInteraction mDatabaseInteraction;
 
@@ -85,14 +87,16 @@ public class IME extends InputMethodService
                 if (sLingServNum == Constants.ORTHO_LING_SERV_NUM) {
                     mOrthocorrector.clickBtnAny(button.getText());
                     if (sLingServNum == Constants.PRED_LING_SERV_NUM || sLingServNum == Constants.DEF_LING_SERV_NUM) {
-                        if (UserStore.user != null)
-                            mPredictiveInput.process();
+//                        if (UserStore.user != null)
+                        mPredictiveInput.process();
                     }
                 }
                 else if (sLingServNum == Constants.PRED_LING_SERV_NUM) {
                     mPredictiveInput.clickBtnAny(button.getText());
                 }
-
+                else {
+                    mAddition.clickBtnAny(button.getText());
+                }
             }
         };
         mBtn.setOnClickListener(listener);
@@ -101,12 +105,6 @@ public class IME extends InputMethodService
         mGeneralContainer.removeView(mKeyboardView);
         mGeneralContainer.addView(mCandidateView, mParamsGeneralContainer);
         mGeneralContainer.addView(mKeyboardView, mParamsGeneralContainer);
-
-
-//        int color = getResources().getColor(R.color.green);
-//        int color = mBtn.getResources().getColor(R.color.green);
-//        mBtn.setTextColor(color);
-//        mBtn.setText("Hello");
     }
 
     private void initOrthocorrector() {
@@ -119,6 +117,11 @@ public class IME extends InputMethodService
         mPredictiveInput.getFromApi(UserStore.user.getId(), Constants.EXPAND);
     }
 
+    private void initAddition() {
+        mAddition = new Addition(new WordClientImpl(), mBtn, mBtn2, mBtn3);
+        mAddition.start();
+    }
+
     @Override
     public void onStartInputView(EditorInfo info, boolean restarting) {
         if (mCandidateView == null)
@@ -128,6 +131,7 @@ public class IME extends InputMethodService
         if (UserStore.user != null) {
             initOrthocorrector();
             initPredictiveInput();
+            initAddition();
         }
     }
 
@@ -210,6 +214,7 @@ public class IME extends InputMethodService
         if (UserStore.user != null) {
             mOrthocorrector.setIc(ic);
             mPredictiveInput.setIc(ic);
+            mAddition.setIc(ic);
         }
         playClick(primaryCode);
         switch (primaryCode) {
@@ -246,6 +251,9 @@ public class IME extends InputMethodService
                     if (UserStore.user != null)
                         mPredictiveInput.process();
                 }
+                if (sLingServNum == Constants.DEF_LING_SERV_NUM)
+                    if (UserStore.user != null)
+                        mAddition.process();
                 break;
         }
     }
