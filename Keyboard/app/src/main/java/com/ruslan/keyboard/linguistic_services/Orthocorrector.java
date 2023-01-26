@@ -158,8 +158,9 @@ public class Orthocorrector {
         if (textBeforeCursor.length() == 0)
             return;
         if (!Character.isLetter(textBeforeCursor.charAt(textBeforeCursor.length() - 1))) {
+            String oldLastWord = mLastWord.toString();
             searchLastWordAndOther(textBeforeCursor);
-            if (mLastWord.length() == 0)
+            if (mLastWord.length() == 0 || oldLastWord.equals(mLastWord.toString()))
                 return;
             hints = checkForSpelling();
             Log.d("PROCESS", mLastWord.toString() + "=Length=" + mLastWord.length());
@@ -176,6 +177,16 @@ public class Orthocorrector {
                 mBtn2.setText(hints[1]);
                 mBtn3.setText(hints[2]);
             }
+            else {
+                Word word = prepareForPut(
+                        WordStore.words.stream()
+                                .filter(x -> x.getWord().equals(mLastWord.toString()))
+                                .collect(Collectors.toList())
+                                .get(0)
+                );
+                putToApi(word.getId(), word);
+                resetFields();
+            }
         }
         else if (!isDel && mLastWord.length() != 0 && mLastOther.length() != 0) {
             if (mIndexInWordStore == -1) {
@@ -190,15 +201,7 @@ public class Orthocorrector {
             clearHints();
         }
         else {
-            if (mIndexInWordStore == -2) {
-                Word word = prepareForPut(
-                        WordStore.words.stream()
-                                .filter(x -> x.getWord().equals(mLastWord.toString()))
-                                .collect(Collectors.toList())
-                                .get(0)
-                );
-                putToApi(word.getId(), word);
-            }
+            resetFields();
             clearHints();
         }
     }

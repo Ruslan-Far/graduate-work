@@ -32,6 +32,8 @@ public class Addition {
 
     private InputConnection mIc;
 
+//    private boolean mFlag = false;
+
     public Addition(WordClientImpl wordClientImpl, Button btn, Button btn2, Button btn3) {
         mWordClientImpl = wordClientImpl;
         mBtn = btn;
@@ -57,6 +59,7 @@ public class Addition {
                     Word w = response.body();
                     System.out.println(w.getWord());
                     WordStore.putToStore(w.getId(), w);
+//                    mFlag = true;
                 }
                 else {
                     System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA333333333333333333333333EEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
@@ -122,14 +125,23 @@ public class Addition {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void start() {
         // задержать время
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            System.out.println("ERERERERERERERE");
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(10000);
+//        } catch (InterruptedException e) {
+//            System.out.println("ERERERERERERERE");
+//            e.printStackTrace();
+//        }
+//        while (WordStore.words == null) {}
+        if (WordStore.words == null)
+            return;
         String[] hints;
-        hints = getWordsWithMaxCount(new ArrayList<>(WordStore.words));
+        System.out.println("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
+        System.out.println(WordStore.words);
+        hints = getWordsWithMaxCount(
+                new ArrayList<>(WordStore.words).stream()
+                        .filter(x -> x.getCount() >= Constants.NEEDED_MAX_WORDS_COUNT)
+                        .collect(Collectors.toList())
+        );
         System.out.println("START_AAAAAAAAAAA_HINTS");
         setupHints(hints);
     }
@@ -141,10 +153,15 @@ public class Addition {
         String[] hints;
 
         textBeforeCursor = mIc.getTextBeforeCursor(IME.sLimitMaxChars, 0).toString();
-        if (textBeforeCursor.length() == 0)
+        System.out.println("TTTTEEEEXXTTTBEFORECURSOR:" + textBeforeCursor);
+        if (textBeforeCursor.length() == 0) {
+            start();
             return;
+        }
         lastWord = searchLastWord(textBeforeCursor);
+        System.out.println("lastWord:" + lastWord + "len:" + lastWord.length());
         if (lastWord.length() == 0) {
+            System.out.println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
             start();
             return;
         }
@@ -153,7 +170,6 @@ public class Addition {
                     .filter(x -> x.getWord().startsWith(lastWord) && x.getCount() >= Constants.NEEDED_MAX_WORDS_COUNT)
                     .collect(Collectors.toList())
         );
-        System.out.println("AAAAAAAAAAA_HINTS");
         setupHints(hints);
     }
 
@@ -161,7 +177,7 @@ public class Addition {
         StringBuilder lastWord;
 
         lastWord = new StringBuilder();
-        for (int i = 0; i >= 0 && Character.isLetter(textBeforeCursor.charAt(i)); i--)
+        for (int i = textBeforeCursor.length() - 1; i >= 0 && Character.isLetter(textBeforeCursor.charAt(i)); i--)
             lastWord.append(textBeforeCursor.charAt(i));
         lastWord.reverse();
         return lastWord.toString();
@@ -190,12 +206,14 @@ public class Addition {
         word = prepareForPut(hint.toString());
         putToApi(word.getId(), word);
         // задержать время
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            System.out.println("ERERERERERERERE2222");
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(10000);
+//        } catch (InterruptedException e) {
+//            System.out.println("ERERERERERERERE2222");
+//            e.printStackTrace();
+//        }
+//        while (!mFlag) {}
         process();
+//        mFlag = false;
     }
 }
