@@ -1,9 +1,12 @@
 package com.ruslan.keyboard.linguistic_services;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.util.Log;
 import android.view.inputmethod.InputConnection;
 import android.widget.Button;
+
+import androidx.annotation.RequiresApi;
 
 import com.ruslan.keyboard.Constants;
 import com.ruslan.keyboard.IME;
@@ -15,6 +18,7 @@ import com.ruslan.keyboard.entities.Word;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -144,6 +148,7 @@ public class Orthocorrector {
         mBtn3.setTextColor(color);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("ResourceAsColor")
     public void process(boolean isDel) {
         String textBeforeCursor;
@@ -174,26 +179,45 @@ public class Orthocorrector {
         }
         else if (!isDel && mLastWord.length() != 0 && mLastOther.length() != 0) {
             if (mIndexInWordStore == -1) {
-                Word word = new Word();
-                word.setUserId(UserStore.user.getId());
-                word.setWord(mLastWord.toString());
-                word.setCount(1);
+                Word word = prepareForPost();
                 postToApi(word);
             }
             else if (mIndexInWordStore > -1) {
-                Word word = new Word();
-                word.setId(WordStore.words.get(mIndexInWordStore).getId());
-                word.setUserId(WordStore.words.get(mIndexInWordStore).getUserId());
-                word.setWord(WordStore.words.get(mIndexInWordStore).getWord());
-                word.setCount(WordStore.words.get(mIndexInWordStore).getCount() + 1);
+                Word word = prepareForPut(WordStore.words.get(mIndexInWordStore));
                 putToApi(word.getId(), word);
             }
             resetFields();
             clearHints();
         }
         else {
+            if (mIndexInWordStore == -2) {
+                Word word = prepareForPut(
+                        WordStore.words.stream()
+                                .filter(x -> x.getWord().equals(mLastWord.toString()))
+                                .collect(Collectors.toList())
+                                .get(0)
+                );
+                putToApi(word.getId(), word);
+            }
             clearHints();
         }
+    }
+
+    private Word prepareForPost() {
+        Word word = new Word();
+        word.setUserId(UserStore.user.getId());
+        word.setWord(mLastWord.toString());
+        word.setCount(1);
+        return word;
+    }
+
+    private Word prepareForPut(Word wordForPut) {
+        Word word = new Word();
+        word.setId(wordForPut.getId());
+        word.setUserId(wordForPut.getUserId());
+        word.setWord(wordForPut.getWord());
+        word.setCount(wordForPut.getCount() + 1);
+        return word;
     }
 
     private void resetFields() {
@@ -218,7 +242,7 @@ public class Orthocorrector {
     private String[] checkForSpelling() {
         for (int i = 0; i < WordStore.words.size(); i++) {
             if (mLastWord.toString().equals(WordStore.words.get(i).getWord())) {
-                if (WordStore.words.get(i).getCount() >= Constants.LIMIT_MAX_WORDS_COUNT)
+                if (WordStore.words.get(i).getCount() >= Constants.NEEDED_MAX_WORDS_COUNT)
                     return new String[Constants.NUMBER_OF_HINTS];
                 mIndexInWordStore = i;
                 return getApproximateWords();
@@ -243,7 +267,7 @@ public class Orthocorrector {
         if (WordStore.words.size() == 0)
             return hints;
         for (int i = 0; i < WordStore.words.size(); i++) {
-            if (WordStore.words.get(i).getCount() < Constants.LIMIT_MAX_WORDS_COUNT
+            if (WordStore.words.get(i).getCount() < Constants.NEEDED_MAX_WORDS_COUNT
                     || WordStore.words.get(i).getWord().length() == 0)
                 continue;
             countLetters = 0;

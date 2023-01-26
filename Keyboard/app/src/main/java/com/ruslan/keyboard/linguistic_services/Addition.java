@@ -144,11 +144,13 @@ public class Addition {
         if (textBeforeCursor.length() == 0)
             return;
         lastWord = searchLastWord(textBeforeCursor);
-        if (lastWord.length() == 0)
+        if (lastWord.length() == 0) {
+            start();
             return;
+        }
         hints = getWordsWithMaxCount(
                 WordStore.words.stream()
-                    .filter(x -> x.getWord().startsWith(lastWord))
+                    .filter(x -> x.getWord().startsWith(lastWord) && x.getCount() >= Constants.NEEDED_MAX_WORDS_COUNT)
                     .collect(Collectors.toList())
         );
         System.out.println("AAAAAAAAAAA_HINTS");
