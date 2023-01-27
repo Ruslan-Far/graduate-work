@@ -22,6 +22,7 @@ import com.ruslan.keyboard.linguistic_services.Addition;
 import com.ruslan.keyboard.linguistic_services.Orthocorrector;
 import com.ruslan.keyboard.linguistic_services.PredictiveInput;
 import com.ruslan.keyboard.stores.CollocationStore;
+import com.ruslan.keyboard.stores.DictionaryStore;
 import com.ruslan.keyboard.stores.UserStore;
 import com.ruslan.keyboard.stores.WordStore;
 
@@ -129,6 +130,11 @@ public class IME extends InputMethodService
             createCandidatesView();
         mDatabaseInteraction = new DatabaseInteraction(this);
         mDatabaseInteraction.selectUser();
+        mDatabaseInteraction.selectDictionary();
+        if (DictionaryStore.dictionary == null) {
+            mDatabaseInteraction.insertDictionary();
+            mDatabaseInteraction.selectDictionary();
+        }
         if (UserStore.user != null) {
             initOrthocorrector();
             initPredictiveInput();
@@ -142,6 +148,7 @@ public class IME extends InputMethodService
         UserStore.user = null;
         WordStore.words = null;
         CollocationStore.collocations = null;
+        DictionaryStore.dictionary = null;
         clearHints();
         super.onFinishInputView(finishingInput);
     }

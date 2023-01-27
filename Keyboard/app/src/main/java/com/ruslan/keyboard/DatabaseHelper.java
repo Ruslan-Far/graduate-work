@@ -27,7 +27,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private String createDictionaryQuery =
             "CREATE TABLE " + DICTIONARY_TABLE +
                 "(" +
-                    DICTIONARY_COLUMN_ID + " SERIAL PRIMARY KEY," +
+                    DICTIONARY_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     DICTIONARY_COLUMN_WORD + " TEXT DEFAULT '' NOT NULL" +
                 ")";
 

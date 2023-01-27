@@ -42,4 +42,10 @@ public class DatabaseInteraction {
         DictionaryStore.dictionary = mDictionaryRepo.select();
         mDictionaryRepo.close();
     }
+
+    public void insertDictionary() {
+        mDictionaryRepo.open();
+        mDictionaryRepo.insert();
+        mDictionaryRepo.close();
+    }
 }
