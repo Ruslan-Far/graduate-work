@@ -31,7 +31,7 @@ public class WordsController
     WordResource[] getAll(@RequestParam(required = false) Integer userId,
                           @RequestParam(required = false) Object expand)
     {
-        System.out.println("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
+        System.out.println("WordsController GET");
         Word[] wordEntities = userId == null ?
                 wordsRepository.select() :
                 wordsRepository.selectByUserId(userId);
@@ -75,8 +75,8 @@ public class WordsController
     @RequestMapping(value = "", method = RequestMethod.POST)
     WordResource post(@RequestBody WordResource wordResource)
     {
-        System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
-        System.out.println(wordResource);
+        System.out.print("WordsController POST ");
+        System.out.println(wordResource.toEntity().getWord());
         Word wordEntity = wordsRepository.insert(wordResource.toEntity());
         if (wordEntity == null)
             return null;
@@ -87,6 +87,8 @@ public class WordsController
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     WordResource put(@PathVariable Integer id, @RequestBody WordResource wordResource)
     {
+        System.out.print("WordsController PUT ");
+        System.out.println(wordResource.toEntity().getId() + " " + wordResource.toEntity().getWord());
         Word wordEntity = wordsRepository.update(id, wordResource.toEntity());
         if (wordEntity == null)
             return null;
