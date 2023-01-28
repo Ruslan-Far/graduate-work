@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ruslan.keyboard.repos.UserRepo;
+import com.ruslan.keyboard.stores.DictionaryStore;
 import com.ruslan.keyboard.stores.UserStore;
 
 public class IMESettingsActivity extends AppCompatActivity {
@@ -29,6 +30,13 @@ public class IMESettingsActivity extends AppCompatActivity {
 
         setTitle(R.string.ime_settings_activity);
         mDatabaseInteraction = new DatabaseInteraction(this);
+        if (DictionaryStore.dictionary == null) {
+            mDatabaseInteraction.selectDictionary();
+            if (DictionaryStore.dictionary == null) {
+                mDatabaseInteraction.insertDictionary();
+                mDatabaseInteraction.selectDictionary();
+            }
+        }
     }
 
     @Override

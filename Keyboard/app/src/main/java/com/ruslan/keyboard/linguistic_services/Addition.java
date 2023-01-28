@@ -167,7 +167,9 @@ public class Addition {
         }
         hints = getWordsWithMaxCount(
                 WordStore.words.stream()
-                    .filter(x -> x.getWord().startsWith(lastWord) && x.getCount() >= Constants.NEEDED_MAX_WORDS_COUNT)
+                    .filter(x -> x.getWord().startsWith(lastWord)
+                            && x.getWord().length() > lastWord.length()
+                            && x.getCount() >= Constants.NEEDED_MAX_WORDS_COUNT)
                     .collect(Collectors.toList())
         );
         setupHints(hints);

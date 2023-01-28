@@ -130,10 +130,13 @@ public class IME extends InputMethodService
             createCandidatesView();
         mDatabaseInteraction = new DatabaseInteraction(this);
         mDatabaseInteraction.selectUser();
-        mDatabaseInteraction.selectDictionary();
+//        mDatabaseInteraction.selectDictionary();
         if (DictionaryStore.dictionary == null) {
-            mDatabaseInteraction.insertDictionary();
             mDatabaseInteraction.selectDictionary();
+            if (DictionaryStore.dictionary == null) {
+                mDatabaseInteraction.insertDictionary();
+                mDatabaseInteraction.selectDictionary();
+            }
         }
         if (UserStore.user != null) {
             initOrthocorrector();
@@ -148,7 +151,7 @@ public class IME extends InputMethodService
         UserStore.user = null;
         WordStore.words = null;
         CollocationStore.collocations = null;
-        DictionaryStore.dictionary = null;
+//        DictionaryStore.dictionary = null;
         clearHints();
         super.onFinishInputView(finishingInput);
     }
