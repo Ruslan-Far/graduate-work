@@ -8,6 +8,7 @@ import android.database.Cursor;
 import com.ruslan.keyboard.Constants;
 import com.ruslan.keyboard.DatabaseHelper;
 import com.ruslan.keyboard.R;
+import com.ruslan.keyboard.entities.User;
 import com.ruslan.keyboard.entities.Word;
 
 import java.io.IOException;
@@ -42,6 +43,24 @@ public class WordRepo extends Repo {
         if (words.size() == 0)
             return null;
         return words;
+    }
+
+    @SuppressLint("Range")
+    public Word select(Integer id) {
+        Word word = null;
+        String[] columns = new String[] { DatabaseHelper.WORDS_COLUMN_ID,
+                DatabaseHelper.WORDS_COLUMN_WORD, DatabaseHelper.WORDS_COLUMN_COUNT };
+        Cursor cursor = database.query(DatabaseHelper.WORDS_TABLE, columns,
+                null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            word = new Word(
+                cursor.getInt(cursor.getColumnIndex(DatabaseHelper.WORDS_COLUMN_ID)),
+                cursor.getString(cursor.getColumnIndex(DatabaseHelper.WORDS_COLUMN_WORD)),
+                cursor.getInt(cursor.getColumnIndex(DatabaseHelper.WORDS_COLUMN_COUNT))
+            );
+        }
+        cursor.close();
+        return word;
     }
 
     public long insert(Word word) {
@@ -91,5 +110,12 @@ public class WordRepo extends Repo {
             }
         }
         return words;
+    }
+
+    public long update(Integer id, Word word) {
+        ContentValues cv = new ContentValues();
+        cv.put(DatabaseHelper.WORDS_COLUMN_COUNT, word.getCount());
+        return database.update(DatabaseHelper.WORDS_TABLE, cv,
+                DatabaseHelper.WORDS_COLUMN_ID + "=" + id, null);
     }
 }

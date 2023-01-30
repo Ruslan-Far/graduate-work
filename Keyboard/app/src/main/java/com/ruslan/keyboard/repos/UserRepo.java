@@ -19,7 +19,8 @@ public class UserRepo extends Repo {
     public User select() {
         User user = null;
         String[] columns = new String[] { DatabaseHelper.USER_COLUMN_ID, DatabaseHelper.USER_COLUMN_LOGIN };
-        Cursor cursor = database.query(DatabaseHelper.USER_TABLE, columns, null, null, null, null, null);
+        Cursor cursor = database.query(DatabaseHelper.USER_TABLE, columns,
+                null, null, null, null, null);
         if (cursor.moveToFirst()) {
             user = new User(
                 cursor.getInt(cursor.getColumnIndex(DatabaseHelper.USER_COLUMN_ID)),

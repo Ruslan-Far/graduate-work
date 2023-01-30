@@ -107,18 +107,18 @@ public class IME extends InputMethodService
     }
 
     private void initOrthocorrector() {
-        mOrthocorrector = new Orthocorrector(new WordClientImpl(), mBtn, mBtn2, mBtn3);
-        mOrthocorrector.getFromApi(UserStore.user.getId());
+        mOrthocorrector = new Orthocorrector(new WordClientImpl(), mBtn, mBtn2, mBtn3, mDatabaseInteraction);
+//        mOrthocorrector.getFromApi(UserStore.user.getId());
     }
 
     private void initPredictiveInput() {
-        mPredictiveInput = new PredictiveInput(new CollocationClientImpl(), mBtn, mBtn2, mBtn3);
-        mPredictiveInput.getFromApi(UserStore.user.getId(), Constants.EXPAND);
+        mPredictiveInput = new PredictiveInput(new CollocationClientImpl(), mBtn, mBtn2, mBtn3, mDatabaseInteraction);
+//        mPredictiveInput.getFromApi(UserStore.user.getId(), Constants.EXPAND);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void initAddition() {
-        mAddition = new Addition(new WordClientImpl(), mBtn, mBtn2, mBtn3);
+        mAddition = new Addition(new WordClientImpl(), mBtn, mBtn2, mBtn3, mDatabaseInteraction);
         mAddition.start();
     }
 
@@ -134,11 +134,11 @@ public class IME extends InputMethodService
             mDatabaseInteraction.insertWords();
             mDatabaseInteraction.selectWords();
         }
-        if (UserStore.user != null) {
+//        if (UserStore.user != null) {
             initOrthocorrector();
             initPredictiveInput();
             initAddition();
-        }
+//        }
     }
 
     @Override
@@ -217,11 +217,11 @@ public class IME extends InputMethodService
     public void onKey(int primaryCode, int[] ints) {
         Log.d(TAG, "onKey " + primaryCode);
         InputConnection ic = getCurrentInputConnection();
-        if (UserStore.user != null) {
+//        if (UserStore.user != null) {
             mOrthocorrector.setIc(ic);
             mPredictiveInput.setIc(ic);
             mAddition.setIc(ic);
-        }
+//        }
         playClick(primaryCode);
         switch (primaryCode) {
             case Keyboard.KEYCODE_SHIFT:
@@ -240,7 +240,7 @@ public class IME extends InputMethodService
                 if (primaryCode == Keyboard.KEYCODE_DELETE) {
                     ic.deleteSurroundingText(1, 0);
                     if (sLingServNum == Constants.ORTHO_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
-                        if (UserStore.user != null)
+//                        if (UserStore.user != null)
                             mOrthocorrector.process(true);
                 }
                 else {
@@ -250,15 +250,15 @@ public class IME extends InputMethodService
                     }
                     ic.commitText(String.valueOf(code), 1);
                     if (sLingServNum == Constants.ORTHO_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
-                        if (UserStore.user != null)
+//                        if (UserStore.user != null)
                             mOrthocorrector.process(false);
                 }
                 if (sLingServNum == Constants.PRED_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM) {
-                    if (UserStore.user != null)
+//                    if (UserStore.user != null)
                         mPredictiveInput.process();
                 }
                 if (sLingServNum == Constants.ADDIT_LING_SERV_NUM)
-                    if (UserStore.user != null)
+//                    if (UserStore.user != null)
                         mAddition.process();
                 break;
         }

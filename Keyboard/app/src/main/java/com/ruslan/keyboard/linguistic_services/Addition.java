@@ -7,6 +7,7 @@ import android.widget.Button;
 import androidx.annotation.RequiresApi;
 
 import com.ruslan.keyboard.Constants;
+import com.ruslan.keyboard.DatabaseInteraction;
 import com.ruslan.keyboard.IME;
 import com.ruslan.keyboard.R;
 import com.ruslan.keyboard.clients_impl.WordClientImpl;
@@ -30,15 +31,19 @@ public class Addition {
     private Button mBtn2;
     private Button mBtn3;
 
+    private DatabaseInteraction mDatabaseInteraction;
+
     private InputConnection mIc;
 
 //    private boolean mFlag = false;
 
-    public Addition(WordClientImpl wordClientImpl, Button btn, Button btn2, Button btn3) {
+    public Addition(WordClientImpl wordClientImpl,
+                    Button btn, Button btn2, Button btn3, DatabaseInteraction databaseInteraction) {
         mWordClientImpl = wordClientImpl;
         mBtn = btn;
         mBtn2 = btn2;
         mBtn3 = btn3;
+        mDatabaseInteraction = databaseInteraction;
     }
 
     public InputConnection getIc() {
@@ -206,7 +211,8 @@ public class Addition {
         mIc.deleteSurroundingText(lastWord.length(), 0);
         mIc.commitText(hint.toString(), 0);
         word = prepareForPut(hint.toString());
-        putToApi(word.getId(), word);
+//        putToApi(word.getId(), word);
+        mDatabaseInteraction.updateWord(word.getId(), word);
         // задержать время
 //        try {
 //            Thread.sleep(10000);

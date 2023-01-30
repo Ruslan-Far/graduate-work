@@ -8,6 +8,7 @@ import android.widget.Button;
 import androidx.annotation.RequiresApi;
 
 import com.ruslan.keyboard.Constants;
+import com.ruslan.keyboard.DatabaseInteraction;
 import com.ruslan.keyboard.IME;
 import com.ruslan.keyboard.R;
 import com.ruslan.keyboard.clients_impl.CollocationClientImpl;
@@ -32,15 +33,19 @@ public class PredictiveInput {
     private Button mBtn2;
     private Button mBtn3;
 
+    private DatabaseInteraction mDatabaseInteraction;
+
     private InputConnection mIc;
 
     private StringBuilder mLastWord;
 
-    public PredictiveInput(CollocationClientImpl collocationClient, Button btn, Button btn2, Button btn3) {
+    public PredictiveInput(CollocationClientImpl collocationClient,
+                           Button btn, Button btn2, Button btn3, DatabaseInteraction databaseInteraction) {
         mCollocationClientImpl = collocationClient;
         mBtn = btn;
         mBtn2 = btn2;
         mBtn3 = btn3;
+        mDatabaseInteraction = databaseInteraction;
         resetFields();
     }
 

@@ -18,10 +18,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String WORDS_COLUMN_WORD = "word";
     public static final String WORDS_COLUMN_COUNT = "count";
 
+    public static final String COLLOCATIONS_TABLE = "collocations";
+    public static final String COLLOCATIONS_COLUMN_ID = "id";
+    public static final String COLLOCATIONS_COLUMN_PREV_ID = "prev_id";
+    public static final String COLLOCATIONS_COLUMN_NEXT_ID = "next_id";
+    public static final String COLLOCATIONS_COLUMN_COUNT = "count";
+
     private String createUserQuery =
             "CREATE TABLE " + USER_TABLE +
                 "(" +
-                    USER_COLUMN_ID + " SERIAL PRIMARY KEY," +
+                    USER_COLUMN_ID + " INTEGER PRIMARY KEY," +
                     USER_COLUMN_LOGIN + " TEXT DEFAULT '' NOT NULL" +
                 ")";
 
@@ -33,6 +39,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     WORDS_COLUMN_COUNT + " INTEGER NOT NULL" +
                 ")";
 
+    private String createCollocationsQuery =
+            "CREATE TABLE " + COLLOCATIONS_TABLE +
+                "(" +
+                    COLLOCATIONS_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    COLLOCATIONS_COLUMN_PREV_ID + " INTEGER REFERENCES \"words\" (\"id\")," +
+                    COLLOCATIONS_COLUMN_NEXT_ID + " INTEGER REFERENCES \"words\" (\"id\")," +
+                    COLLOCATIONS_COLUMN_COUNT + " INTEGER NOT NULL" +
+                ")";
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, SCHEMA);
     }
@@ -41,6 +56,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(createUserQuery);
         db.execSQL(createWordsQuery);
+        db.execSQL(createCollocationsQuery);
     }
 
     @Override

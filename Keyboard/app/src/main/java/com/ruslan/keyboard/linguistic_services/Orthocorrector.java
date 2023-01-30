@@ -9,6 +9,7 @@ import android.widget.Button;
 import androidx.annotation.RequiresApi;
 
 import com.ruslan.keyboard.Constants;
+import com.ruslan.keyboard.DatabaseInteraction;
 import com.ruslan.keyboard.IME;
 import com.ruslan.keyboard.R;
 import com.ruslan.keyboard.stores.UserStore;
@@ -32,17 +33,21 @@ public class Orthocorrector {
     private Button mBtn2;
     private Button mBtn3;
 
+    private DatabaseInteraction mDatabaseInteraction;
+
     private InputConnection mIc;
 
     private StringBuilder mLastOther;
     private StringBuilder mLastWord;
     private int mIndexInWordStore;
 
-    public Orthocorrector(WordClientImpl wordClientImpl, Button btn, Button btn2, Button btn3) {
+    public Orthocorrector(WordClientImpl wordClientImpl,
+                          Button btn, Button btn2, Button btn3, DatabaseInteraction databaseInteraction) {
         mWordClientImpl = wordClientImpl;
         mBtn = btn;
         mBtn2 = btn2;
         mBtn3 = btn3;
+        mDatabaseInteraction = databaseInteraction;
         resetFields();
     }
 
@@ -184,18 +189,21 @@ public class Orthocorrector {
                                 .collect(Collectors.toList())
                                 .get(0)
                 );
-                putToApi(word.getId(), word);
+//                putToApi(word.getId(), word);
+                mDatabaseInteraction.updateWord(word.getId(), word);
                 resetFields();
             }
         }
         else if (!isDel && mLastWord.length() != 0 && mLastOther.length() != 0) {
             if (mIndexInWordStore == -1) {
                 Word word = prepareForPost();
-                postToApi(word);
+//                postToApi(word);
+                mDatabaseInteraction.insertWord(word);
             }
             else if (mIndexInWordStore > -1) {
                 Word word = prepareForPut(WordStore.words.get(mIndexInWordStore));
-                putToApi(word.getId(), word);
+//                putToApi(word.getId(), word);
+                mDatabaseInteraction.updateWord(word.getId(), word);
             }
             resetFields();
             clearHints();
@@ -330,10 +338,19 @@ public class Orthocorrector {
         return hints;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void clickBtnAny(CharSequence hint) {
         searchLastWordAndOther(mIc.getTextBeforeCursor(IME.sLimitMaxChars, 0).toString());
         mIc.deleteSurroundingText(mLastOther.length() + mLastWord.length(), 0);
         mIc.commitText(hint.toString() + mLastOther, 0);
+        Word word = prepareForPut(
+                WordStore.words.stream()
+                        .filter(x -> x.getWord().equals(hint.toString()))
+                        .collect(Collectors.toList())
+                        .get(0)
+        );
+//                putToApi(word.getId(), word);
+        mDatabaseInteraction.updateWord(word.getId(), word);
         clearHints();
     }
 }
