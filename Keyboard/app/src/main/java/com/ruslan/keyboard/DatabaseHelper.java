@@ -13,9 +13,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String USER_COLUMN_ID = "id";
     public static final String USER_COLUMN_LOGIN = "login";
 
-    public static final String DICTIONARY_TABLE = "dictionary";
-    public static final String DICTIONARY_COLUMN_ID = "id";
-    public static final String DICTIONARY_COLUMN_WORD = "word";
+    public static final String WORDS_TABLE = "words";
+    public static final String WORDS_COLUMN_ID = "id";
+    public static final String WORDS_COLUMN_WORD = "word";
+    public static final String WORDS_COLUMN_COUNT = "count";
 
     private String createUserQuery =
             "CREATE TABLE " + USER_TABLE +
@@ -24,11 +25,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     USER_COLUMN_LOGIN + " TEXT DEFAULT '' NOT NULL" +
                 ")";
 
-    private String createDictionaryQuery =
-            "CREATE TABLE " + DICTIONARY_TABLE +
+    private String createWordsQuery =
+            "CREATE TABLE " + WORDS_TABLE +
                 "(" +
-                    DICTIONARY_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    DICTIONARY_COLUMN_WORD + " TEXT DEFAULT '' NOT NULL" +
+                    WORDS_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    WORDS_COLUMN_WORD + " TEXT DEFAULT '' NOT NULL," +
+                    WORDS_COLUMN_COUNT + " INTEGER NOT NULL" +
                 ")";
 
     public DatabaseHelper(Context context) {
@@ -38,7 +40,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(createUserQuery);
-        db.execSQL(createDictionaryQuery);
+        db.execSQL(createWordsQuery);
     }
 
     @Override

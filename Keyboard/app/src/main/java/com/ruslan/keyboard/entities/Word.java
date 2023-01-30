@@ -15,6 +15,13 @@ public class Word extends BaseEntity {
         this.count = count;
     }
 
+    public Word(Integer id, String word, Integer count)
+    {
+        super(id);
+        this.word = word;
+        this.count = count;
+    }
+
     public Integer getUserId()
     {
         return userId;

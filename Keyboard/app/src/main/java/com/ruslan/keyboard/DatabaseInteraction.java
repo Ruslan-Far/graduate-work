@@ -3,19 +3,20 @@ package com.ruslan.keyboard;
 import android.content.Context;
 
 import com.ruslan.keyboard.entities.User;
-import com.ruslan.keyboard.repos.DictionaryRepo;
+import com.ruslan.keyboard.entities.Word;
+import com.ruslan.keyboard.repos.WordRepo;
 import com.ruslan.keyboard.repos.UserRepo;
-import com.ruslan.keyboard.stores.DictionaryStore;
 import com.ruslan.keyboard.stores.UserStore;
+import com.ruslan.keyboard.stores.WordStore;
 
 public class DatabaseInteraction {
 
     private UserRepo mUserRepo;
-    private DictionaryRepo mDictionaryRepo;
+    private WordRepo mWordRepo;
 
     public DatabaseInteraction(Context context) {
         mUserRepo = new UserRepo(context);
-        mDictionaryRepo = new DictionaryRepo(context);
+        mWordRepo = new WordRepo(context);
     }
 
     public void selectUser() {
@@ -37,15 +38,21 @@ public class DatabaseInteraction {
         mUserRepo.close();
     }
 
-    public void selectDictionary() {
-        mDictionaryRepo.open();
-        DictionaryStore.dictionary = mDictionaryRepo.select();
-        mDictionaryRepo.close();
+    public void selectWords() {
+        mWordRepo.open();
+        WordStore.words = mWordRepo.select();
+        mWordRepo.close();
     }
 
-    public void insertDictionary() {
-        mDictionaryRepo.open();
-        mDictionaryRepo.insert();
-        mDictionaryRepo.close();
+    public void insertWord(Word word) {
+        mWordRepo.open();
+        mWordRepo.insert(word);
+        mWordRepo.close();
+    }
+
+    public void insertWords() {
+        mWordRepo.open();
+        mWordRepo.insertAll();
+        mWordRepo.close();
     }
 }
