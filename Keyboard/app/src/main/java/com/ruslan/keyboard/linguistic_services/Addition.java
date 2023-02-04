@@ -137,8 +137,8 @@ public class Addition {
 //            e.printStackTrace();
 //        }
 //        while (WordStore.words == null) {}
-        if (WordStore.words == null)
-            return;
+//        if (WordStore.words == null)
+//            return;
         String[] hints;
         System.out.println("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
         System.out.println(WordStore.words);
@@ -158,7 +158,15 @@ public class Addition {
         String[] hints;
 
         textBeforeCursor = mIc.getTextBeforeCursor(IME.sLimitMaxChars, 0).toString();
-        System.out.println("TTTTEEEEXXTTTBEFORECURSOR:" + textBeforeCursor);
+        System.out.println("TTTTEEEEXXTTTBEFORECURSOR:" + textBeforeCursor + "len:" + textBeforeCursor.length());
+//        for (int i = 0; i < textBeforeCursor.length(); i++) {
+//            System.out.println(textBeforeCursor.charAt(i));
+//            System.out.println((int) textBeforeCursor.charAt(i));
+//        }
+
+
+
+
         if (textBeforeCursor.length() == 0) {
             start();
             return;

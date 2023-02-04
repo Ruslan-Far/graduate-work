@@ -1,6 +1,9 @@
 package com.ruslan.keyboard;
 
 import android.content.Context;
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
 
 import com.ruslan.keyboard.entities.Collocation;
 import com.ruslan.keyboard.entities.User;
@@ -11,6 +14,9 @@ import com.ruslan.keyboard.repos.UserRepo;
 import com.ruslan.keyboard.stores.CollocationStore;
 import com.ruslan.keyboard.stores.UserStore;
 import com.ruslan.keyboard.stores.WordStore;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class DatabaseInteraction {
 
@@ -69,9 +75,25 @@ public class DatabaseInteraction {
         mWordRepo.close();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void selectCollocations() {
         mCollocationRepo.open();
         CollocationStore.collocations = mCollocationRepo.select();
+        if (CollocationStore.collocations != null) {
+            mWordRepo.open();
+            CollocationStore.collocations = CollocationStore.collocations.stream()
+                    .map(collocation -> {
+                        Word[] words = new Word[2];
+                        words[0] = mWordRepo.select(collocation.getPrevId());
+                        words[1] = mWordRepo.select(collocation.getNextId());
+                        collocation.setWordResources(words);
+                        return collocation;
+                    }).collect(Collectors.toList());
+            mWordRepo.close();
+            System.out.println("PROVERKA");
+            System.out.println(Arrays.toString(CollocationStore.collocations.get(
+                    CollocationStore.collocations.size() - 1).getWordResources()));
+        }
         mCollocationRepo.close();
     }
 

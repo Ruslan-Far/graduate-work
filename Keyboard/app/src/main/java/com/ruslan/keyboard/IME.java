@@ -109,16 +109,19 @@ public class IME extends InputMethodService
     private void initOrthocorrector() {
         mOrthocorrector = new Orthocorrector(new WordClientImpl(), mBtn, mBtn2, mBtn3, mDatabaseInteraction);
 //        mOrthocorrector.getFromApi(UserStore.user.getId());
+        mOrthocorrector.setIc(getCurrentInputConnection());
     }
 
     private void initPredictiveInput() {
         mPredictiveInput = new PredictiveInput(new CollocationClientImpl(), mBtn, mBtn2, mBtn3, mDatabaseInteraction);
 //        mPredictiveInput.getFromApi(UserStore.user.getId(), Constants.EXPAND);
+        mPredictiveInput.setIc(getCurrentInputConnection());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void initAddition() {
         mAddition = new Addition(new WordClientImpl(), mBtn, mBtn2, mBtn3, mDatabaseInteraction);
+        mAddition.setIc(getCurrentInputConnection());
         mAddition.start();
     }
 
@@ -134,6 +137,7 @@ public class IME extends InputMethodService
             mDatabaseInteraction.insertWords();
             mDatabaseInteraction.selectWords();
         }
+        mDatabaseInteraction.selectCollocations();
 //        if (UserStore.user != null) {
             initOrthocorrector();
             initPredictiveInput();

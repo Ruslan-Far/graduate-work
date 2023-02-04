@@ -182,13 +182,15 @@ public class PredictiveInput {
                 System.out.println("lastWord=" + mLastWord + ":len=" + mLastWord.length());
                 if (filteredCollocations.size() == 0) {
                     Collocation collocation = prepareForPost(penultimateWord.toString());
-                    postToApi(collocation);
+//                    postToApi(collocation);
+                    mDatabaseInteraction.insertCollocation(collocation);
                 }
                 else {
                     System.out.println("1 filteredCollocations=" + filteredCollocations.get(0));
                     System.out.println("2 filteredCollocations=" + filteredCollocations.get(1));
                     Collocation collocation = prepareForPut(filteredCollocations.get(0));
-                    putToApi(collocation.getId(), collocation);
+//                    putToApi(collocation.getId(), collocation);
+                    mDatabaseInteraction.updateCollocation(collocation.getId(), collocation);
                 }
             }
         }
@@ -299,7 +301,8 @@ public class PredictiveInput {
     public void clickBtnAny(CharSequence hint) {
         List<Collocation> filteredCollocations = filterCollocationsByTwoWords(mLastWord.toString(), hint.toString());
         Collocation collocation = prepareForPut(filteredCollocations.get(0));
-        putToApi(collocation.getId(), collocation);
+//        putToApi(collocation.getId(), collocation);
+        mDatabaseInteraction.updateCollocation(collocation.getId(), collocation);
         mIc.commitText(hint.toString(), 0);
         clearHints();
     }

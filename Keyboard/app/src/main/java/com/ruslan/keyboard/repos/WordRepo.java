@@ -51,7 +51,8 @@ public class WordRepo extends Repo {
         String[] columns = new String[] { DatabaseHelper.WORDS_COLUMN_ID,
                 DatabaseHelper.WORDS_COLUMN_WORD, DatabaseHelper.WORDS_COLUMN_COUNT };
         Cursor cursor = database.query(DatabaseHelper.WORDS_TABLE, columns,
-                null, null, null, null, null);
+                DatabaseHelper.WORDS_COLUMN_ID + "=" + id,
+                null, null, null, null);
         if (cursor.moveToFirst()) {
             word = new Word(
                 cursor.getInt(cursor.getColumnIndex(DatabaseHelper.WORDS_COLUMN_ID)),
@@ -84,6 +85,10 @@ public class WordRepo extends Repo {
             cv.put(DatabaseHelper.WORDS_COLUMN_WORD, arrWords[i]);
             cv.put(DatabaseHelper.WORDS_COLUMN_COUNT, Constants.NEEDED_MAX_WORDS_COUNT);
             database.insert(DatabaseHelper.WORDS_TABLE, null, cv);
+
+
+
+//            System.out.println("arrWords:" + arrWords[i] + "len:" + arrWords[i].length());
         }
     }
 
