@@ -186,8 +186,9 @@ public class PredictiveInput {
                     mDatabaseInteraction.insertCollocation(collocation);
                 }
                 else {
-                    System.out.println("1 filteredCollocations=" + filteredCollocations.get(0));
-                    System.out.println("2 filteredCollocations=" + filteredCollocations.get(1));
+                    System.out.println("1 filteredCollocations=" + filteredCollocations.get(0).getWordResources()[0]);
+                    System.out.println("2 filteredCollocations=" + filteredCollocations.get(0).getWordResources()[1]);
+//                    System.out.println("2 filteredCollocations=" + filteredCollocations.get(1));
                     Collocation collocation = prepareForPut(filteredCollocations.get(0));
 //                    putToApi(collocation.getId(), collocation);
                     mDatabaseInteraction.updateCollocation(collocation.getId(), collocation);
@@ -227,6 +228,8 @@ public class PredictiveInput {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private List<Collocation> filterCollocationsByTwoWords(String penultimateWord, String lastWord) {
+        if (CollocationStore.collocations == null)
+            return new ArrayList<>();
         return CollocationStore.collocations.stream()
                 .filter(x -> x.getWordResources()[0].getWord().equals(penultimateWord)
                         && x.getWordResources()[1].getWord().equals(lastWord))
@@ -248,6 +251,8 @@ public class PredictiveInput {
         List<Collocation> filteredCollocations;
 
         hints = new String[Constants.NUMBER_OF_HINTS];
+        if (CollocationStore.collocations == null)
+            return hints;
         filteredCollocations = CollocationStore.collocations.stream()
                 .filter(x -> x.getWordResources()[0].getWord().equals(mLastWord.toString()))
                 .collect(Collectors.toList());
@@ -304,6 +309,8 @@ public class PredictiveInput {
 //        putToApi(collocation.getId(), collocation);
         mDatabaseInteraction.updateCollocation(collocation.getId(), collocation);
         mIc.commitText(hint.toString(), 0);
+        // Warning!!!
+        resetFields();
         clearHints();
     }
 }

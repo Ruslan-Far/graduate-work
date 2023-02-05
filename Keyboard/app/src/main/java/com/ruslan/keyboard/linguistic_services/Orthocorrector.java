@@ -19,6 +19,7 @@ import com.ruslan.keyboard.entities.Word;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -40,6 +41,8 @@ public class Orthocorrector {
     private StringBuilder mLastOther;
     private StringBuilder mLastWord;
     private int mIndexInWordStore;
+
+    private final String mMark = "0";
 
     public Orthocorrector(WordClientImpl wordClientImpl,
                           Button btn, Button btn2, Button btn3, DatabaseInteraction databaseInteraction) {
@@ -165,8 +168,12 @@ public class Orthocorrector {
         if (!Character.isLetter(textBeforeCursor.charAt(textBeforeCursor.length() - 1))) {
             String oldLastWord = mLastWord.toString();
             searchLastWordAndOther(textBeforeCursor);
-            if (mLastWord.length() == 0 || oldLastWord.equals(mLastWord.toString()))
+            if (mLastWord.length() == 0 || oldLastWord.equals(mLastWord.toString())) {
+                System.out.println("ORTHOCORRECTOR");
+                System.out.println("mLastWord:" + mLastWord + "len:" + mLastWord.length());
+                System.out.println("oldLastWord:" + oldLastWord + "len:" + oldLastWord.length());
                 return;
+            }
             hints = checkForSpelling();
             Log.d("PROCESS", mLastWord.toString() + "=Length=" + mLastWord.length());
             if (mIndexInWordStore != -2) {
@@ -216,7 +223,7 @@ public class Orthocorrector {
 
     private Word prepareForPost() {
         Word word = new Word();
-        word.setUserId(UserStore.user.getId());
+//        word.setUserId(UserStore.user.getId());
         word.setWord(mLastWord.toString());
         word.setCount(1);
         return word;
@@ -225,7 +232,7 @@ public class Orthocorrector {
     private Word prepareForPut(Word wordForPut) {
         Word word = new Word();
         word.setId(wordForPut.getId());
-        word.setUserId(wordForPut.getUserId());
+//        word.setUserId(wordForPut.getUserId());
         word.setWord(wordForPut.getWord());
         word.setCount(wordForPut.getCount() + 1);
         return word;
@@ -251,6 +258,10 @@ public class Orthocorrector {
     }
 
     private String[] checkForSpelling() {
+        System.out.println("checkForSpelling");
+        for (int i = 0; i < WordStore.words.size(); i++)
+            System.out.println(WordStore.words.get(i).getWord());
+
         for (int i = 0; i < WordStore.words.size(); i++) {
             if (mLastWord.toString().equals(WordStore.words.get(i).getWord())) {
                 if (WordStore.words.get(i).getCount() >= Constants.NEEDED_MAX_WORDS_COUNT)
@@ -261,6 +272,43 @@ public class Orthocorrector {
         }
         mIndexInWordStore = -1;
         return getApproximateWords();
+    }
+
+    private List<Word> copyWords() {
+        List<Word> copyWords;
+
+        copyWords = new ArrayList<>();
+        for (int i = 0; i < WordStore.words.size(); i++)
+            copyWords.add(new Word(WordStore.words.get(i).getId(),
+                    WordStore.words.get(i).getWord(), WordStore.words.get(i).getCount()));
+        return copyWords;
+    }
+
+    private List<Word> getCopyProcessedWords() {
+        List<Word> copyProcessedWords;
+
+//        copyProcessedWords = new ArrayList<>(WordStore.words);
+        copyProcessedWords = copyWords();
+        if (copyProcessedWords.size() <= Constants.NUMBER_OF_HINTS)
+            return copyProcessedWords;
+        for (int i = 0; i < copyProcessedWords.size() - 1; i++) {
+            for (int j = i + 1; j < copyProcessedWords.size(); j++) {
+                if (copyProcessedWords.get(i).getWord().equals(mMark))
+                    break;
+                if (copyProcessedWords.get(i).getWord().equalsIgnoreCase(copyProcessedWords.get(j).getWord())) {
+                    if (copyProcessedWords.get(i).getCount() > copyProcessedWords.get(j).getCount())
+                        copyProcessedWords.get(j).setWord(mMark);
+                    else
+                        copyProcessedWords.get(i).setWord(mMark);
+                    break;
+                }
+            }
+        }
+        System.out.println("copyProcessedWords");
+        for (int i = 0; i < copyProcessedWords.size(); i++) {
+            System.out.println(copyProcessedWords.get(i).getWord());
+        }
+        return copyProcessedWords;
     }
 
     private String[] getApproximateWords() {
@@ -274,15 +322,18 @@ public class Orthocorrector {
         int countLetters;
         StringBuilder wordFromStore;
         String[] hints = new String[Constants.NUMBER_OF_HINTS];
+        List<Word> copyProcessedWords;
 
         if (WordStore.words.size() == 0)
             return hints;
-        for (int i = 0; i < WordStore.words.size(); i++) {
-            if (WordStore.words.get(i).getCount() < Constants.NEEDED_MAX_WORDS_COUNT
-                    || WordStore.words.get(i).getWord().length() == 0)
+        copyProcessedWords = getCopyProcessedWords();
+        for (int i = 0; i < copyProcessedWords.size(); i++) {
+            if (copyProcessedWords.get(i).getCount() < Constants.NEEDED_MAX_WORDS_COUNT
+                    || copyProcessedWords.get(i).getWord().length() == 0
+                    || copyProcessedWords.get(i).getWord().equals(mMark))
                 continue;
             countLetters = 0;
-            wordFromStore = new StringBuilder(WordStore.words.get(i).getWord());
+            wordFromStore = new StringBuilder(copyProcessedWords.get(i).getWord());
             for (int j = 0; j < mLastWord.length(); j++) {
                 for (int k = 0; k < wordFromStore.length(); k++) {
                     if (Math.abs(k - j) > radius)
@@ -324,17 +375,17 @@ public class Orthocorrector {
         if (iMin == -1)
             return hints;
         if (iMin2 == -1) {
-            hints[0] = WordStore.words.get(iMin).getWord();
+            hints[0] = copyProcessedWords.get(iMin).getWord();
             return hints;
         }
         if (iMin3 == -1) {
-            hints[0] = WordStore.words.get(iMin).getWord();
-            hints[1] = WordStore.words.get(iMin2).getWord();
+            hints[0] = copyProcessedWords.get(iMin).getWord();
+            hints[1] = copyProcessedWords.get(iMin2).getWord();
             return hints;
         }
-        hints[0] = WordStore.words.get(iMin).getWord();
-        hints[1] = WordStore.words.get(iMin2).getWord();
-        hints[2] = WordStore.words.get(iMin3).getWord();
+        hints[0] = copyProcessedWords.get(iMin).getWord();
+        hints[1] = copyProcessedWords.get(iMin2).getWord();
+        hints[2] = copyProcessedWords.get(iMin3).getWord();
         return hints;
     }
 

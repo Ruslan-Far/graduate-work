@@ -45,8 +45,8 @@ public class DatabaseInteraction {
     public void deleteUser() {
         mUserRepo.open();
         mUserRepo.delete();
-        UserStore.user = null;
         mUserRepo.close();
+        UserStore.user = null;
     }
 
     public void selectWords() {
@@ -56,10 +56,10 @@ public class DatabaseInteraction {
     }
 
     public void insertWord(Word word) {
-        WordStore.postToStore(word);
         mWordRepo.open();
         mWordRepo.insert(word);
         mWordRepo.close();
+        WordStore.postToStore(word);
     }
 
     public void insertWords() {
@@ -69,10 +69,10 @@ public class DatabaseInteraction {
     }
 
     public void updateWord(Integer id, Word word) {
-        WordStore.putToStore(id, word);
         mWordRepo.open();
         mWordRepo.update(id, word);
         mWordRepo.close();
+        WordStore.putToStore(id, word);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -98,16 +98,22 @@ public class DatabaseInteraction {
     }
 
     public void insertCollocation(Collocation collocation) {
-        CollocationStore.postToStore(collocation);
         mCollocationRepo.open();
         mCollocationRepo.insert(collocation);
         mCollocationRepo.close();
+        Word[] words = new Word[2];
+        mWordRepo.open();
+        words[0] = mWordRepo.select(collocation.getPrevId());
+        words[1] = mWordRepo.select(collocation.getNextId());
+        mWordRepo.close();
+        collocation.setWordResources(words);
+        CollocationStore.postToStore(collocation);
     }
 
     public void updateCollocation(Integer id, Collocation collocation) {
-        CollocationStore.putToStore(id, collocation);
         mCollocationRepo.open();
         mCollocationRepo.update(id, collocation);
         mCollocationRepo.close();
+        CollocationStore.putToStore(id, collocation);
     }
 }
