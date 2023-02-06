@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -92,10 +93,29 @@ public class IMESettingsActivity extends AppCompatActivity {
                 }
             });
         }
-        String[] imeSettings = new String[] { "Шрифт", "Тема" };
+//        String[] imeSettings = new String[] { "Шрифт", "Тема" };
+//        ListView imeSettingsList = findViewById(R.id.imeSettingsList);
+//        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, imeSettings);
+//        imeSettingsList.setAdapter(adapter);
         ListView imeSettingsList = findViewById(R.id.imeSettingsList);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, imeSettings);
-        imeSettingsList.setAdapter(adapter);
+        imeSettingsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intentActivity = null;
+                String selectedItem = (String) parent.getItemAtPosition(position);
+                if (selectedItem.equals(getString(R.string.synchronization_activity))) {
+                    System.out.println(getString(R.string.synchronization_activity));
+                    intentActivity = new Intent(IMESettingsActivity.this, SynActivity.class);
+                }
+                else if (selectedItem.equals(getString(R.string.font_activity))) {
+                    System.out.println(getString(R.string.font_activity));
+                }
+                else {
+                    System.out.println(getString(R.string.theme_activity));
+                }
+                startActivity(intentActivity);
+            }
+        });
     }
 
     @Override

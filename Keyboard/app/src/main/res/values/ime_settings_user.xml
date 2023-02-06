@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="ime_settings_user">
+        <item>@string/synchronization_activity</item>
+        <item>@string/font_activity</item>
+        <item>@string/theme_activity</item>
+    </string-array>
+</resources>

@@ -45,6 +45,10 @@
             android:name=".RegActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Keyboard" />
+        <activity
+            android:name=".SynActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Keyboard" />
 
     </application>
 </manifest>
