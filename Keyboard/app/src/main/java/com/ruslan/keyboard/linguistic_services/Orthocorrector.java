@@ -42,8 +42,6 @@ public class Orthocorrector {
     private StringBuilder mLastWord;
     private int mIndexInWordStore;
 
-    private final String mMark = "0";
-
     public Orthocorrector(WordClientImpl wordClientImpl,
                           Button btn, Button btn2, Button btn3, DatabaseInteraction databaseInteraction) {
         mWordClientImpl = wordClientImpl;
@@ -293,13 +291,13 @@ public class Orthocorrector {
             return copyProcessedWords;
         for (int i = 0; i < copyProcessedWords.size() - 1; i++) {
             for (int j = i + 1; j < copyProcessedWords.size(); j++) {
-                if (copyProcessedWords.get(i).getWord().equals(mMark))
+                if (copyProcessedWords.get(i).getWord().equals(Constants.MARK))
                     break;
                 if (copyProcessedWords.get(i).getWord().equalsIgnoreCase(copyProcessedWords.get(j).getWord())) {
                     if (copyProcessedWords.get(i).getCount() > copyProcessedWords.get(j).getCount())
-                        copyProcessedWords.get(j).setWord(mMark);
+                        copyProcessedWords.get(j).setWord(Constants.MARK);
                     else
-                        copyProcessedWords.get(i).setWord(mMark);
+                        copyProcessedWords.get(i).setWord(Constants.MARK);
                     break;
                 }
             }
@@ -330,7 +328,7 @@ public class Orthocorrector {
         for (int i = 0; i < copyProcessedWords.size(); i++) {
             if (copyProcessedWords.get(i).getCount() < Constants.NEEDED_MAX_WORDS_COUNT
                     || copyProcessedWords.get(i).getWord().length() == 0
-                    || copyProcessedWords.get(i).getWord().equals(mMark))
+                    || copyProcessedWords.get(i).getWord().equals(Constants.MARK))
                 continue;
             countLetters = 0;
             wordFromStore = new StringBuilder(copyProcessedWords.get(i).getWord());

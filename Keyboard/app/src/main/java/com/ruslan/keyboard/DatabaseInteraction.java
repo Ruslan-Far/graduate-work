@@ -59,7 +59,8 @@ public class DatabaseInteraction {
         mWordRepo.open();
         mWordRepo.insert(word);
         mWordRepo.close();
-        WordStore.postToStore(word);
+//        WordStore.postToStore(word);
+        selectWords();
     }
 
     public void insertWords() {
@@ -72,7 +73,8 @@ public class DatabaseInteraction {
         mWordRepo.open();
         mWordRepo.update(id, word);
         mWordRepo.close();
-        WordStore.putToStore(id, word);
+//        WordStore.putToStore(id, word);
+        selectWords();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -97,23 +99,27 @@ public class DatabaseInteraction {
         mCollocationRepo.close();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void insertCollocation(Collocation collocation) {
         mCollocationRepo.open();
         mCollocationRepo.insert(collocation);
         mCollocationRepo.close();
-        Word[] words = new Word[2];
-        mWordRepo.open();
-        words[0] = mWordRepo.select(collocation.getPrevId());
-        words[1] = mWordRepo.select(collocation.getNextId());
-        mWordRepo.close();
-        collocation.setWordResources(words);
-        CollocationStore.postToStore(collocation);
+//        Word[] words = new Word[2];
+//        mWordRepo.open();
+//        words[0] = mWordRepo.select(collocation.getPrevId());
+//        words[1] = mWordRepo.select(collocation.getNextId());
+//        mWordRepo.close();
+//        collocation.setWordResources(words);
+//        CollocationStore.postToStore(collocation);
+        selectCollocations();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void updateCollocation(Integer id, Collocation collocation) {
         mCollocationRepo.open();
         mCollocationRepo.update(id, collocation);
         mCollocationRepo.close();
-        CollocationStore.putToStore(id, collocation);
+//        CollocationStore.putToStore(id, collocation);
+        selectCollocations();
     }
 }
