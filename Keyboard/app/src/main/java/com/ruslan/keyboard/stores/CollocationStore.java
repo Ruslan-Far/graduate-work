@@ -9,18 +9,18 @@ public class CollocationStore {
 
     public static List<Collocation> collocations;
 
-    public static void postToStore(Collocation collocation) {
-        if (collocations == null)
-            collocations = new ArrayList<>();
-        collocations.add(collocation);
-    }
-
-    public static void putToStore(Integer id, Collocation collocation) {
-        for (int i = 0; i < collocations.size(); i++) {
-            if (collocations.get(i).getId() == id) {
-                collocations.get(i).setCount(collocation.getCount());
-                break;
-            }
-        }
-    }
+//    public static void postToStore(Collocation collocation) {
+//        if (collocations == null)
+//            collocations = new ArrayList<>();
+//        collocations.add(collocation);
+//    }
+//
+//    public static void putToStore(Integer id, Collocation collocation) {
+//        for (int i = 0; i < collocations.size(); i++) {
+//            if (collocations.get(i).getId() == id) {
+//                collocations.get(i).setCount(collocation.getCount());
+//                break;
+//            }
+//        }
+//    }
 }

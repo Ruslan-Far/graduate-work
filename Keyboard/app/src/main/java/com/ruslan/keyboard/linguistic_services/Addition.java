@@ -54,29 +54,29 @@ public class Addition {
         mIc = ic;
     }
 
-    public void putToApi(Integer id, Word word) {
-        mWordClientImpl.setCallPut(id, word);
-        mWordClientImpl.getCallPut().enqueue(new Callback<Word>() {
-            @Override
-            public void onResponse(Call<Word> call, Response<Word> response) {
-                if (response.isSuccessful()) {
-                    System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPUUUUUUUUUUUUUUUUUTTTTTTTTTTTTTTTTTTT");
-                    Word w = response.body();
-                    System.out.println(w.getWord());
-                    WordStore.putToStore(w.getId(), w);
-//                    mFlag = true;
-                }
-                else {
-                    System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA333333333333333333333333EEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-                }
-            }
-            @Override
-            public void onFailure(Call<Word> call, Throwable t) {
-                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA33333333333333333FFFFFFFFFFFFFFAAAAAAAAAAAAA");
-            }
-        });
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA33333333333333333333333333333333NNNNNNNNNNNNNNNNNNN");
-    }
+//    public void putToApi(Integer id, Word word) {
+//        mWordClientImpl.setCallPut(id, word);
+//        mWordClientImpl.getCallPut().enqueue(new Callback<Word>() {
+//            @Override
+//            public void onResponse(Call<Word> call, Response<Word> response) {
+//                if (response.isSuccessful()) {
+//                    System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPUUUUUUUUUUUUUUUUUTTTTTTTTTTTTTTTTTTT");
+//                    Word w = response.body();
+//                    System.out.println(w.getWord());
+//                    WordStore.putToStore(w.getId(), w);
+////                    mFlag = true;
+//                }
+//                else {
+//                    System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA333333333333333333333333EEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+//                }
+//            }
+//            @Override
+//            public void onFailure(Call<Word> call, Throwable t) {
+//                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA33333333333333333FFFFFFFFFFFFFFAAAAAAAAAAAAA");
+//            }
+//        });
+//        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA33333333333333333333333333333333NNNNNNNNNNNNNNNNNNN");
+//    }
 
     private void checkHintsOnNullAndEmpty(String[] hints) {
         for (int i = 0; i < hints.length; i++) {
