@@ -20,6 +20,7 @@ import com.ruslan.keyboard.stores.CollocationStore;
 import com.ruslan.keyboard.stores.UserStore;
 import com.ruslan.keyboard.stores.WordStore;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,6 +43,8 @@ public class SynActivity extends AppCompatActivity {
     private List<Word> tmpWordsFromApi;
     private List<Word> synWordsFromApi;
 
+    private int countWordsInSynWordsFromApi;
+
     private List<Collocation> tmpCollocationsFromApi;
 
     @Override
@@ -58,8 +61,18 @@ public class SynActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
-                synWords();
-                synCollocations();
+//                Runnable runnable = new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        System.out.println("second thread");
+//                        while (tmpWordsFromApi == null) {}
+//                        System.out.println("exit second thread");
+//                    }
+//                };
+//                Thread thread = new Thread(runnable);
+//                thread.start();
+                getWordsFromApi(UserStore.user.getId());
+                System.out.println("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             }
         });
         mMessage = findViewById(R.id.message);
@@ -68,19 +81,21 @@ public class SynActivity extends AppCompatActivity {
     private void synWords() {
         Word word;
         synWordsFromApi = new ArrayList<>();
+        countWordsInSynWordsFromApi = 0;
 
-        getWordsFromApi(UserStore.user.getId());
         for (int i = 0; i < WordStore.words.size(); i++) {
             for (int j = 0; tmpWordsFromApi != null && j < tmpWordsFromApi.size(); j++) {
                 if (WordStore.words.get(i).getWord().equals(tmpWordsFromApi.get(j).getWord())) {
                     if (WordStore.words.get(i).getCount() > tmpWordsFromApi.get(j).getCount()) {
                         word = prepareWordForPut(tmpWordsFromApi.get(j), WordStore.words.get(i).getCount());
                         putWordToApi(word.getId(), word);
+                        countWordsInSynWordsFromApi++;
                     }
                     else if (WordStore.words.get(i).getCount() < tmpWordsFromApi.get(j).getCount()) {
                         word = prepareWordForPut(WordStore.words.get(i), tmpWordsFromApi.get(j).getCount());
                         mDatabaseInteraction.updateWord(word.getId(), word);
                         synWordsFromApi.add(tmpWordsFromApi.get(j));
+                        countWordsInSynWordsFromApi++;
                     }
                     tmpWordsFromApi.remove(j);
                     break;
@@ -88,11 +103,12 @@ public class SynActivity extends AppCompatActivity {
             }
             word = prepareWordForPost(WordStore.words.get(i));
             postWordToApi(word);
-//            postWordToApi(WordStore.words.get(i));
+            countWordsInSynWordsFromApi++;
         }
         for (int i = 0; tmpWordsFromApi != null && i < tmpWordsFromApi.size(); i++) {
             mDatabaseInteraction.insertWord(tmpWordsFromApi.get(i));
             synWordsFromApi.add(tmpWordsFromApi.get(i));
+            countWordsInSynWordsFromApi++;
         }
         tmpWordsFromApi = null;
     }
@@ -125,6 +141,18 @@ public class SynActivity extends AppCompatActivity {
                     for (int i = 0; i < tmpWordsFromApi.size(); i++) {
                         System.out.println(tmpWordsFromApi.get(i).getWord());
                     }
+                    synWords();
+                    Runnable runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            System.out.println("second thread");
+                            while (synWordsFromApi.size() != countWordsInSynWordsFromApi) {}
+                            System.out.println("exit second thread");
+                            getCollocationsFromApi(UserStore.user.getId(), Constants.EXPAND);
+                        }
+                    };
+                    Thread thread = new Thread(runnable);
+                    thread.start();
                 }
                 else {
                     System.out.println("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
@@ -147,7 +175,6 @@ public class SynActivity extends AppCompatActivity {
                     System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
                     Word w = response.body();
                     System.out.println(w.getWord());
-//                    WordStore.postToStore(w);
                     synWordsFromApi.add(w);
                 }
                 else {
@@ -171,7 +198,6 @@ public class SynActivity extends AppCompatActivity {
                     System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPUUUUUUUUUUUUUUUUUTTTTTTTTTTTTTTTTTTT");
                     Word w = response.body();
                     System.out.println(w.getWord());
-//                    WordStore.putToStore(w.getId(), w);
                     synWordsFromApi.add(w);
                 }
                 else {
@@ -191,7 +217,6 @@ public class SynActivity extends AppCompatActivity {
         Collocation collocation;
 
         mDatabaseInteraction.selectCollocations();
-        getCollocationsFromApi(UserStore.user.getId(), Constants.EXPAND);
         for (int i = 0; i < CollocationStore.collocations.size(); i++) {
             for (int j = 0; tmpCollocationsFromApi != null && j < tmpCollocationsFromApi.size(); j++) {
                 if (CollocationStore.collocations.get(i).getWordResources()[0].getWord()
@@ -224,6 +249,8 @@ public class SynActivity extends AppCompatActivity {
             mDatabaseInteraction.insertCollocation(collocation);
         }
         tmpCollocationsFromApi = null;
+        synWordsFromApi = null;
+        countWordsInSynWordsFromApi = 0;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -252,6 +279,7 @@ public class SynActivity extends AppCompatActivity {
     private void getCollocationsFromApi(Integer userId, Object expand) {
         mCollocationClientImpl.setCallGet(userId, expand);
         mCollocationClientImpl.getCallGet().enqueue(new Callback<Collocation[]>() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onResponse(Call<Collocation[]> call, Response<Collocation[]> response) {
                 if (response.isSuccessful()) {
@@ -262,6 +290,7 @@ public class SynActivity extends AppCompatActivity {
                         System.out.println(tmpCollocationsFromApi.get(i).getWordResources()[0].getWord());
                         System.out.println(tmpCollocationsFromApi.get(i).getWordResources()[1].getWord());
                     }
+                    synCollocations();
                 }
                 else {
                     System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCCEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
@@ -285,7 +314,6 @@ public class SynActivity extends AppCompatActivity {
                     Collocation c = response.body();
                     System.out.println(c.getWordResources()[0].getWord());
                     System.out.println(c.getWordResources()[1].getWord());
-//                    CollocationStore.postToStore(c);
                 }
                 else {
                     System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCC22222222222222222222222EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
@@ -309,7 +337,6 @@ public class SynActivity extends AppCompatActivity {
                     Collocation c = response.body();
                     System.out.println(c.getWordResources()[0].getWord());
                     System.out.println(c.getWordResources()[1].getWord());
-//                    CollocationStore.putToStore(c.getId(), c);
                 }
                 else {
                     System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCC333333333333333333333EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
@@ -322,11 +349,6 @@ public class SynActivity extends AppCompatActivity {
         });
         System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC3333333333333333333NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
     }
-
-
-
-
-
 
     @Override
     protected void onDestroy(){
