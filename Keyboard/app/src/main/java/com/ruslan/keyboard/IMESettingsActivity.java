@@ -21,6 +21,8 @@ public class IMESettingsActivity extends AppCompatActivity {
 
     private DatabaseInteraction mDatabaseInteraction;
 
+    public static String errorMessage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +37,7 @@ public class IMESettingsActivity extends AppCompatActivity {
             mDatabaseInteraction.insertWords();
             mDatabaseInteraction.selectWords();
         }
+        errorMessage = Constants.EMPTY_SYM;
     }
 
     @Override
@@ -116,6 +119,18 @@ public class IMESettingsActivity extends AppCompatActivity {
                 startActivity(intentActivity);
             }
         });
+        if (errorMessage.length() != 0) {
+            showErrorDialog();
+        }
+    }
+
+    public void showErrorDialog() {
+        ErrorDialogFragment errorDialog = new ErrorDialogFragment();
+        Bundle args = new Bundle();
+        args.putString("errorMessage", errorMessage);
+        errorDialog.setArguments(args);
+        errorDialog.show(getSupportFragmentManager(), "error");
+        errorMessage = Constants.EMPTY_SYM;
     }
 
     @Override

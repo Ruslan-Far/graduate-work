@@ -40,17 +40,15 @@ public class SynActivity extends AppCompatActivity {
 
     private TextView mMessage;
 
-    private List<Word> tmpWordsFromApi;
-    private List<Word> synWordsFromApi;
+    private List<Word> mTmpWordsFromApi;
+    private List<Word> mSynWordsFromApi;
 
-    private int countWordsInSynWordsFromApi;
+    private int mCountWordsInSynWordsFromApi;
 
-    private List<Collocation> tmpCollocationsFromApi;
-    private List<Collocation> synCollocationsFromApi;
+    private List<Collocation> mTmpCollocationsFromApi;
+    private List<Collocation> mSynCollocationsFromApi;
 
-    private int countCollocationsInSynCollocationsFromApi;
-
-    private boolean isError;
+    private int mCountCollocationsInSynCollocationsFromApi;
 
     private final String mGoodMessage = "Синхронизация прошла успешно";
 
@@ -68,55 +66,46 @@ public class SynActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
-//                Runnable runnable = new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        System.out.println("second thread");
-//                        while (tmpWordsFromApi == null) {}
-//                        System.out.println("exit second thread");
-//                    }
-//                };
-//                Thread thread = new Thread(runnable);
-//                thread.start();
-                getWordsFromApi(UserStore.user.getId());
-                System.out.println("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+//                mMessage.setText(Constants.EMPTY_SYM);
+//                getWordsFromApi(UserStore.user.getId());
+//                System.out.println("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                setErrorMessage(Constants.ERROR_TRANSFER_DATA);
             }
         });
         mMessage = findViewById(R.id.message);
-        isError = false;
     }
 
     private void synWords() {
         Word word;
-        synWordsFromApi = new ArrayList<>();
-        countWordsInSynWordsFromApi = 0;
+        mSynWordsFromApi = new ArrayList<>();
+        mCountWordsInSynWordsFromApi = 0;
 
         for (int i = 0; i < WordStore.words.size(); i++) {
-            for (int j = 0; tmpWordsFromApi != null && j < tmpWordsFromApi.size(); j++) {
-                if (WordStore.words.get(i).getWord().equals(tmpWordsFromApi.get(j).getWord())) {
-                    if (WordStore.words.get(i).getCount() > tmpWordsFromApi.get(j).getCount()) {
-                        word = prepareWordForPut(tmpWordsFromApi.get(j), WordStore.words.get(i).getCount());
+            for (int j = 0; mTmpWordsFromApi != null && j < mTmpWordsFromApi.size(); j++) {
+                if (WordStore.words.get(i).getWord().equals(mTmpWordsFromApi.get(j).getWord())) {
+                    if (WordStore.words.get(i).getCount() > mTmpWordsFromApi.get(j).getCount()) {
+                        word = prepareWordForPut(mTmpWordsFromApi.get(j), WordStore.words.get(i).getCount());
                         putWordToApi(word.getId(), word);
-                        countWordsInSynWordsFromApi++;
+                        mCountWordsInSynWordsFromApi++;
                     }
-                    else if (WordStore.words.get(i).getCount() < tmpWordsFromApi.get(j).getCount()) {
-                        word = prepareWordForPut(WordStore.words.get(i), tmpWordsFromApi.get(j).getCount());
+                    else if (WordStore.words.get(i).getCount() < mTmpWordsFromApi.get(j).getCount()) {
+                        word = prepareWordForPut(WordStore.words.get(i), mTmpWordsFromApi.get(j).getCount());
                         mDatabaseInteraction.updateWord(word.getId(), word);
-                        synWordsFromApi.add(tmpWordsFromApi.get(j));
-                        countWordsInSynWordsFromApi++;
+                        mSynWordsFromApi.add(mTmpWordsFromApi.get(j));
+                        mCountWordsInSynWordsFromApi++;
                     }
-                    tmpWordsFromApi.remove(j);
+                    mTmpWordsFromApi.remove(j);
                     break;
                 }
             }
             word = prepareWordForPost(WordStore.words.get(i));
             postWordToApi(word);
-            countWordsInSynWordsFromApi++;
+            mCountWordsInSynWordsFromApi++;
         }
-        for (int i = 0; tmpWordsFromApi != null && i < tmpWordsFromApi.size(); i++) {
-            mDatabaseInteraction.insertWord(tmpWordsFromApi.get(i));
-            synWordsFromApi.add(tmpWordsFromApi.get(i));
-            countWordsInSynWordsFromApi++;
+        for (int i = 0; mTmpWordsFromApi != null && i < mTmpWordsFromApi.size(); i++) {
+            mDatabaseInteraction.insertWord(mTmpWordsFromApi.get(i));
+            mSynWordsFromApi.add(mTmpWordsFromApi.get(i));
+            mCountWordsInSynWordsFromApi++;
         }
     }
 
@@ -144,17 +133,18 @@ public class SynActivity extends AppCompatActivity {
             public void onResponse(Call<Word[]> call, Response<Word[]> response) {
                 if (response.isSuccessful()) {
                     System.out.println("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
-                    tmpWordsFromApi = new ArrayList<>(Arrays.asList(response.body()));
-                    for (int i = 0; i < tmpWordsFromApi.size(); i++) {
-                        System.out.println(tmpWordsFromApi.get(i).getWord());
+                    mTmpWordsFromApi = new ArrayList<>(Arrays.asList(response.body()));
+                    for (int i = 0; i < mTmpWordsFromApi.size(); i++) {
+                        System.out.println(mTmpWordsFromApi.get(i).getWord());
                     }
                     synWords();
                     Runnable runnable = new Runnable() {
                         @Override
                         public void run() {
                             System.out.println("second thread");
-                            while (synWordsFromApi.size() != countWordsInSynWordsFromApi && !isError) {}
-                            if (isError) {
+                            while (mSynWordsFromApi.size() != mCountWordsInSynWordsFromApi
+                                    && IMESettingsActivity.errorMessage.length() == 0) {}
+                            if (IMESettingsActivity.errorMessage.length() != 0) {
                                 System.out.println("Была ошибка!!!  (getWordsFromApi)");
                                 return;
                             }
@@ -167,15 +157,13 @@ public class SynActivity extends AppCompatActivity {
                 }
                 else {
                     System.out.println("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-                    isError = true;
-                    mMessage.setText(Constants.ERROR_TRANSFER_DATA);
+                    setErrorMessage(Constants.ERROR_TRANSFER_DATA);
                 }
             }
             @Override
             public void onFailure(Call<Word[]> call, Throwable t) {
                 System.out.println("FFFFFFFFFFFFFFFFFFAAAAAAAAAAAAAAAAAAAAAAA");
-                isError = true;
-                mMessage.setText(Constants.ERROR_CONNECTION);
+                setErrorMessage(Constants.ERROR_CONNECTION);
             }
         });
         System.out.println("NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
@@ -190,19 +178,17 @@ public class SynActivity extends AppCompatActivity {
                     System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
                     Word w = response.body();
                     System.out.println(w.getWord());
-                    synWordsFromApi.add(w);
+                    mSynWordsFromApi.add(w);
                 }
                 else {
                     System.out.println("2222222222222222222EEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-                    isError = true;
-                    mMessage.setText(Constants.ERROR_TRANSFER_DATA);
+                    setErrorMessage(Constants.ERROR_TRANSFER_DATA);
                 }
             }
             @Override
             public void onFailure(Call<Word> call, Throwable t) {
                 System.out.println("2222222222FFFFFFFFFFFFFFAAAAAAAAAAAAA");
-                isError = true;
-                mMessage.setText(Constants.ERROR_CONNECTION);
+                setErrorMessage(Constants.ERROR_CONNECTION);
             }
         });
         System.out.println("222222222222222222222222222222222222NNNNNNNNNNNNNNNNNNN");
@@ -217,19 +203,17 @@ public class SynActivity extends AppCompatActivity {
                     System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPUUUUUUUUUUUUUUUUUTTTTTTTTTTTTTTTTTTT");
                     Word w = response.body();
                     System.out.println(w.getWord());
-                    synWordsFromApi.add(w);
+                    mSynWordsFromApi.add(w);
                 }
                 else {
                     System.out.println("333333333333333333333333EEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-                    isError = true;
-                    mMessage.setText(Constants.ERROR_TRANSFER_DATA);
+                    setErrorMessage(Constants.ERROR_TRANSFER_DATA);
                 }
             }
             @Override
             public void onFailure(Call<Word> call, Throwable t) {
                 System.out.println("33333333333333333FFFFFFFFFFFFFFAAAAAAAAAAAAA");
-                isError = true;
-                mMessage.setText(Constants.ERROR_CONNECTION);
+                setErrorMessage(Constants.ERROR_CONNECTION);
             }
         });
         System.out.println("33333333333333333333333333333333NNNNNNNNNNNNNNNNNNN");
@@ -238,46 +222,46 @@ public class SynActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void synCollocations() {
         Collocation collocation;
-        synCollocationsFromApi = new ArrayList<>();
-        countCollocationsInSynCollocationsFromApi = 0;
+        mSynCollocationsFromApi = new ArrayList<>();
+        mCountCollocationsInSynCollocationsFromApi = 0;
 
         mDatabaseInteraction.selectCollocations();
         for (int i = 0; i < CollocationStore.collocations.size(); i++) {
-            for (int j = 0; tmpCollocationsFromApi != null && j < tmpCollocationsFromApi.size(); j++) {
+            for (int j = 0; mTmpCollocationsFromApi != null && j < mTmpCollocationsFromApi.size(); j++) {
                 if (CollocationStore.collocations.get(i).getWordResources()[0].getWord()
-                        .equals(tmpCollocationsFromApi.get(j).getWordResources()[0].getWord())
+                        .equals(mTmpCollocationsFromApi.get(j).getWordResources()[0].getWord())
                             && CollocationStore.collocations.get(i).getWordResources()[1].getWord()
-                                .equals(tmpCollocationsFromApi.get(j).getWordResources()[1].getWord())) {
+                                .equals(mTmpCollocationsFromApi.get(j).getWordResources()[1].getWord())) {
                     if (CollocationStore.collocations.get(i).getCount()
-                        > tmpCollocationsFromApi.get(j).getCount()) {
+                        > mTmpCollocationsFromApi.get(j).getCount()) {
                         collocation = prepareCollocationForPut(
-                                tmpCollocationsFromApi.get(j), CollocationStore.collocations.get(i).getCount()
+                                mTmpCollocationsFromApi.get(j), CollocationStore.collocations.get(i).getCount()
                         );
                         putCollocationToApi(collocation.getId(), collocation);
-                        countCollocationsInSynCollocationsFromApi++;
+                        mCountCollocationsInSynCollocationsFromApi++;
                     }
                     else if (CollocationStore.collocations.get(i).getCount()
-                        < tmpCollocationsFromApi.get(j).getCount()) {
+                        < mTmpCollocationsFromApi.get(j).getCount()) {
                         collocation = prepareCollocationForPut(
-                                CollocationStore.collocations.get(i), tmpCollocationsFromApi.get(j).getCount()
+                                CollocationStore.collocations.get(i), mTmpCollocationsFromApi.get(j).getCount()
                         );
                         mDatabaseInteraction.updateCollocation(collocation.getId(), collocation);
-                        synCollocationsFromApi.add(tmpCollocationsFromApi.get(j));
-                        countCollocationsInSynCollocationsFromApi++;
+                        mSynCollocationsFromApi.add(mTmpCollocationsFromApi.get(j));
+                        mCountCollocationsInSynCollocationsFromApi++;
                     }
-                    tmpCollocationsFromApi.remove(j);
+                    mTmpCollocationsFromApi.remove(j);
                     break;
                 }
             }
-            collocation = prepareCollocationForPost(synWordsFromApi, CollocationStore.collocations.get(i));
+            collocation = prepareCollocationForPost(mSynWordsFromApi, CollocationStore.collocations.get(i));
             postCollocationToApi(collocation);
-            countCollocationsInSynCollocationsFromApi++;
+            mCountCollocationsInSynCollocationsFromApi++;
         }
-        for (int i = 0; tmpCollocationsFromApi != null && i < tmpCollocationsFromApi.size(); i++) {
-            collocation = prepareCollocationForPost(WordStore.words, tmpCollocationsFromApi.get(i));
+        for (int i = 0; mTmpCollocationsFromApi != null && i < mTmpCollocationsFromApi.size(); i++) {
+            collocation = prepareCollocationForPost(WordStore.words, mTmpCollocationsFromApi.get(i));
             mDatabaseInteraction.insertCollocation(collocation);
-            synCollocationsFromApi.add(tmpCollocationsFromApi.get(i));
-            countCollocationsInSynCollocationsFromApi++;
+            mSynCollocationsFromApi.add(mTmpCollocationsFromApi.get(i));
+            mCountCollocationsInSynCollocationsFromApi++;
         }
     }
 
@@ -312,26 +296,25 @@ public class SynActivity extends AppCompatActivity {
             public void onResponse(Call<Collocation[]> call, Response<Collocation[]> response) {
                 if (response.isSuccessful()) {
                     System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
-                    tmpCollocationsFromApi = new ArrayList<>(Arrays.asList(response.body()));
-                    for (int i = 0; i < tmpCollocationsFromApi.size(); i++) {
-                        System.out.println(tmpCollocationsFromApi.get(i).getPrevId() + " " + tmpCollocationsFromApi.get(i).getNextId());
-                        System.out.println(tmpCollocationsFromApi.get(i).getWordResources()[0].getWord());
-                        System.out.println(tmpCollocationsFromApi.get(i).getWordResources()[1].getWord());
+                    mTmpCollocationsFromApi = new ArrayList<>(Arrays.asList(response.body()));
+                    for (int i = 0; i < mTmpCollocationsFromApi.size(); i++) {
+                        System.out.println(mTmpCollocationsFromApi.get(i).getPrevId() + " " + mTmpCollocationsFromApi.get(i).getNextId());
+                        System.out.println(mTmpCollocationsFromApi.get(i).getWordResources()[0].getWord());
+                        System.out.println(mTmpCollocationsFromApi.get(i).getWordResources()[1].getWord());
                     }
                     synCollocations();
                     Runnable runnable = new Runnable() {
                         @Override
                         public void run() {
                             System.out.println("second CCCCCCCCCCCCCCCCCCCCCC thread");
-                            while (synCollocationsFromApi.size() != countCollocationsInSynCollocationsFromApi
-                                        && !isError) {}
+                            while (mSynCollocationsFromApi.size() != mCountCollocationsInSynCollocationsFromApi
+                                        && IMESettingsActivity.errorMessage.length() == 0) {}
 //                            resetFields();
-                            if (isError) {
+                            if (IMESettingsActivity.errorMessage.length() != 0) {
                                 System.out.println("Была ошибка!!!  (getCollocationsFromApi)");
                                 return;
                             }
                             System.out.println("Все в порядке!!!   (getCollocationsFromApi)");
-                            mMessage.setTextColor(getResources().getColor(R.color.green));
                             mMessage.setText(mGoodMessage);
                         }
                     };
@@ -340,15 +323,13 @@ public class SynActivity extends AppCompatActivity {
                 }
                 else {
                     System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCCEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-                    isError = true;
-                    mMessage.setText(Constants.ERROR_TRANSFER_DATA);
+                    setErrorMessage(Constants.ERROR_TRANSFER_DATA);
                 }
             }
             @Override
             public void onFailure(Call<Collocation[]> call, Throwable t) {
                 System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCFFFFFFFFFFFFFFFFFFAAAAAAAAAAAAAAAAAAAAAAA");
-                isError = true;
-                mMessage.setText(Constants.ERROR_CONNECTION);
+                setErrorMessage(Constants.ERROR_CONNECTION);
             }
         });
         System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
@@ -364,19 +345,17 @@ public class SynActivity extends AppCompatActivity {
                     Collocation c = response.body();
                     System.out.println(c.getWordResources()[0].getWord());
                     System.out.println(c.getWordResources()[1].getWord());
-                    synCollocationsFromApi.add(c);
+                    mSynCollocationsFromApi.add(c);
                 }
                 else {
                     System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCC22222222222222222222222EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-                    isError = true;
-                    mMessage.setText(Constants.ERROR_TRANSFER_DATA);
+                    setErrorMessage(Constants.ERROR_TRANSFER_DATA);
                 }
             }
             @Override
             public void onFailure(Call<Collocation> call, Throwable t) {
                 System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCCCC2222222222222222222222222222222FFFFFFFFFFFFFFFFFFAAAAAAAAAAAAAAAAAAAAAAA");
-                isError = true;
-                mMessage.setText(Constants.ERROR_CONNECTION);
+                setErrorMessage(Constants.ERROR_CONNECTION);
             }
         });
         System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC222222222222222222222NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
@@ -392,31 +371,34 @@ public class SynActivity extends AppCompatActivity {
                     Collocation c = response.body();
                     System.out.println(c.getWordResources()[0].getWord());
                     System.out.println(c.getWordResources()[1].getWord());
-                    synCollocationsFromApi.add(c);
+                    mSynCollocationsFromApi.add(c);
                 }
                 else {
                     System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCC333333333333333333333EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-                    isError = true;
-                    mMessage.setText(Constants.ERROR_TRANSFER_DATA);
+                    setErrorMessage(Constants.ERROR_TRANSFER_DATA);
                 }
             }
             @Override
             public void onFailure(Call<Collocation> call, Throwable t) {
                 System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCCCC333333333333333333333FFFFFFFFFFFFFFFFFFAAAAAAAAAAAAAAAAAAAAAAA");
-                isError = true;
-                mMessage.setText(Constants.ERROR_CONNECTION);
+                setErrorMessage(Constants.ERROR_CONNECTION);
             }
         });
         System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC3333333333333333333NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
     }
 
+    private void setErrorMessage(String errorMessage) {
+        IMESettingsActivity.errorMessage = errorMessage;
+        finish();
+    }
+
     private void resetFields() {
-        tmpWordsFromApi = null;
-        tmpCollocationsFromApi = null;
-        synWordsFromApi = null;
-        countWordsInSynWordsFromApi = 0;
-        synCollocationsFromApi = null;
-        countCollocationsInSynCollocationsFromApi = 0;
+        mTmpWordsFromApi = null;
+        mTmpCollocationsFromApi = null;
+        mSynWordsFromApi = null;
+        mCountWordsInSynWordsFromApi = 0;
+        mSynCollocationsFromApi = null;
+        mCountCollocationsInSynCollocationsFromApi = 0;
     }
 
     @Override
