@@ -75,8 +75,8 @@ public class WordsController
     @RequestMapping(value = "", method = RequestMethod.POST)
     WordResource post(@RequestBody WordResource wordResource)
     {
-        System.out.print("WordsController POST ");
-        System.out.println(wordResource.toEntity().getWord());
+        System.out.println("WordsController POST " + wordResource.toEntity().getWord());
+//        System.out.println(wordResource.toEntity().getWord());
         Word wordEntity = wordsRepository.insert(wordResource.toEntity());
         if (wordEntity == null)
             return null;
@@ -87,8 +87,8 @@ public class WordsController
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     WordResource put(@PathVariable Integer id, @RequestBody WordResource wordResource)
     {
-        System.out.print("WordsController PUT ");
-        System.out.println(wordResource.toEntity().getId() + " " + wordResource.toEntity().getWord());
+        System.out.println("WordsController PUT " + wordResource.toEntity().getId() + " " + wordResource.toEntity().getWord());
+//        System.out.println(wordResource.toEntity().getId() + " " + wordResource.toEntity().getWord());
         Word wordEntity = wordsRepository.update(id, wordResource.toEntity());
         if (wordEntity == null)
             return null;

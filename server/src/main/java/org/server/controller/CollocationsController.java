@@ -71,8 +71,8 @@ public class CollocationsController
     @RequestMapping(value = "", method = RequestMethod.POST)
     CollocationResource post(@RequestBody CollocationResource collocationResource)
     {
-        System.out.println("CollocationsController POST ");
-        System.out.println(collocationResource.toEntity().getPrevId() + " " + collocationResource.toEntity().getNextId());
+        System.out.println("CollocationsController POST " + collocationResource.toEntity().getPrevId() + " " + collocationResource.toEntity().getNextId());
+//        System.out.println(collocationResource.toEntity().getPrevId() + " " + collocationResource.toEntity().getNextId());
         Collocation collocationEntity = collocationsRepository.insert(collocationResource.toEntity());
         if (collocationEntity == null)
             return null;
@@ -88,8 +88,8 @@ public class CollocationsController
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     CollocationResource put(@PathVariable Integer id, @RequestBody CollocationResource collocationResource)
     {
-        System.out.println("CollocationsController PUT ");
-        System.out.println(collocationResource.toEntity().getId() + " " + collocationResource.toEntity().getPrevId() + " " + collocationResource.toEntity().getNextId());
+        System.out.println("CollocationsController PUT " + collocationResource.toEntity().getId() + " " + collocationResource.toEntity().getPrevId() + " " + collocationResource.toEntity().getNextId());
+//        System.out.println(collocationResource.toEntity().getId() + " " + collocationResource.toEntity().getPrevId() + " " + collocationResource.toEntity().getNextId());
         Collocation collocationEntity = collocationsRepository.update(id, collocationResource.toEntity());
         if (collocationEntity == null)
             return null;

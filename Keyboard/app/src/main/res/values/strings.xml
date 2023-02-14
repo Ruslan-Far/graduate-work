@@ -20,4 +20,5 @@
     <string name="password_hint">Пароль</string>
     
     <string name="synchronize">Синхронизировать</string>
+    <string name="syn_warning">После начала синхронизации дождитесь ее окончания</string>
 </resources>
