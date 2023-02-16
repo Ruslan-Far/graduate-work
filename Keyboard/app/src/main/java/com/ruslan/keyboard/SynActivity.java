@@ -66,22 +66,23 @@ public class SynActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
-//                mMessage.setText(Constants.EMPTY_SYM);
-//                getWordsFromApi(UserStore.user.getId());
-//                System.out.println("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-                setErrorMessage(Constants.ERROR_TRANSFER_DATA);
+                mMessage.setText(Constants.EMPTY_SYM);
+                getWordsFromApi(UserStore.user.getId());
+                System.out.println("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             }
         });
         mMessage = findViewById(R.id.message);
     }
 
     private void synWords() {
+        int startIndexForPost = 0;
         Word word;
         mSynWordsFromApi = new ArrayList<>();
         mCountWordsInSynWordsFromApi = 0;
 
+        mDatabaseInteraction.selectWords();
         for (int i = 0; i < WordStore.words.size(); i++) {
-            for (int j = 0; mTmpWordsFromApi != null && j < mTmpWordsFromApi.size(); j++) {
+            for (int j = 0; j < mTmpWordsFromApi.size(); j++) {
                 if (WordStore.words.get(i).getWord().equals(mTmpWordsFromApi.get(j).getWord())) {
                     if (WordStore.words.get(i).getCount() > mTmpWordsFromApi.get(j).getCount()) {
                         word = prepareWordForPut(mTmpWordsFromApi.get(j), WordStore.words.get(i).getCount());
@@ -94,15 +95,29 @@ public class SynActivity extends AppCompatActivity {
                         mSynWordsFromApi.add(mTmpWordsFromApi.get(j));
                         mCountWordsInSynWordsFromApi++;
                     }
+                    else {
+                        mSynWordsFromApi.add(mTmpWordsFromApi.get(j));
+                        mCountWordsInSynWordsFromApi++;
+                    }
                     mTmpWordsFromApi.remove(j);
+                    startIndexForPost = i + 1;
                     break;
                 }
+                if (j == mTmpWordsFromApi.size() - 1) {
+                    word = prepareWordForPost(WordStore.words.get(i));
+                    postWordToApi(word);
+                    mCountWordsInSynWordsFromApi++;
+                }
             }
+            if (mTmpWordsFromApi.size() == 0)
+                break;
+        }
+        for (int i = startIndexForPost; mTmpWordsFromApi.size() == 0 && i < WordStore.words.size(); i++) {
             word = prepareWordForPost(WordStore.words.get(i));
             postWordToApi(word);
             mCountWordsInSynWordsFromApi++;
         }
-        for (int i = 0; mTmpWordsFromApi != null && i < mTmpWordsFromApi.size(); i++) {
+        for (int i = 0; i < mTmpWordsFromApi.size(); i++) {
             mDatabaseInteraction.insertWord(mTmpWordsFromApi.get(i));
             mSynWordsFromApi.add(mTmpWordsFromApi.get(i));
             mCountWordsInSynWordsFromApi++;
@@ -221,13 +236,14 @@ public class SynActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void synCollocations() {
+        int startIndexForPost = 0;
         Collocation collocation;
         mSynCollocationsFromApi = new ArrayList<>();
         mCountCollocationsInSynCollocationsFromApi = 0;
 
         mDatabaseInteraction.selectCollocations();
         for (int i = 0; i < CollocationStore.collocations.size(); i++) {
-            for (int j = 0; mTmpCollocationsFromApi != null && j < mTmpCollocationsFromApi.size(); j++) {
+            for (int j = 0; j < mTmpCollocationsFromApi.size(); j++) {
                 if (CollocationStore.collocations.get(i).getWordResources()[0].getWord()
                         .equals(mTmpCollocationsFromApi.get(j).getWordResources()[0].getWord())
                             && CollocationStore.collocations.get(i).getWordResources()[1].getWord()
@@ -250,14 +266,25 @@ public class SynActivity extends AppCompatActivity {
                         mCountCollocationsInSynCollocationsFromApi++;
                     }
                     mTmpCollocationsFromApi.remove(j);
+                    startIndexForPost = i + 1;
                     break;
                 }
+                if (j == mTmpCollocationsFromApi.size() - 1) {
+                    collocation = prepareCollocationForPost(mSynWordsFromApi, CollocationStore.collocations.get(i));
+                    postCollocationToApi(collocation);
+                    mCountCollocationsInSynCollocationsFromApi++;
+                }
             }
+            if (mTmpCollocationsFromApi.size() == 0)
+                break;
+        }
+        for (int i = startIndexForPost; mTmpCollocationsFromApi.size() == 0
+                && i < CollocationStore.collocations.size(); i++) {
             collocation = prepareCollocationForPost(mSynWordsFromApi, CollocationStore.collocations.get(i));
             postCollocationToApi(collocation);
             mCountCollocationsInSynCollocationsFromApi++;
         }
-        for (int i = 0; mTmpCollocationsFromApi != null && i < mTmpCollocationsFromApi.size(); i++) {
+        for (int i = 0; i < mTmpCollocationsFromApi.size(); i++) {
             collocation = prepareCollocationForPost(WordStore.words, mTmpCollocationsFromApi.get(i));
             mDatabaseInteraction.insertCollocation(collocation);
             mSynCollocationsFromApi.add(mTmpCollocationsFromApi.get(i));
@@ -315,7 +342,12 @@ public class SynActivity extends AppCompatActivity {
                                 return;
                             }
                             System.out.println("Все в порядке!!!   (getCollocationsFromApi)");
-                            mMessage.setText(mGoodMessage);
+                            mMessage.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mMessage.setText(mGoodMessage);
+                                }
+                            });
                         }
                     };
                     Thread thread = new Thread(runnable);

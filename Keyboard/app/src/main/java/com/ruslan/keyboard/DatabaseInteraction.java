@@ -93,8 +93,10 @@ public class DatabaseInteraction {
                     }).collect(Collectors.toList());
             mWordRepo.close();
             System.out.println("PROVERKA");
-            System.out.println(Arrays.toString(CollocationStore.collocations.get(
-                    CollocationStore.collocations.size() - 1).getWordResources()));
+            System.out.println(CollocationStore.collocations.get(
+                    CollocationStore.collocations.size() - 1).getWordResources()[0].getWord());
+            System.out.println(CollocationStore.collocations.get(
+                    CollocationStore.collocations.size() - 1).getWordResources()[1].getWord());
         }
         mCollocationRepo.close();
     }
