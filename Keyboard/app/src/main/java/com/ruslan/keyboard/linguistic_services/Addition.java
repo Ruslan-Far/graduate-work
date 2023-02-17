@@ -104,7 +104,7 @@ public class Addition {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void start() {
+    private void start() {
         // задержать время
 //        try {
 //            Thread.sleep(10000);
