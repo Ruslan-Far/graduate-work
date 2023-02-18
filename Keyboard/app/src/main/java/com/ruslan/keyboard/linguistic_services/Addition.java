@@ -17,6 +17,7 @@ import com.ruslan.keyboard.stores.WordStore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -116,12 +117,29 @@ public class Addition {
 //        if (WordStore.words == null)
 //            return;
         String[] hints;
+        List<Word> copyWords;
+
         System.out.println("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
         System.out.println(WordStore.words);
-        hints = getWordsWithMaxCount(
-                new ArrayList<>(WordStore.words).stream()
-                        .filter(x -> x.getCount() >= Constants.NEEDED_MAX_WORDS_COUNT)
-                        .collect(Collectors.toList())
+//        hints = getWordsWithMaxCount(
+//                new ArrayList<>(WordStore.words).stream()
+//                        .filter(x -> x.getCount() >= Constants.NEEDED_MAX_WORDS_COUNT)
+//                        .collect(Collectors.toList())
+//        );
+        copyWords = new ArrayList<>(WordStore.words);
+        if (IME.currentLocale == Constants.KEYS_TYPE.ENGLISH)
+            copyWords = copyWords.stream()
+                    .filter(x -> x.getWord().toLowerCase().charAt(0) >= 'a'
+                                && x.getWord().toLowerCase().charAt(0) <= 'z')
+                    .collect(Collectors.toList());
+        else
+            copyWords = copyWords.stream()
+                    .filter(x -> x.getWord().toLowerCase().charAt(0) >= 'а'
+                                && x.getWord().toLowerCase().charAt(0) <= 'я')
+                    .collect(Collectors.toList());
+        hints = getWordsWithMaxCount(copyWords.stream()
+                .filter(x -> x.getCount() >= Constants.NEEDED_MAX_WORDS_COUNT)
+                .collect(Collectors.toList())
         );
         System.out.println("START_AAAAAAAAAAA_HINTS");
         setupHints(hints);

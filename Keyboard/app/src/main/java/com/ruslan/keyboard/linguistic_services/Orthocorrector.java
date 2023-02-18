@@ -206,9 +206,20 @@ public class Orthocorrector {
         List<Word> copyWords;
 
         copyWords = new ArrayList<>();
-        for (int i = 0; i < WordStore.words.size(); i++)
+        for (int i = 0; i < WordStore.words.size(); i++) {
+            if (IME.currentLocale == Constants.KEYS_TYPE.ENGLISH) {
+                if (!(WordStore.words.get(i).getWord().toLowerCase().charAt(0) >= 'a'
+                        && WordStore.words.get(i).getWord().toLowerCase().charAt(0) <= 'z'))
+                    continue;
+            }
+            else {
+                if (!(WordStore.words.get(i).getWord().toLowerCase().charAt(0) >= 'а'
+                        && WordStore.words.get(i).getWord().toLowerCase().charAt(0) <= 'я'))
+                    continue;
+            }
             copyWords.add(new Word(WordStore.words.get(i).getId(),
                     WordStore.words.get(i).getWord(), WordStore.words.get(i).getCount()));
+        }
         return copyWords;
     }
 

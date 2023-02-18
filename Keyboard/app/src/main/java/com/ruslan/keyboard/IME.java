@@ -38,8 +38,11 @@ public class IME extends InputMethodService
 
     private KeyboardView mKeyboardView;
     private Keyboard mKeyboard;
-    private Constants.KEYS_TYPE mCurrentLocale;
+
+    public static Constants.KEYS_TYPE currentLocale;
+
     private Constants.KEYS_TYPE mPreviousLocale;
+
     private boolean mIsCapsOn = true;
 
     private LinearLayout mCandidateView;
@@ -57,8 +60,8 @@ public class IME extends InputMethodService
     @Override
     public View onCreateInputView() {
         mKeyboardView = (KeyboardView) getLayoutInflater().inflate(R.layout.keyboard, null);
-        mCurrentLocale = Constants.KEYS_TYPE.RUSSIAN;
-        mKeyboard = getKeyboard(mCurrentLocale);
+        currentLocale = Constants.KEYS_TYPE.RUSSIAN;
+        mKeyboard = getKeyboard(currentLocale);
         mKeyboard.setShifted(mIsCapsOn);
         mKeyboardView.setKeyboard(mKeyboard);
         mKeyboardView.setOnKeyboardActionListener(this);
@@ -300,13 +303,13 @@ public class IME extends InputMethodService
     }
 
     private void handleSymbolsSwitch() {
-        if (mCurrentLocale != Constants.KEYS_TYPE.SYMBOLS) {
+        if (currentLocale != Constants.KEYS_TYPE.SYMBOLS) {
             mKeyboard = getKeyboard(Constants.KEYS_TYPE.SYMBOLS);
-            mPreviousLocale = mCurrentLocale;
-            mCurrentLocale = Constants.KEYS_TYPE.SYMBOLS;
+            mPreviousLocale = currentLocale;
+            currentLocale = Constants.KEYS_TYPE.SYMBOLS;
         } else {
             mKeyboard = getKeyboard(mPreviousLocale);
-            mCurrentLocale = mPreviousLocale;
+            currentLocale = mPreviousLocale;
             mKeyboard.setShifted(mIsCapsOn);
         }
         mKeyboardView.setKeyboard(mKeyboard);
@@ -320,11 +323,11 @@ public class IME extends InputMethodService
     }
 
     private void handleLanguageSwitch() {
-        if (mCurrentLocale == Constants.KEYS_TYPE.RUSSIAN) {
-            mCurrentLocale = Constants.KEYS_TYPE.ENGLISH;
+        if (currentLocale == Constants.KEYS_TYPE.RUSSIAN) {
+            currentLocale = Constants.KEYS_TYPE.ENGLISH;
             mKeyboard = getKeyboard(Constants.KEYS_TYPE.ENGLISH);
         } else {
-            mCurrentLocale = Constants.KEYS_TYPE.RUSSIAN;
+            currentLocale = Constants.KEYS_TYPE.RUSSIAN;
             mKeyboard = getKeyboard(Constants.KEYS_TYPE.RUSSIAN);
         }
         mKeyboardView.setKeyboard(mKeyboard);
