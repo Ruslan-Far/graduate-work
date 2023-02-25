@@ -66,15 +66,18 @@ public class IME extends InputMethodService
         mKeyboardView.setKeyboard(mKeyboard);
         mKeyboardView.setOnKeyboardActionListener(this);
 
+        mCandidateView = null;
+
         mGeneralContainer = new LinearLayout(this);
         mGeneralContainer.setOrientation(LinearLayout.VERTICAL);
         mParamsGeneralContainer = new LinearLayout.LayoutParams
-                (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         mGeneralContainer.addView(mKeyboardView, mParamsGeneralContainer);
         return mGeneralContainer;
     }
 
     private void createCandidatesView() {
+        mGeneralContainer.removeAllViews();
         mCandidateView = (LinearLayout) getLayoutInflater().inflate(R.layout.candidates, null);
         mBtn = mCandidateView.findViewById(R.id.btn);
         mBtn2 = mCandidateView.findViewById(R.id.btn2);
@@ -104,7 +107,6 @@ public class IME extends InputMethodService
         mBtn.setOnClickListener(listener);
         mBtn2.setOnClickListener(listener);
         mBtn3.setOnClickListener(listener);
-        mGeneralContainer.removeView(mKeyboardView);
         mGeneralContainer.addView(mCandidateView, mParamsGeneralContainer);
         mGeneralContainer.addView(mKeyboardView, mParamsGeneralContainer);
     }
