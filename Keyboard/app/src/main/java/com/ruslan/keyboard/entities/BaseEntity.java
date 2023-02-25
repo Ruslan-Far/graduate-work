@@ -1,6 +1,7 @@
 package com.ruslan.keyboard.entities;
 
 public class BaseEntity {
+
     private Integer id;
 
     public BaseEntity(){}

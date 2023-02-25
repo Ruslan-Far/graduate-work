@@ -7,10 +7,8 @@ import android.database.Cursor;
 
 import com.ruslan.keyboard.DatabaseHelper;
 import com.ruslan.keyboard.entities.Collocation;
-import com.ruslan.keyboard.entities.Word;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class CollocationRepo extends Repo {
@@ -34,13 +32,6 @@ public class CollocationRepo extends Repo {
                 cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLLOCATIONS_COLUMN_NEXT_ID)),
                 cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLLOCATIONS_COLUMN_COUNT))
             ));
-//            Collocation lastCollocation = collocations.get(collocations.size() - 1);
-//            lastCollocation.setWordResources(
-//                new Word[] {mWordRepo.select(lastCollocation.getPrevId()),
-//                            mWordRepo.select(lastCollocation.getNextId())}
-//            );
-//            System.out.println("PROVERKA");
-//            System.out.println(Arrays.toString(collocations.get(collocations.size() - 1).getWordResources()));
         }
         cursor.close();
         if (collocations.size() == 0)

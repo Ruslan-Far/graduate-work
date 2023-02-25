@@ -15,14 +15,8 @@ import com.ruslan.keyboard.entities.Word;
 import com.ruslan.keyboard.stores.WordStore;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class Addition {
 
@@ -35,8 +29,6 @@ public class Addition {
     private DatabaseInteraction mDatabaseInteraction;
 
     private InputConnection mIc;
-
-//    private boolean mFlag = false;
 
     public Addition(WordClientImpl wordClientImpl,
                     Button btn, Button btn2, Button btn3, DatabaseInteraction databaseInteraction) {
@@ -106,26 +98,11 @@ public class Addition {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void start() {
-        // задержать время
-//        try {
-//            Thread.sleep(10000);
-//        } catch (InterruptedException e) {
-//            System.out.println("ERERERERERERERE");
-//            e.printStackTrace();
-//        }
-//        while (WordStore.words == null) {}
-//        if (WordStore.words == null)
-//            return;
         String[] hints;
         List<Word> copyWords;
 
         System.out.println("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
         System.out.println(WordStore.words);
-//        hints = getWordsWithMaxCount(
-//                new ArrayList<>(WordStore.words).stream()
-//                        .filter(x -> x.getCount() >= Constants.NEEDED_MAX_WORDS_COUNT)
-//                        .collect(Collectors.toList())
-//        );
         copyWords = new ArrayList<>(WordStore.words);
         if (IME.currentLocale == Constants.KEYS_TYPE.ENGLISH)
             copyWords = copyWords.stream()
@@ -153,14 +130,6 @@ public class Addition {
 
         textBeforeCursor = mIc.getTextBeforeCursor(IME.sLimitMaxChars, 0).toString();
         System.out.println("TTTTEEEEXXTTTBEFORECURSOR:" + textBeforeCursor + "len:" + textBeforeCursor.length());
-//        for (int i = 0; i < textBeforeCursor.length(); i++) {
-//            System.out.println(textBeforeCursor.charAt(i));
-//            System.out.println((int) textBeforeCursor.charAt(i));
-//        }
-
-
-
-
         if (textBeforeCursor.length() == 0) {
             start();
             return;
@@ -213,17 +182,7 @@ public class Addition {
         mIc.deleteSurroundingText(lastWord.length(), 0);
         mIc.commitText(hint.toString(), 0);
         word = prepareForPut(hint.toString());
-//        putToApi(word.getId(), word);
         mDatabaseInteraction.updateWord(word.getId(), word);
-        // задержать время
-//        try {
-//            Thread.sleep(10000);
-//        } catch (InterruptedException e) {
-//            System.out.println("ERERERERERERERE2222");
-//            e.printStackTrace();
-//        }
-//        while (!mFlag) {}
         process();
-//        mFlag = false;
     }
 }

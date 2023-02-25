@@ -15,7 +15,6 @@ import com.ruslan.keyboard.stores.CollocationStore;
 import com.ruslan.keyboard.stores.UserStore;
 import com.ruslan.keyboard.stores.WordStore;
 
-import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class DatabaseInteraction {
@@ -59,7 +58,6 @@ public class DatabaseInteraction {
         mWordRepo.open();
         mWordRepo.insert(word);
         mWordRepo.close();
-//        WordStore.postToStore(word);
         selectWords();
     }
 
@@ -73,7 +71,6 @@ public class DatabaseInteraction {
         mWordRepo.open();
         mWordRepo.update(id, word);
         mWordRepo.close();
-//        WordStore.putToStore(id, word);
         selectWords();
     }
 
@@ -106,13 +103,6 @@ public class DatabaseInteraction {
         mCollocationRepo.open();
         mCollocationRepo.insert(collocation);
         mCollocationRepo.close();
-//        Word[] words = new Word[2];
-//        mWordRepo.open();
-//        words[0] = mWordRepo.select(collocation.getPrevId());
-//        words[1] = mWordRepo.select(collocation.getNextId());
-//        mWordRepo.close();
-//        collocation.setWordResources(words);
-//        CollocationStore.postToStore(collocation);
         selectCollocations();
     }
 
@@ -121,7 +111,6 @@ public class DatabaseInteraction {
         mCollocationRepo.open();
         mCollocationRepo.update(id, collocation);
         mCollocationRepo.close();
-//        CollocationStore.putToStore(id, collocation);
         selectCollocations();
     }
 }

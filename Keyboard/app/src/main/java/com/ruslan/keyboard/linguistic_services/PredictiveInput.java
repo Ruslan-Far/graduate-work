@@ -17,13 +17,8 @@ import com.ruslan.keyboard.stores.CollocationStore;
 import com.ruslan.keyboard.stores.WordStore;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class PredictiveInput {
 
@@ -108,15 +103,12 @@ public class PredictiveInput {
                 System.out.println("lastWord=" + mLastWord + ":len=" + mLastWord.length());
                 if (filteredCollocations.size() == 0) {
                     Collocation collocation = prepareForPost(penultimateWord.toString());
-//                    postToApi(collocation);
                     mDatabaseInteraction.insertCollocation(collocation);
                 }
                 else {
                     System.out.println("1 filteredCollocations=" + filteredCollocations.get(0).getWordResources()[0]);
                     System.out.println("2 filteredCollocations=" + filteredCollocations.get(0).getWordResources()[1]);
-//                    System.out.println("2 filteredCollocations=" + filteredCollocations.get(1));
                     Collocation collocation = prepareForPut(filteredCollocations.get(0));
-//                    putToApi(collocation.getId(), collocation);
                     mDatabaseInteraction.updateCollocation(collocation.getId(), collocation);
                 }
             }
@@ -232,10 +224,8 @@ public class PredictiveInput {
     public void clickBtnAny(CharSequence hint) {
         List<Collocation> filteredCollocations = filterCollocationsByTwoWords(mLastWord.toString(), hint.toString());
         Collocation collocation = prepareForPut(filteredCollocations.get(0));
-//        putToApi(collocation.getId(), collocation);
         mDatabaseInteraction.updateCollocation(collocation.getId(), collocation);
         mIc.commitText(hint.toString(), 0);
-        // Warning!!!
         resetFields();
         clearHints();
     }

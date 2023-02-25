@@ -12,9 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.ruslan.keyboard.clients_impl.UserClientImpl;
 import com.ruslan.keyboard.entities.User;
-import com.ruslan.keyboard.entities.Word;
-import com.ruslan.keyboard.stores.UserStore;
-import com.ruslan.keyboard.stores.WordStore;
 
 import retrofit2.Call;
 import retrofit2.Callback;

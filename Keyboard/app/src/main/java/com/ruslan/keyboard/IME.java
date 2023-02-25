@@ -112,7 +112,6 @@ public class IME extends InputMethodService
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void initOrthocorrector() {
         mOrthocorrector = new Orthocorrector(new WordClientImpl(), mBtn, mBtn2, mBtn3, mDatabaseInteraction);
-//        mOrthocorrector.getFromApi(UserStore.user.getId());
         mOrthocorrector.setIc(getCurrentInputConnection());
         mOrthocorrector.process(false);
     }
@@ -120,7 +119,6 @@ public class IME extends InputMethodService
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void initPredictiveInput() {
         mPredictiveInput = new PredictiveInput(new CollocationClientImpl(), mBtn, mBtn2, mBtn3, mDatabaseInteraction);
-//        mPredictiveInput.getFromApi(UserStore.user.getId(), Constants.EXPAND);
         mPredictiveInput.setIc(getCurrentInputConnection());
         if (sLingServNum == Constants.PRED_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
             mPredictiveInput.process();
@@ -147,11 +145,9 @@ public class IME extends InputMethodService
             mDatabaseInteraction.selectWords();
         }
         mDatabaseInteraction.selectCollocations();
-//        if (UserStore.user != null) {
-            initOrthocorrector();
-            initPredictiveInput();
-            initAddition();
-//        }
+        initOrthocorrector();
+        initPredictiveInput();
+        initAddition();
     }
 
     @Override
@@ -230,11 +226,9 @@ public class IME extends InputMethodService
     public void onKey(int primaryCode, int[] ints) {
         Log.d(TAG, "onKey " + primaryCode);
         InputConnection ic = getCurrentInputConnection();
-//        if (UserStore.user != null) {
-            mOrthocorrector.setIc(ic);
-            mPredictiveInput.setIc(ic);
-            mAddition.setIc(ic);
-//        }
+        mOrthocorrector.setIc(ic);
+        mPredictiveInput.setIc(ic);
+        mAddition.setIc(ic);
         playClick(primaryCode);
         switch (primaryCode) {
             case Keyboard.KEYCODE_SHIFT:
@@ -253,8 +247,7 @@ public class IME extends InputMethodService
                 if (primaryCode == Keyboard.KEYCODE_DELETE) {
                     ic.deleteSurroundingText(1, 0);
                     if (sLingServNum == Constants.ORTHO_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
-//                        if (UserStore.user != null)
-                            mOrthocorrector.process(true);
+                        mOrthocorrector.process(true);
                 }
                 else {
                     char code = (char) primaryCode;
@@ -263,16 +256,13 @@ public class IME extends InputMethodService
                     }
                     ic.commitText(String.valueOf(code), 1);
                     if (sLingServNum == Constants.ORTHO_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
-//                        if (UserStore.user != null)
-                            mOrthocorrector.process(false);
+                        mOrthocorrector.process(false);
                 }
                 if (sLingServNum == Constants.PRED_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM) {
-//                    if (UserStore.user != null)
-                        mPredictiveInput.process();
+                    mPredictiveInput.process();
                 }
                 if (sLingServNum == Constants.ADDIT_LING_SERV_NUM)
-//                    if (UserStore.user != null)
-                        mAddition.process();
+                    mAddition.process();
                 break;
         }
     }

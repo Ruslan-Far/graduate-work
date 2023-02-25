@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -96,10 +95,6 @@ public class IMESettingsActivity extends AppCompatActivity {
                 }
             });
         }
-//        String[] imeSettings = new String[] { "Шрифт", "Тема" };
-//        ListView imeSettingsList = findViewById(R.id.imeSettingsList);
-//        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, imeSettings);
-//        imeSettingsList.setAdapter(adapter);
         ListView imeSettingsList = findViewById(R.id.imeSettingsList);
         imeSettingsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

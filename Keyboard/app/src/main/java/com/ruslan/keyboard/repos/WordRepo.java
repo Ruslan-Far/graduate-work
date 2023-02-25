@@ -8,7 +8,6 @@ import android.database.Cursor;
 import com.ruslan.keyboard.Constants;
 import com.ruslan.keyboard.DatabaseHelper;
 import com.ruslan.keyboard.R;
-import com.ruslan.keyboard.entities.User;
 import com.ruslan.keyboard.entities.Word;
 
 import java.io.IOException;
@@ -85,10 +84,6 @@ public class WordRepo extends Repo {
             cv.put(DatabaseHelper.WORDS_COLUMN_WORD, arrWords[i]);
             cv.put(DatabaseHelper.WORDS_COLUMN_COUNT, Constants.NEEDED_MAX_WORDS_COUNT);
             database.insert(DatabaseHelper.WORDS_TABLE, null, cv);
-
-
-
-//            System.out.println("arrWords:" + arrWords[i] + "len:" + arrWords[i].length());
         }
     }
 

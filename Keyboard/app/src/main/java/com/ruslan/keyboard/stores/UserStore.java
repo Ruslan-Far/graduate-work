@@ -5,5 +5,4 @@ import com.ruslan.keyboard.entities.User;
 public class UserStore {
 
     public static User user;
-
 }

@@ -11,16 +11,13 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ruslan.keyboard.clients_impl.CollocationClientImpl;
-import com.ruslan.keyboard.clients_impl.UserClientImpl;
 import com.ruslan.keyboard.clients_impl.WordClientImpl;
 import com.ruslan.keyboard.entities.Collocation;
-import com.ruslan.keyboard.entities.User;
 import com.ruslan.keyboard.entities.Word;
 import com.ruslan.keyboard.stores.CollocationStore;
 import com.ruslan.keyboard.stores.UserStore;
 import com.ruslan.keyboard.stores.WordStore;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -336,7 +333,6 @@ public class SynActivity extends AppCompatActivity {
                             System.out.println("second CCCCCCCCCCCCCCCCCCCCCC thread");
                             while (mSynCollocationsFromApi.size() != mCountCollocationsInSynCollocationsFromApi
                                         && IMESettingsActivity.errorMessage.length() == 0) {}
-//                            resetFields();
                             if (IMESettingsActivity.errorMessage.length() != 0) {
                                 System.out.println("Была ошибка!!!  (getCollocationsFromApi)");
                                 return;
@@ -424,19 +420,13 @@ public class SynActivity extends AppCompatActivity {
         finish();
     }
 
-    private void resetFields() {
-        mTmpWordsFromApi = null;
-        mTmpCollocationsFromApi = null;
-        mSynWordsFromApi = null;
-        mCountWordsInSynWordsFromApi = 0;
-        mSynCollocationsFromApi = null;
-        mCountCollocationsInSynCollocationsFromApi = 0;
-    }
-
     @Override
     protected void onDestroy(){
         super.onDestroy();
         Log.d(TAG, "onDestroy");
+        UserStore.user = null;
+        WordStore.words = null;
+        CollocationStore.collocations = null;
     }
 
     @Override

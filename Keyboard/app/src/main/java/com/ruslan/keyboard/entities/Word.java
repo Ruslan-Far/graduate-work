@@ -1,6 +1,7 @@
 package com.ruslan.keyboard.entities;
 
 public class Word extends BaseEntity {
+
     private Integer userId;
     private String word;
     private Integer count;

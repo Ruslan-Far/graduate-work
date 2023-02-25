@@ -12,19 +12,13 @@ import com.ruslan.keyboard.Constants;
 import com.ruslan.keyboard.DatabaseInteraction;
 import com.ruslan.keyboard.IME;
 import com.ruslan.keyboard.R;
-import com.ruslan.keyboard.stores.UserStore;
 import com.ruslan.keyboard.stores.WordStore;
 import com.ruslan.keyboard.clients_impl.WordClientImpl;
 import com.ruslan.keyboard.entities.Word;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class Orthocorrector {
 
@@ -124,7 +118,6 @@ public class Orthocorrector {
                                 .collect(Collectors.toList())
                                 .get(0)
                 );
-//                putToApi(word.getId(), word);
                 mDatabaseInteraction.updateWord(word.getId(), word);
                 resetFields();
             }
@@ -132,12 +125,10 @@ public class Orthocorrector {
         else if (!isDel && mLastWord.length() != 0 && mLastOther.length() != 0) {
             if (mIndexInWordStore == -1) {
                 Word word = prepareForPost();
-//                postToApi(word);
                 mDatabaseInteraction.insertWord(word);
             }
             else if (mIndexInWordStore > -1) {
                 Word word = prepareForPut(WordStore.words.get(mIndexInWordStore));
-//                putToApi(word.getId(), word);
                 mDatabaseInteraction.updateWord(word.getId(), word);
             }
             resetFields();
@@ -151,7 +142,6 @@ public class Orthocorrector {
 
     private Word prepareForPost() {
         Word word = new Word();
-//        word.setUserId(UserStore.user.getId());
         word.setWord(mLastWord.toString());
         word.setCount(1);
         return word;
@@ -160,7 +150,6 @@ public class Orthocorrector {
     private Word prepareForPut(Word wordForPut) {
         Word word = new Word();
         word.setId(wordForPut.getId());
-//        word.setUserId(wordForPut.getUserId());
         word.setWord(wordForPut.getWord());
         word.setCount(wordForPut.getCount() + 1);
         return word;
@@ -226,7 +215,6 @@ public class Orthocorrector {
     private List<Word> getCopyProcessedWords() {
         List<Word> copyProcessedWords;
 
-//        copyProcessedWords = new ArrayList<>(WordStore.words);
         copyProcessedWords = copyWords();
         if (copyProcessedWords.size() <= Constants.NUMBER_OF_HINTS)
             return copyProcessedWords;
@@ -339,7 +327,6 @@ public class Orthocorrector {
                         .collect(Collectors.toList())
                         .get(0)
         );
-//                putToApi(word.getId(), word);
         mDatabaseInteraction.updateWord(word.getId(), word);
         clearHints();
     }
