@@ -10,6 +10,10 @@
     <string name="font_activity">Шрифт</string>
     <string name="theme_activity">Тема</string>
 
+    <string name="sound_checkbox">Звук клавиш</string>
+    <string name="vibration_checkbox">Виброотклик клавиш</string>
+    <string name="candidates_checkbox">Показывать подсказки</string>
+
     <string name="auth">Авторизация</string>
     <string name="enter">Войти</string>
     <string name="enter_to_system">Войти в систему</string>

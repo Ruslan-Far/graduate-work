@@ -5,14 +5,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.ruslan.keyboard.stores.UserStore;
 import com.ruslan.keyboard.stores.WordStore;
+
+import java.util.ArrayList;
 
 public class IMESettingsActivity extends AppCompatActivity {
 
@@ -25,6 +29,7 @@ public class IMESettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         Log.d(TAG, "onCreate");
         Intent intent = new Intent(this, IME.class);
         startService(intent);
@@ -43,6 +48,7 @@ public class IMESettingsActivity extends AppCompatActivity {
     protected void onDestroy(){
         super.onDestroy();
         Log.d(TAG, "onDestroy");
+        UserStore.user = null;
         WordStore.words = null;
     }
 
@@ -95,6 +101,31 @@ public class IMESettingsActivity extends AppCompatActivity {
                 }
             });
         }
+        String[] ime_settings_checkbox = getResources().getStringArray(R.array.ime_settings_checkbox);
+        ListView imeSettingsCheckboxList = findViewById(R.id.imeSettingsCheckboxList);
+        ArrayAdapter<String> adapter
+                = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice,
+                    ime_settings_checkbox);
+        imeSettingsCheckboxList.setAdapter(adapter);
+        imeSettingsCheckboxList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String selectedItem;
+
+                selectedItem = adapter.getItem(position);
+                if (imeSettingsCheckboxList.isItemChecked(position)) {
+                    if (selectedItem.equals(getString(R.string.sound_checkbox))) {
+                        System.out.println("Установить звук");
+                    }
+                }
+                else {
+                    if (selectedItem.equals(getString(R.string.sound_checkbox))) {
+                        System.out.println("Отключить звук");
+                    }
+                }
+            }
+        });
+        imeSettingsCheckboxList.setItemChecked(0, true);
         ListView imeSettingsList = findViewById(R.id.imeSettingsList);
         imeSettingsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
