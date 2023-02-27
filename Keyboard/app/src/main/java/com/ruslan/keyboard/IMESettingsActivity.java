@@ -11,8 +11,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 
+import com.ruslan.keyboard.stores.IMESettingsStore;
 import com.ruslan.keyboard.stores.UserStore;
 import com.ruslan.keyboard.stores.WordStore;
 
@@ -29,7 +29,6 @@ public class IMESettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         Log.d(TAG, "onCreate");
         Intent intent = new Intent(this, IME.class);
         startService(intent);
@@ -41,6 +40,11 @@ public class IMESettingsActivity extends AppCompatActivity {
             mDatabaseInteraction.insertWords();
             mDatabaseInteraction.selectWords();
         }
+        // mDatabaseInteraction.selectIMESettings();
+        IMESettingsStore.imeSettings = new ArrayList<>();
+        IMESettingsStore.imeSettings.add(Constants.FALSE);
+        IMESettingsStore.imeSettings.add(Constants.FALSE);
+        IMESettingsStore.imeSettings.add(Constants.TRUE);
         errorMessage = Constants.EMPTY_SYM;
     }
 
@@ -50,6 +54,7 @@ public class IMESettingsActivity extends AppCompatActivity {
         Log.d(TAG, "onDestroy");
         UserStore.user = null;
         WordStore.words = null;
+//        IMESettingsStore.imeSettings = null;
     }
 
     @Override
@@ -101,11 +106,10 @@ public class IMESettingsActivity extends AppCompatActivity {
                 }
             });
         }
-        String[] ime_settings_checkbox = getResources().getStringArray(R.array.ime_settings_checkbox);
         ListView imeSettingsCheckboxList = findViewById(R.id.imeSettingsCheckboxList);
         ArrayAdapter<String> adapter
                 = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice,
-                    ime_settings_checkbox);
+                    getResources().getStringArray(R.array.ime_settings_checkbox));
         imeSettingsCheckboxList.setAdapter(adapter);
         imeSettingsCheckboxList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -116,16 +120,40 @@ public class IMESettingsActivity extends AppCompatActivity {
                 if (imeSettingsCheckboxList.isItemChecked(position)) {
                     if (selectedItem.equals(getString(R.string.sound_checkbox))) {
                         System.out.println("Установить звук");
+                        // update
+                        IMESettingsStore.imeSettings.set(Constants.SOUND, Constants.TRUE);
+                    }
+                    else if (selectedItem.equals(getString(R.string.vibration_checkbox))) {
+                        System.out.println("Установить вибрацию");
+                        // update
+                        IMESettingsStore.imeSettings.set(Constants.VIBRATION, Constants.TRUE);
+                    }
+                    else {
+                        System.out.println("Установить подсказки");
+                        // update
+                        IMESettingsStore.imeSettings.set(Constants.CANDIDATES, Constants.TRUE);
                     }
                 }
                 else {
                     if (selectedItem.equals(getString(R.string.sound_checkbox))) {
                         System.out.println("Отключить звук");
+                        // update
+                        IMESettingsStore.imeSettings.set(Constants.SOUND, Constants.FALSE);
+                    }
+                    else if (selectedItem.equals(getString(R.string.vibration_checkbox))) {
+                        System.out.println("Отключить вибрацию");
+                        // update
+                        IMESettingsStore.imeSettings.set(Constants.VIBRATION, Constants.FALSE);
+                    }
+                    else {
+                        System.out.println("Отключить подсказки");
+                        // update
+                        IMESettingsStore.imeSettings.set(Constants.CANDIDATES, Constants.FALSE);
                     }
                 }
             }
         });
-        imeSettingsCheckboxList.setItemChecked(0, true);
+        initIMESettingsCheckboxList(imeSettingsCheckboxList);
         ListView imeSettingsList = findViewById(R.id.imeSettingsList);
         imeSettingsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -150,7 +178,14 @@ public class IMESettingsActivity extends AppCompatActivity {
         }
     }
 
-    public void showErrorDialog() {
+    private void initIMESettingsCheckboxList(ListView imeSettingsCheckboxList) {
+        for (int i = 0; i < 3; i++) {
+            if (IMESettingsStore.imeSettings.get(i).equals(Constants.TRUE))
+                imeSettingsCheckboxList.setItemChecked(i, true);
+        }
+    }
+
+    private void showErrorDialog() {
         ErrorDialogFragment errorDialog = new ErrorDialogFragment();
         Bundle args = new Bundle();
         args.putString("errorMessage", errorMessage);

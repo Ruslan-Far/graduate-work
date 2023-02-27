@@ -7,6 +7,7 @@ import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
 import android.os.Build;
 import android.util.Log;
+import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -22,7 +23,7 @@ import com.ruslan.keyboard.linguistic_services.Addition;
 import com.ruslan.keyboard.linguistic_services.Orthocorrector;
 import com.ruslan.keyboard.linguistic_services.PredictiveInput;
 import com.ruslan.keyboard.stores.CollocationStore;
-import com.ruslan.keyboard.stores.UserStore;
+import com.ruslan.keyboard.stores.IMESettingsStore;
 import com.ruslan.keyboard.stores.WordStore;
 
 public class IME extends InputMethodService
@@ -137,28 +138,36 @@ public class IME extends InputMethodService
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onStartInputView(EditorInfo info, boolean restarting) {
-        if (mCandidateView == null)
-            createCandidatesView();
         mDatabaseInteraction = new DatabaseInteraction(this);
-        mDatabaseInteraction.selectUser();
-        mDatabaseInteraction.selectWords();
-        if (WordStore.words == null) {
-            mDatabaseInteraction.insertWords();
+        // mDatabaseInteraction.selectIMESettings();
+        if (mCandidateView == null
+                && IMESettingsStore.imeSettings.get(Constants.CANDIDATES).equals(Constants.TRUE))
+            createCandidatesView();
+        else if (mCandidateView != null
+                && IMESettingsStore.imeSettings.get(Constants.CANDIDATES).equals(Constants.FALSE))
+            destroyCandidatesView();
+        if (mCandidateView != null) {
             mDatabaseInteraction.selectWords();
+            if (WordStore.words == null) {
+                mDatabaseInteraction.insertWords();
+                mDatabaseInteraction.selectWords();
+            }
+            mDatabaseInteraction.selectCollocations();
+            initOrthocorrector();
+            initPredictiveInput();
+            initAddition();
         }
-        mDatabaseInteraction.selectCollocations();
-        initOrthocorrector();
-        initPredictiveInput();
-        initAddition();
     }
 
     @Override
     public void onFinishInputView(boolean finishingInput) {
         System.out.println("FFFFIIIIIIIINNNNNNNNNNNNNIIIIIIIIIIIISSSSSSSSSSSHHHHHHHHHHHH");
-        UserStore.user = null;
-        WordStore.words = null;
-        CollocationStore.collocations = null;
-        clearHints();
+//        IMESettingsStore.imeSettings = null;
+        if (mCandidateView != null) {
+            WordStore.words = null;
+            CollocationStore.collocations = null;
+            clearHints();
+        }
         super.onFinishInputView(finishingInput);
     }
 
@@ -168,6 +177,11 @@ public class IME extends InputMethodService
         mBtn.setText(Constants.EMPTY_SYM);
         mBtn2.setText(Constants.EMPTY_SYM);
         mBtn3.setText(Constants.EMPTY_SYM);
+    }
+
+    private void destroyCandidatesView() {
+        mGeneralContainer.removeView(mCandidateView);
+        mCandidateView = null;
     }
 
     /**
@@ -213,6 +227,12 @@ public class IME extends InputMethodService
         }
     }
 
+    private void vibrate() {
+        mKeyboardView.performHapticFeedback(
+            HapticFeedbackConstants.KEYBOARD_TAP,
+            HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+    }
+
     @Override
     public void onPress(int i) {
         Log.d(TAG, "onPress " + i);
@@ -228,10 +248,15 @@ public class IME extends InputMethodService
     public void onKey(int primaryCode, int[] ints) {
         Log.d(TAG, "onKey " + primaryCode);
         InputConnection ic = getCurrentInputConnection();
-        mOrthocorrector.setIc(ic);
-        mPredictiveInput.setIc(ic);
-        mAddition.setIc(ic);
-        playClick(primaryCode);
+        if (mCandidateView != null) {
+            mOrthocorrector.setIc(ic);
+            mPredictiveInput.setIc(ic);
+            mAddition.setIc(ic);
+        }
+        if (IMESettingsStore.imeSettings.get(Constants.SOUND).equals(Constants.TRUE))
+            playClick(primaryCode);
+        if (IMESettingsStore.imeSettings.get(Constants.VIBRATION).equals(Constants.TRUE))
+            vibrate();
         switch (primaryCode) {
             case Keyboard.KEYCODE_SHIFT:
                 handleShift();
@@ -248,8 +273,9 @@ public class IME extends InputMethodService
             default:
                 if (primaryCode == Keyboard.KEYCODE_DELETE) {
                     ic.deleteSurroundingText(1, 0);
-                    if (sLingServNum == Constants.ORTHO_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
-                        mOrthocorrector.process(true);
+                    if (mCandidateView != null)
+                        if (sLingServNum == Constants.ORTHO_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
+                            mOrthocorrector.process(true);
                 }
                 else {
                     char code = (char) primaryCode;
@@ -257,14 +283,16 @@ public class IME extends InputMethodService
                         code = Character.toUpperCase(code);
                     }
                     ic.commitText(String.valueOf(code), 1);
-                    if (sLingServNum == Constants.ORTHO_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
-                        mOrthocorrector.process(false);
+                    if (mCandidateView != null)
+                        if (sLingServNum == Constants.ORTHO_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
+                            mOrthocorrector.process(false);
                 }
-                if (sLingServNum == Constants.PRED_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM) {
-                    mPredictiveInput.process();
-                }
-                if (sLingServNum == Constants.ADDIT_LING_SERV_NUM)
-                    mAddition.process();
+                if (mCandidateView != null)
+                    if (sLingServNum == Constants.PRED_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
+                        mPredictiveInput.process();
+                if (mCandidateView != null)
+                    if (sLingServNum == Constants.ADDIT_LING_SERV_NUM)
+                        mAddition.process();
                 break;
         }
     }
@@ -296,9 +324,9 @@ public class IME extends InputMethodService
 
     private void handleSymbolsSwitch() {
         if (currentLocale != Constants.KEYS_TYPE.SYMBOLS) {
-            mKeyboard = getKeyboard(Constants.KEYS_TYPE.SYMBOLS);
             mPreviousLocale = currentLocale;
             currentLocale = Constants.KEYS_TYPE.SYMBOLS;
+            mKeyboard = getKeyboard(currentLocale);
         } else {
             mKeyboard = getKeyboard(mPreviousLocale);
             currentLocale = mPreviousLocale;
@@ -317,11 +345,10 @@ public class IME extends InputMethodService
     private void handleLanguageSwitch() {
         if (currentLocale == Constants.KEYS_TYPE.RUSSIAN) {
             currentLocale = Constants.KEYS_TYPE.ENGLISH;
-            mKeyboard = getKeyboard(Constants.KEYS_TYPE.ENGLISH);
         } else {
             currentLocale = Constants.KEYS_TYPE.RUSSIAN;
-            mKeyboard = getKeyboard(Constants.KEYS_TYPE.RUSSIAN);
         }
+        mKeyboard = getKeyboard(currentLocale);
         mKeyboardView.setKeyboard(mKeyboard);
         mKeyboard.setShifted(mIsCapsOn);
         mKeyboardView.invalidateAllKeys();
