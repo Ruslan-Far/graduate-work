@@ -1,8 +1,8 @@
 package com.ruslan.keyboard.stores;
 
-import java.util.List;
+import com.ruslan.keyboard.entities.IMESettings;
 
 public class IMESettingsStore {
 
-    public static List<String> imeSettings;
+    public static IMESettings imeSettings;
 }

@@ -19,6 +19,7 @@ import androidx.annotation.RequiresApi;
 
 import com.ruslan.keyboard.clients_impl.CollocationClientImpl;
 import com.ruslan.keyboard.clients_impl.WordClientImpl;
+import com.ruslan.keyboard.entities.IMESettings;
 import com.ruslan.keyboard.linguistic_services.Addition;
 import com.ruslan.keyboard.linguistic_services.Orthocorrector;
 import com.ruslan.keyboard.linguistic_services.PredictiveInput;
@@ -139,12 +140,16 @@ public class IME extends InputMethodService
     @Override
     public void onStartInputView(EditorInfo info, boolean restarting) {
         mDatabaseInteraction = new DatabaseInteraction(this);
-        // mDatabaseInteraction.selectIMESettings();
+        mDatabaseInteraction.selectIMESettings();
+        if (IMESettingsStore.imeSettings == null) {
+            mDatabaseInteraction.insertIMESettings(new IMESettings());
+            mDatabaseInteraction.selectIMESettings();
+        }
         if (mCandidateView == null
-                && IMESettingsStore.imeSettings.get(Constants.CANDIDATES).equals(Constants.TRUE))
+                && IMESettingsStore.imeSettings.getCandidates() == Constants.TRUE)
             createCandidatesView();
         else if (mCandidateView != null
-                && IMESettingsStore.imeSettings.get(Constants.CANDIDATES).equals(Constants.FALSE))
+                && IMESettingsStore.imeSettings.getCandidates() == Constants.FALSE)
             destroyCandidatesView();
         if (mCandidateView != null) {
             mDatabaseInteraction.selectWords();
@@ -162,7 +167,7 @@ public class IME extends InputMethodService
     @Override
     public void onFinishInputView(boolean finishingInput) {
         System.out.println("FFFFIIIIIIIINNNNNNNNNNNNNIIIIIIIIIIIISSSSSSSSSSSHHHHHHHHHHHH");
-//        IMESettingsStore.imeSettings = null;
+        IMESettingsStore.imeSettings = null;
         if (mCandidateView != null) {
             WordStore.words = null;
             CollocationStore.collocations = null;
@@ -184,10 +189,6 @@ public class IME extends InputMethodService
         mCandidateView = null;
     }
 
-    /**
-     * @param locale - keys of keyboard
-     * @return localized keyboard
-     */
     private Keyboard getKeyboard(Constants.KEYS_TYPE locale) {
         switch (locale) {
             case RUSSIAN:
@@ -201,11 +202,6 @@ public class IME extends InputMethodService
         }
     }
 
-    /**
-     * Play sound on key press
-     *
-     * @param keyCode of pressed key
-     */
     private void playClick(int keyCode) {
         AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
         switch (keyCode) {
@@ -253,9 +249,9 @@ public class IME extends InputMethodService
             mPredictiveInput.setIc(ic);
             mAddition.setIc(ic);
         }
-        if (IMESettingsStore.imeSettings.get(Constants.SOUND).equals(Constants.TRUE))
+        if (IMESettingsStore.imeSettings.getSound() == Constants.TRUE)
             playClick(primaryCode);
-        if (IMESettingsStore.imeSettings.get(Constants.VIBRATION).equals(Constants.TRUE))
+        if (IMESettingsStore.imeSettings.getVibration() == Constants.TRUE)
             vibrate();
         switch (primaryCode) {
             case Keyboard.KEYCODE_SHIFT:

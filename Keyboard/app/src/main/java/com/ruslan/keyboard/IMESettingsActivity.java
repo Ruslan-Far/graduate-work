@@ -12,11 +12,10 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.ruslan.keyboard.entities.IMESettings;
 import com.ruslan.keyboard.stores.IMESettingsStore;
 import com.ruslan.keyboard.stores.UserStore;
 import com.ruslan.keyboard.stores.WordStore;
-
-import java.util.ArrayList;
 
 public class IMESettingsActivity extends AppCompatActivity {
 
@@ -35,26 +34,26 @@ public class IMESettingsActivity extends AppCompatActivity {
 
         setTitle(R.string.ime_settings_activity);
         mDatabaseInteraction = new DatabaseInteraction(this);
+        mDatabaseInteraction.selectIMESettings();
+        if (IMESettingsStore.imeSettings == null) {
+            mDatabaseInteraction.insertIMESettings(new IMESettings());
+            mDatabaseInteraction.selectIMESettings();
+        }
         mDatabaseInteraction.selectWords();
         if (WordStore.words == null) {
             mDatabaseInteraction.insertWords();
             mDatabaseInteraction.selectWords();
         }
-        // mDatabaseInteraction.selectIMESettings();
-        IMESettingsStore.imeSettings = new ArrayList<>();
-        IMESettingsStore.imeSettings.add(Constants.FALSE);
-        IMESettingsStore.imeSettings.add(Constants.FALSE);
-        IMESettingsStore.imeSettings.add(Constants.TRUE);
         errorMessage = Constants.EMPTY_SYM;
     }
 
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
         UserStore.user = null;
         WordStore.words = null;
-//        IMESettingsStore.imeSettings = null;
+        IMESettingsStore.imeSettings = null;
     }
 
     @Override
@@ -120,37 +119,33 @@ public class IMESettingsActivity extends AppCompatActivity {
                 if (imeSettingsCheckboxList.isItemChecked(position)) {
                     if (selectedItem.equals(getString(R.string.sound_checkbox))) {
                         System.out.println("Установить звук");
-                        // update
-                        IMESettingsStore.imeSettings.set(Constants.SOUND, Constants.TRUE);
+                        IMESettingsStore.imeSettings.setSound(Constants.TRUE);
                     }
                     else if (selectedItem.equals(getString(R.string.vibration_checkbox))) {
                         System.out.println("Установить вибрацию");
-                        // update
-                        IMESettingsStore.imeSettings.set(Constants.VIBRATION, Constants.TRUE);
+                        IMESettingsStore.imeSettings.setVibration(Constants.TRUE);
                     }
                     else {
                         System.out.println("Установить подсказки");
-                        // update
-                        IMESettingsStore.imeSettings.set(Constants.CANDIDATES, Constants.TRUE);
+                        IMESettingsStore.imeSettings.setCandidates(Constants.TRUE);
                     }
                 }
                 else {
                     if (selectedItem.equals(getString(R.string.sound_checkbox))) {
                         System.out.println("Отключить звук");
-                        // update
-                        IMESettingsStore.imeSettings.set(Constants.SOUND, Constants.FALSE);
+                        IMESettingsStore.imeSettings.setSound(Constants.FALSE);
                     }
                     else if (selectedItem.equals(getString(R.string.vibration_checkbox))) {
                         System.out.println("Отключить вибрацию");
-                        // update
-                        IMESettingsStore.imeSettings.set(Constants.VIBRATION, Constants.FALSE);
+                        IMESettingsStore.imeSettings.setVibration(Constants.FALSE);
                     }
                     else {
                         System.out.println("Отключить подсказки");
-                        // update
-                        IMESettingsStore.imeSettings.set(Constants.CANDIDATES, Constants.FALSE);
+                        IMESettingsStore.imeSettings.setCandidates(Constants.FALSE);
                     }
                 }
+                mDatabaseInteraction.updateIMESettings(IMESettingsStore.imeSettings.getId(),
+                        IMESettingsStore.imeSettings);
             }
         });
         initIMESettingsCheckboxList(imeSettingsCheckboxList);
@@ -179,10 +174,12 @@ public class IMESettingsActivity extends AppCompatActivity {
     }
 
     private void initIMESettingsCheckboxList(ListView imeSettingsCheckboxList) {
-        for (int i = 0; i < 3; i++) {
-            if (IMESettingsStore.imeSettings.get(i).equals(Constants.TRUE))
-                imeSettingsCheckboxList.setItemChecked(i, true);
-        }
+        if (IMESettingsStore.imeSettings.getSound() == Constants.TRUE)
+            imeSettingsCheckboxList.setItemChecked(0, true);
+        if (IMESettingsStore.imeSettings.getVibration() == Constants.TRUE)
+            imeSettingsCheckboxList.setItemChecked(1, true);
+        if (IMESettingsStore.imeSettings.getCandidates() == Constants.TRUE)
+            imeSettingsCheckboxList.setItemChecked(2, true);
     }
 
     private void showErrorDialog() {

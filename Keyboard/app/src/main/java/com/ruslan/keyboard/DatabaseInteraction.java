@@ -6,12 +6,15 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.ruslan.keyboard.entities.Collocation;
+import com.ruslan.keyboard.entities.IMESettings;
 import com.ruslan.keyboard.entities.User;
 import com.ruslan.keyboard.entities.Word;
 import com.ruslan.keyboard.repos.CollocationRepo;
+import com.ruslan.keyboard.repos.IMESettingsRepo;
 import com.ruslan.keyboard.repos.WordRepo;
 import com.ruslan.keyboard.repos.UserRepo;
 import com.ruslan.keyboard.stores.CollocationStore;
+import com.ruslan.keyboard.stores.IMESettingsStore;
 import com.ruslan.keyboard.stores.UserStore;
 import com.ruslan.keyboard.stores.WordStore;
 
@@ -22,11 +25,13 @@ public class DatabaseInteraction {
     private UserRepo mUserRepo;
     private WordRepo mWordRepo;
     private CollocationRepo mCollocationRepo;
+    private IMESettingsRepo mIMESettingsRepo;
 
     public DatabaseInteraction(Context context) {
         mUserRepo = new UserRepo(context);
         mWordRepo = new WordRepo(context);
         mCollocationRepo = new CollocationRepo(context);
+        mIMESettingsRepo = new IMESettingsRepo(context);
     }
 
     public void selectUser() {
@@ -112,5 +117,28 @@ public class DatabaseInteraction {
         mCollocationRepo.update(id, collocation);
         mCollocationRepo.close();
         selectCollocations();
+    }
+
+    public void selectIMESettings() {
+        mIMESettingsRepo.open();
+        IMESettingsStore.imeSettings = mIMESettingsRepo.select();
+        mIMESettingsRepo.close();
+    }
+
+    public void insertIMESettings(IMESettings imeSettings) {
+        imeSettings.setId(1);
+        imeSettings.setSound(Constants.FALSE);
+        imeSettings.setVibration(Constants.FALSE);
+        imeSettings.setCandidates(Constants.TRUE);
+        mIMESettingsRepo.open();
+        mIMESettingsRepo.insert(imeSettings);
+        mIMESettingsRepo.close();
+    }
+
+    public void updateIMESettings(Integer id, IMESettings imeSettings) {
+        mIMESettingsRepo.open();
+        mIMESettingsRepo.update(id, imeSettings);
+        mIMESettingsRepo.close();
+        selectIMESettings();
     }
 }

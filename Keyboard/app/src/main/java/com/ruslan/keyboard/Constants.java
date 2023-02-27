@@ -18,11 +18,8 @@ public class Constants {
     public static final int ORTHO_LING_SERV_NUM = 1;
     public static final int PRED_LING_SERV_NUM = 2;
     public static final String MARK = "0";
-    public static final String TRUE = "true";
-    public static final String FALSE = "false";
-    public static final int SOUND = 0;
-    public static final int VIBRATION = 1;
-    public static final int CANDIDATES = 2;
+    public static final int TRUE = 1;
+    public static final int FALSE = 0;
 
     public static class KeyCode {
 

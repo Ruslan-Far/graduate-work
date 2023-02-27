@@ -24,6 +24,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLLOCATIONS_COLUMN_NEXT_ID = "next_id";
     public static final String COLLOCATIONS_COLUMN_COUNT = "count";
 
+    public static final String IME_SETTINGS_TABLE = "ime_settings";
+    public static final String IME_SETTINGS_COLUMN_ID = "id";
+    public static final String IME_SETTINGS_COLUMN_SOUND = "sound";
+    public static final String IME_SETTINGS_COLUMN_VIBRATION = "vibration";
+    public static final String IME_SETTINGS_COLUMN_CANDIDATES = "candidates";
+
     private String createUserQuery =
             "CREATE TABLE " + USER_TABLE +
                 "(" +
@@ -48,6 +54,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     COLLOCATIONS_COLUMN_COUNT + " INTEGER NOT NULL" +
                 ")";
 
+    private String createIMESettingsQuery =
+            "CREATE TABLE " + IME_SETTINGS_TABLE +
+                "(" +
+                    IME_SETTINGS_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    IME_SETTINGS_COLUMN_SOUND + " INTEGER NOT NULL," +
+                    IME_SETTINGS_COLUMN_VIBRATION + " INTEGER NOT NULL," +
+                    IME_SETTINGS_COLUMN_CANDIDATES + " INTEGER NOT NULL" +
+                ")";
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, SCHEMA);
     }
@@ -57,6 +72,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(createUserQuery);
         db.execSQL(createWordsQuery);
         db.execSQL(createCollocationsQuery);
+        db.execSQL(createIMESettingsQuery);
     }
 
     @Override

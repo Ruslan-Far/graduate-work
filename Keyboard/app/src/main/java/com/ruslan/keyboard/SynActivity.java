@@ -421,7 +421,7 @@ public class SynActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
         UserStore.user = null;
