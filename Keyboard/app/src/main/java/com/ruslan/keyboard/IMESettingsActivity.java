@@ -105,6 +105,7 @@ public class IMESettingsActivity extends AppCompatActivity {
                 }
             });
         }
+        mDatabaseInteraction.selectIMESettings();
         ListView imeSettingsCheckboxList = findViewById(R.id.imeSettingsCheckboxList);
         ArrayAdapter<String> adapter
                 = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice,
@@ -115,6 +116,8 @@ public class IMESettingsActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String selectedItem;
 
+                if (IMESettingsStore.imeSettings == null)
+                    mDatabaseInteraction.selectIMESettings();
                 selectedItem = adapter.getItem(position);
                 if (imeSettingsCheckboxList.isItemChecked(position)) {
                     if (selectedItem.equals(getString(R.string.sound_checkbox))) {
