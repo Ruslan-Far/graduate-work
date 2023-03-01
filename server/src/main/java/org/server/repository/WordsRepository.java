@@ -35,6 +35,10 @@ public class WordsRepository implements IRestRepository<Word>
             "WHERE \"id\" = ? " +
             "RETURNING \"id\", \"userId\", \"word\", \"count\"";
 
+    private static String deleteByUserIdQuery = "DELETE FROM \"words\" " +
+            "WHERE \"userId\" = ? " +
+            "ORDER BY \"id\"";
+
     public WordsRepository(JdbcOperations jdbcOperations) { this.jdbcOperations = jdbcOperations; }
 
 
@@ -137,5 +141,24 @@ public class WordsRepository implements IRestRepository<Word>
                 rowSet.getString(3),
                 rowSet.getInt(4)
         );
+    }
+
+
+    public Word[] deleteByUserId(Integer userId)
+    {
+        ArrayList<Word> values = new ArrayList<>();
+        Object[] args = { userId };
+        int[] types = { Types.INTEGER };
+        SqlRowSet rowSet = jdbcOperations.queryForRowSet(deleteByUserIdQuery, args, types);
+        while (rowSet.next())
+            values.add(new Word(
+                    rowSet.getInt(1),
+                    rowSet.getInt(2),
+                    rowSet.getString(3),
+                    rowSet.getInt(4)
+            ));
+        Word[] res = new Word[values.size()];
+        res = values.toArray(res);
+        return res;
     }
 }

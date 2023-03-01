@@ -12,6 +12,7 @@ public class CollocationClientImpl extends ClientImpl {
     private Call<Collocation[]> mCallGet;
     private Call<Collocation> mCallPost;
     private Call<Collocation> mCallPut;
+    private Call<Collocation[]> mCallDelete;
 
     public CollocationClientImpl() {
         super();
@@ -40,5 +41,13 @@ public class CollocationClientImpl extends ClientImpl {
 
     public void setCallPut(Integer id, Collocation collocation) {
         mCallPut = mCollocationClient.put(id, collocation);
+    }
+
+    public Call<Collocation[]> getCallDelete() {
+        return mCallDelete;
+    }
+
+    public void setCallDelete(Integer userId) {
+        mCallDelete = mCollocationClient.delete(userId);
     }
 }

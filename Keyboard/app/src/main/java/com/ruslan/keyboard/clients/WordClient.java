@@ -4,6 +4,7 @@ import com.ruslan.keyboard.entities.Word;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -22,4 +23,7 @@ public interface WordClient {
 
     @PUT(res + "/{id}")
     Call<Word> put(@Path("id") Integer id, @Body Word word);
+
+    @DELETE(res)
+    Call<Word[]> delete(@Query("userId") Integer userId);
 }

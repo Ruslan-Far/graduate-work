@@ -76,7 +76,6 @@ public class WordsController
     WordResource post(@RequestBody WordResource wordResource)
     {
         System.out.println("WordsController POST " + wordResource.toEntity().getWord());
-//        System.out.println(wordResource.toEntity().getWord());
         Word wordEntity = wordsRepository.insert(wordResource.toEntity());
         if (wordEntity == null)
             return null;
@@ -88,7 +87,6 @@ public class WordsController
     WordResource put(@PathVariable Integer id, @RequestBody WordResource wordResource)
     {
         System.out.println("WordsController PUT " + wordResource.toEntity().getId() + " " + wordResource.toEntity().getWord());
-//        System.out.println(wordResource.toEntity().getId() + " " + wordResource.toEntity().getWord());
         Word wordEntity = wordsRepository.update(id, wordResource.toEntity());
         if (wordEntity == null)
             return null;
@@ -103,5 +101,13 @@ public class WordsController
         if (wordEntity == null)
             return null;
         return new WordResource(wordEntity);
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.DELETE)
+    WordResource[] deleteByUserId(@RequestParam() Integer userId) {
+        System.out.println("WordsController DELETE");
+        Word[] wordEntities = wordsRepository.deleteByUserId(userId);
+        return Arrays.stream(wordEntities)
+                .map(WordResource::new).toArray(WordResource[]::new);
     }
 }

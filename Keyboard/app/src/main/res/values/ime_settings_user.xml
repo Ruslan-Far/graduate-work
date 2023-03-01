@@ -4,5 +4,7 @@
         <item>@string/synchronization_activity</item>
         <item>@string/font_activity</item>
         <item>@string/theme_activity</item>
+        <item>@string/test_activity</item>
+        <item>@string/delete_account</item>
     </string-array>
 </resources>

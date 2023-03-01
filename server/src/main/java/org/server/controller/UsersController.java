@@ -40,4 +40,14 @@ public class UsersController
         User user = usersRepository.insert(userResource.toEntity());
         return new UserResource(user);
     }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    UserResource delete(@PathVariable Integer id)
+    {
+        System.out.println("UsersController DELETE");
+        User userEntity = usersRepository.delete(id);
+        if (userEntity == null)
+            return null;
+        return new UserResource(userEntity);
+    }
 }

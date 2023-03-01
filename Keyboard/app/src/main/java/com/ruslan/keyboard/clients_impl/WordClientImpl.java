@@ -12,6 +12,7 @@ public class WordClientImpl extends ClientImpl {
     private Call<Word[]> mCallGet;
     private Call<Word> mCallPost;
     private Call<Word> mCallPut;
+    private Call<Word[]> mCallDelete;
 
     public WordClientImpl() {
         super();
@@ -40,5 +41,13 @@ public class WordClientImpl extends ClientImpl {
 
     public void setCallPut(Integer id, Word word) {
         mCallPut = mWordClient.put(id, word);
+    }
+
+    public Call<Word[]> getCallDelete() {
+        return mCallDelete;
+    }
+
+    public void setCallDelete(Integer userId) {
+        mCallDelete = mWordClient.delete(userId);
     }
 }

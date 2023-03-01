@@ -9,6 +9,9 @@
     <string name="synchronization_activity">Синхронизация</string>
     <string name="font_activity">Шрифт</string>
     <string name="theme_activity">Тема</string>
+    <string name="test_activity">Тестирование</string>
+    
+    <string name="delete_account">Удалить аккаунт</string>
 
     <string name="sound_checkbox">Звук клавиш</string>
     <string name="vibration_checkbox">Виброотклик клавиш</string>
@@ -25,4 +28,8 @@
     
     <string name="synchronize">Синхронизировать</string>
     <string name="syn_warning">После начала синхронизации дождитесь ее окончания</string>
+    <string name="test">Здесь можно протестировать клавиатуру на разных полях ввода</string>
+    <string name="text_test">Поле для ввода текста</string>
+    <string name="number_test">Поле для ввода чисел</string>
+    <string name="email_test">Поле для ввода адреса электронной почты</string>
 </resources>

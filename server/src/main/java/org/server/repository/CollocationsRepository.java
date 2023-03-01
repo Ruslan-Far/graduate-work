@@ -42,6 +42,12 @@ public class CollocationsRepository implements IRestRepository<Collocation>
             "WHERE \"id\" = ? " +
             "RETURNING \"id\", \"prevId\", \"nextId\", \"count\"";
 
+    private static String deleteByUserIdQuery = "DELETE FROM \"collocations\" " +
+            "INNER JOIN \"words\" " +
+            "ON \"collocations\".\"prevId\" = \"words\".\"id\" " +
+            "WHERE \"userId\" = ? " +
+            "ORDER BY \"collocations\".\"count\" DESC";
+
     public CollocationsRepository(JdbcOperations jdbcOperations) { this.jdbcOperations = jdbcOperations; }
 
 
@@ -165,5 +171,24 @@ public class CollocationsRepository implements IRestRepository<Collocation>
                 rowSet.getInt(3),
                 rowSet.getInt(4)
         );
+    }
+
+
+    public Collocation[] deleteByUserId(Integer userId)
+    {
+        ArrayList<Collocation> values = new ArrayList<>();
+        Object[] args = { userId };
+        int[] types = { Types.INTEGER };
+        SqlRowSet rowSet = jdbcOperations.queryForRowSet(deleteByUserIdQuery, args, types);
+        while (rowSet.next())
+            values.add(new Collocation(
+                    rowSet.getInt(1),
+                    rowSet.getInt(2),
+                    rowSet.getInt(3),
+                    rowSet.getInt(4)
+            ));
+        Collocation[] res = new Collocation[values.size()];
+        res = values.toArray(res);
+        return res;
     }
 }

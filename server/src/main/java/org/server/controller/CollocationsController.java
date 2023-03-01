@@ -72,7 +72,6 @@ public class CollocationsController
     CollocationResource post(@RequestBody CollocationResource collocationResource)
     {
         System.out.println("CollocationsController POST " + collocationResource.toEntity().getPrevId() + " " + collocationResource.toEntity().getNextId());
-//        System.out.println(collocationResource.toEntity().getPrevId() + " " + collocationResource.toEntity().getNextId());
         Collocation collocationEntity = collocationsRepository.insert(collocationResource.toEntity());
         if (collocationEntity == null)
             return null;
@@ -89,7 +88,6 @@ public class CollocationsController
     CollocationResource put(@PathVariable Integer id, @RequestBody CollocationResource collocationResource)
     {
         System.out.println("CollocationsController PUT " + collocationResource.toEntity().getId() + " " + collocationResource.toEntity().getPrevId() + " " + collocationResource.toEntity().getNextId());
-//        System.out.println(collocationResource.toEntity().getId() + " " + collocationResource.toEntity().getPrevId() + " " + collocationResource.toEntity().getNextId());
         Collocation collocationEntity = collocationsRepository.update(id, collocationResource.toEntity());
         if (collocationEntity == null)
             return null;
@@ -108,5 +106,13 @@ public class CollocationsController
         if (collocationEntity == null)
             return null;
         return new CollocationResource(collocationEntity);
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.DELETE)
+    CollocationResource[] deleteByUserId(@RequestParam() Integer userId) {
+        System.out.println("CollocationsController DELETE");
+        Collocation[] collocationEntities = collocationsRepository.deleteByUserId(userId);
+        return Arrays.stream(collocationEntities)
+                .map(CollocationResource::new).toArray(CollocationResource[]::new);
     }
 }

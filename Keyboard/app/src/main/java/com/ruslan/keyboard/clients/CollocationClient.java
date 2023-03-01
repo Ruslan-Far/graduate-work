@@ -4,6 +4,7 @@ import com.ruslan.keyboard.entities.Collocation;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -23,4 +24,7 @@ public interface CollocationClient {
 
     @PUT(res + "/{id}")
     Call<Collocation> put(@Path("id") Integer id, @Body Collocation collocation);
+
+    @DELETE(res)
+    Call<Collocation[]> delete(@Query("userId") Integer userId);
 }

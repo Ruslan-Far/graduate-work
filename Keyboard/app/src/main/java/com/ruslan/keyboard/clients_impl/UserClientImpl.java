@@ -11,6 +11,7 @@ public class UserClientImpl extends ClientImpl {
 
     private Call<User> mCallAuthPost;
     private Call<User> mCallRegPost;
+    private Call<User> mCallDelete;
 
     public UserClientImpl() {
         super();
@@ -31,5 +32,13 @@ public class UserClientImpl extends ClientImpl {
 
     public void setCallRegPost(User user) {
         mCallRegPost = mUserClient.regPost(user);
+    }
+
+    public Call<User> getCallDelete() {
+        return mCallDelete;
+    }
+
+    public void setCallDelete(Integer id) {
+        mCallDelete = mUserClient.delete(id);
     }
 }

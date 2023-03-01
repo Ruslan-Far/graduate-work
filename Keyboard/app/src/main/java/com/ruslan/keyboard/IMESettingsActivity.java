@@ -12,15 +12,28 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.ruslan.keyboard.clients_impl.CollocationClientImpl;
+import com.ruslan.keyboard.clients_impl.UserClientImpl;
+import com.ruslan.keyboard.clients_impl.WordClientImpl;
+import com.ruslan.keyboard.entities.Collocation;
 import com.ruslan.keyboard.entities.IMESettings;
+import com.ruslan.keyboard.entities.User;
+import com.ruslan.keyboard.entities.Word;
 import com.ruslan.keyboard.stores.IMESettingsStore;
 import com.ruslan.keyboard.stores.UserStore;
 import com.ruslan.keyboard.stores.WordStore;
 
-public class IMESettingsActivity extends AppCompatActivity {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class IMESettingsActivity extends AppCompatActivity implements Removable {
 
     private final static String TAG = "IMESettingsActivity";
 
+    private UserClientImpl mUserClientImpl;
+    private WordClientImpl mWordClientImpl;
+    private CollocationClientImpl mCollocationClientImpl;
     private DatabaseInteraction mDatabaseInteraction;
 
     public static String errorMessage;
@@ -33,6 +46,9 @@ public class IMESettingsActivity extends AppCompatActivity {
         startService(intent);
 
         setTitle(R.string.ime_settings_activity);
+        mUserClientImpl = new UserClientImpl();
+        mWordClientImpl = new WordClientImpl();
+        mCollocationClientImpl = new CollocationClientImpl();
         mDatabaseInteraction = new DatabaseInteraction(this);
         mDatabaseInteraction.selectIMESettings();
         if (IMESettingsStore.imeSettings == null) {
@@ -87,10 +103,7 @@ public class IMESettingsActivity extends AppCompatActivity {
             exitButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mDatabaseInteraction.deleteUser();
-                    Intent intentActivity = new Intent(IMESettingsActivity.this, IMESettingsActivity.class);
-                    intentActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    startActivity(intentActivity);
+                    localDeleteUser();
                 }
             });
         }
@@ -165,14 +178,23 @@ public class IMESettingsActivity extends AppCompatActivity {
                 else if (selectedItem.equals(getString(R.string.font_activity))) {
                     System.out.println(getString(R.string.font_activity));
                 }
-                else {
+                else if (selectedItem.equals(getString(R.string.theme_activity))) {
                     System.out.println(getString(R.string.theme_activity));
                 }
-                startActivity(intentActivity);
+                else if (selectedItem.equals(getString(R.string.test_activity))) {
+                    System.out.println(getString(R.string.test_activity));
+                    intentActivity = new Intent(IMESettingsActivity.this, TestActivity.class);
+                }
+                if (intentActivity != null)
+                    startActivity(intentActivity);
+                if (selectedItem.equals(getString(R.string.delete_account))) {
+                    System.out.println(getString(R.string.delete_account));
+                    showWarningDialog();
+                }
             }
         });
         if (errorMessage.length() != 0) {
-            showErrorDialog();
+            showErrorDialog(true);
         }
     }
 
@@ -185,18 +207,114 @@ public class IMESettingsActivity extends AppCompatActivity {
             imeSettingsCheckboxList.setItemChecked(2, true);
     }
 
-    private void showErrorDialog() {
+    private void setErrorMessage(String errorMessage) {
+        IMESettingsActivity.errorMessage = errorMessage;
+        showErrorDialog(false);
+    }
+
+    private void showErrorDialog(boolean isSyn) {
         ErrorDialogFragment errorDialog = new ErrorDialogFragment();
         Bundle args = new Bundle();
+        if (isSyn)
+            args.putString("errorTitle", "Ошибка синхронизации");
+        else
+            args.putString("errorTitle", "Ошибка удаления аккаунта");
         args.putString("errorMessage", errorMessage);
         errorDialog.setArguments(args);
         errorDialog.show(getSupportFragmentManager(), "error");
         errorMessage = Constants.EMPTY_SYM;
     }
 
+    private void showWarningDialog() {
+        WarningDialogFragment warningDialogFragment = new WarningDialogFragment();
+        warningDialogFragment.show(getSupportFragmentManager(), "warning");
+    }
+
+    @Override
+    public void remove() {
+        System.out.println("REMOVE");
+//        deleteCollocationsToApi(UserStore.user.getId());
+    }
+
     @Override
     protected void onRestart(){
         super.onRestart();
         Log.d(TAG, "onRestart");
+    }
+
+    private void localDeleteUser() {
+        mDatabaseInteraction.deleteUser();
+        Intent intentActivity = new Intent(IMESettingsActivity.this, IMESettingsActivity.class);
+        intentActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intentActivity);
+    }
+
+    private void deleteCollocationsToApi(Integer userId) {
+        mCollocationClientImpl.setCallDelete(userId);
+        mCollocationClientImpl.getCallDelete().enqueue(new Callback<Collocation[]>() {
+            @Override
+            public void onResponse(Call<Collocation[]> call, Response<Collocation[]> response) {
+                if (response.isSuccessful()) {
+                    System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
+                    deleteWordsToApi(userId);
+                }
+                else {
+                    System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCCEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+                    setErrorMessage(Constants.ERROR_TRANSFER_DATA);
+                }
+            }
+            @Override
+            public void onFailure(Call<Collocation[]> call, Throwable t) {
+                System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCFFFFFFFFFFFFFFFFFFAAAAAAAAAAAAAAAAAAAAAAA");
+                setErrorMessage(Constants.ERROR_CONNECTION);
+            }
+        });
+        System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
+    }
+
+    private void deleteWordsToApi(Integer userId) {
+        mWordClientImpl.setCallDelete(userId);
+        mWordClientImpl.getCallDelete().enqueue(new Callback<Word[]>() {
+            @Override
+            public void onResponse(Call<Word[]> call, Response<Word[]> response) {
+                if (response.isSuccessful()) {
+                    System.out.println("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
+                    deleteUserToApi(userId);
+                }
+                else {
+                    System.out.println("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+                    setErrorMessage(Constants.ERROR_TRANSFER_DATA);
+                }
+            }
+            @Override
+            public void onFailure(Call<Word[]> call, Throwable t) {
+                System.out.println("FFFFFFFFFFFFFFFFFFAAAAAAAAAAAAAAAAAAAAAAA");
+                setErrorMessage(Constants.ERROR_CONNECTION);
+            }
+        });
+        System.out.println("NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
+    }
+
+    private void deleteUserToApi(Integer id) {
+        mUserClientImpl.setCallDelete(id);
+        mUserClientImpl.getCallDelete().enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    System.out.println("UUUUUUUUUUUUUUUUUDDDDDDDDDDDDDDDDDD");
+                    localDeleteUser();
+                }
+                else {
+                    System.out.println("UUUUUUUUUUUUUUUUUUUUUUUUEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+                    setErrorMessage(Constants.ERROR_TRANSFER_DATA);
+                }
+            }
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                System.out.println("UUUUUUUUUUUUUUUUUUUUUUUUUFFFFFFFFFFFFFFFFFFAAAAAAAAAAAAAAAAAAAAAAA");
+                setErrorMessage(Constants.ERROR_CONNECTION);
+            }
+        });
+        System.out.println("NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
     }
 }

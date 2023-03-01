@@ -1,6 +1,7 @@
 package org.server.repository;
 
 import org.server.entity.User;
+import org.server.entity.Word;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
@@ -22,6 +23,10 @@ public class UsersRepository
     private static String insertQuery = "INSERT INTO \"users\" (\"login\", \"password\") " +
                                         "VALUES (?, ?) " +
                                         "RETURNING \"id\", \"login\"";
+
+    private static String deleteQuery = "DELETE FROM \"users\" " +
+            "WHERE \"id\" = ? " +
+            "RETURNING \"id\", \"login\"";
 
     public UsersRepository(JdbcOperations jdbcOperations) { this.jdbcOperations = jdbcOperations; }
 
@@ -92,6 +97,21 @@ public class UsersRepository
                     null,
                     null
             );
+        return new User(
+                rowSet.getInt(1),
+                rowSet.getString(2),
+                null
+        );
+    }
+
+
+    public User delete(Integer id)
+    {
+        Object[] args = { id };
+        int[] types = { Types.INTEGER };
+        SqlRowSet rowSet = jdbcOperations.queryForRowSet(deleteQuery, args, types);
+        if (!rowSet.next())
+            return null;
         return new User(
                 rowSet.getInt(1),
                 rowSet.getString(2),
