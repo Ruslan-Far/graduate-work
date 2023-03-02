@@ -22,12 +22,15 @@ public class WarningDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Bundle args = getArguments();
+        String warningMessage = args.getString("warningMessage");
+        String actionButton = args.getString("actionButton");
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         return builder
                 .setTitle("Предупреждение")
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setMessage("Вы действительно хотите удалить свой аккаунт?")
-                .setPositiveButton("Удалить", new DialogInterface.OnClickListener() {
+                .setMessage(warningMessage)
+                .setPositiveButton(actionButton, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         removable.remove();

@@ -82,7 +82,11 @@ public class WordRepo extends Repo {
         arrWords = words.split("\n");
         for (int i = 0; i < arrWords.length; i++) {
             cv.put(DatabaseHelper.WORDS_COLUMN_WORD, arrWords[i]);
-            cv.put(DatabaseHelper.WORDS_COLUMN_COUNT, Constants.NEEDED_MAX_WORDS_COUNT);
+            if (arrWords[i].equals("Привет") || arrWords[i].equals("Как") || arrWords[i].equals("дела")
+                    || arrWords[i].equals("Hello") || arrWords[i].equals("I") || arrWords[i].equals("am"))
+                cv.put(DatabaseHelper.WORDS_COLUMN_COUNT, Constants.NEEDED_MAX_WORDS_COUNT + 1);
+            else
+                cv.put(DatabaseHelper.WORDS_COLUMN_COUNT, Constants.NEEDED_MAX_WORDS_COUNT);
             database.insert(DatabaseHelper.WORDS_TABLE, null, cv);
         }
     }

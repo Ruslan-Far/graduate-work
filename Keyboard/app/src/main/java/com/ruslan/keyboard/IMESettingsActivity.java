@@ -38,6 +38,10 @@ public class IMESettingsActivity extends AppCompatActivity implements Removable 
 
     public static String errorMessage;
 
+    private boolean mIsSyn;
+    private boolean mIsClearPersonDict;
+    private boolean mIsDelUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,10 +60,8 @@ public class IMESettingsActivity extends AppCompatActivity implements Removable 
             mDatabaseInteraction.selectIMESettings();
         }
         mDatabaseInteraction.selectWords();
-        if (WordStore.words == null) {
+        if (WordStore.words == null)
             mDatabaseInteraction.insertWords();
-            mDatabaseInteraction.selectWords();
-        }
         errorMessage = Constants.EMPTY_SYM;
     }
 
@@ -187,14 +189,27 @@ public class IMESettingsActivity extends AppCompatActivity implements Removable 
                 }
                 if (intentActivity != null)
                     startActivity(intentActivity);
-                if (selectedItem.equals(getString(R.string.delete_account))) {
+                if (selectedItem.equals(getString(R.string.clear_personal_dictionary))) {
+                    System.out.println(getString(R.string.clear_personal_dictionary));
+                    mIsSyn = false;
+                    mIsClearPersonDict = true;
+                    mIsDelUser = false;
+                    showWarningDialog();
+                }
+                else if (selectedItem.equals(getString(R.string.delete_account))) {
                     System.out.println(getString(R.string.delete_account));
+                    mIsSyn = false;
+                    mIsClearPersonDict = false;
+                    mIsDelUser = true;
                     showWarningDialog();
                 }
             }
         });
         if (errorMessage.length() != 0) {
-            showErrorDialog(true);
+            mIsSyn = true;
+            mIsClearPersonDict = false;
+            mIsDelUser = false;
+            showErrorDialog();
         }
     }
 
@@ -208,17 +223,28 @@ public class IMESettingsActivity extends AppCompatActivity implements Removable 
     }
 
     private void setErrorMessage(String errorMessage) {
-        IMESettingsActivity.errorMessage = errorMessage;
-        showErrorDialog(false);
+        if (mIsClearPersonDict) {
+            IMESettingsActivity.errorMessage = "Если Вы хотите также очистить словарь и на стороне сервера, то ";
+            if (errorMessage.equals(Constants.ERROR_CONNECTION))
+                IMESettingsActivity.errorMessage += "проверьте подключение к Интернету и повторите попытку";
+            else
+                IMESettingsActivity.errorMessage += "повторите попытку позже, так как возникли неполадки с сервером";
+        }
+        else if (mIsDelUser)
+            IMESettingsActivity.errorMessage = errorMessage;
+        showErrorDialog();
     }
 
-    private void showErrorDialog(boolean isSyn) {
+    private void showErrorDialog() {
+        String keyErrorTitle = "errorTitle";
         ErrorDialogFragment errorDialog = new ErrorDialogFragment();
         Bundle args = new Bundle();
-        if (isSyn)
-            args.putString("errorTitle", "Ошибка синхронизации");
-        else
-            args.putString("errorTitle", "Ошибка удаления аккаунта");
+        if (mIsSyn)
+            args.putString(keyErrorTitle, "Ошибка синхронизации");
+        else if (mIsClearPersonDict)
+            args.putString(keyErrorTitle, "Ошибка очистки на стороне сервера");
+        else if (mIsDelUser)
+            args.putString(keyErrorTitle, "Ошибка удаления аккаунта");
         args.putString("errorMessage", errorMessage);
         errorDialog.setArguments(args);
         errorDialog.show(getSupportFragmentManager(), "error");
@@ -226,20 +252,51 @@ public class IMESettingsActivity extends AppCompatActivity implements Removable 
     }
 
     private void showWarningDialog() {
-        WarningDialogFragment warningDialogFragment = new WarningDialogFragment();
-        warningDialogFragment.show(getSupportFragmentManager(), "warning");
+        String keyWarningMessage = "warningMessage";
+        String keyActionButton = "actionButton";
+        WarningDialogFragment warningDialog = new WarningDialogFragment();
+        Bundle args = new Bundle();
+        if (mIsClearPersonDict) {
+            args.putString(keyWarningMessage, "Вы действительно хотите очистить свой персональный словарь?");
+            args.putString(keyActionButton, "Очистить");
+        }
+        else if (mIsDelUser) {
+            args.putString(keyWarningMessage, "Вы действительно хотите удалить свой аккаунт?");
+            args.putString(keyActionButton, "Удалить");
+        }
+        warningDialog.setArguments(args);
+        warningDialog.show(getSupportFragmentManager(), "warning");
     }
 
     @Override
     public void remove() {
-        System.out.println("REMOVE");
-//        deleteCollocationsToApi(UserStore.user.getId());
+        if (mIsClearPersonDict) {
+            System.out.println("REMOVE ClearPersonDict");
+            clearPersonalDictionary();
+        }
+        else if (mIsDelUser) {
+            System.out.println("REMOVE DelUser");
+            deleteCollocationsToApi(UserStore.user.getId());
+        }
     }
 
     @Override
     protected void onRestart(){
         super.onRestart();
         Log.d(TAG, "onRestart");
+    }
+
+    private void clearPersonalDictionary() {
+        localClearPersonalDictionary();
+        if (UserStore.user != null) {
+            deleteCollocationsToApi(UserStore.user.getId());
+        }
+    }
+
+    private void localClearPersonalDictionary() {
+//        mDatabaseInteraction.deleteCollocations();
+//        mDatabaseInteraction.deleteWords();
+        mDatabaseInteraction.insertWords();
     }
 
     private void localDeleteUser() {
@@ -279,7 +336,8 @@ public class IMESettingsActivity extends AppCompatActivity implements Removable 
             public void onResponse(Call<Word[]> call, Response<Word[]> response) {
                 if (response.isSuccessful()) {
                     System.out.println("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
-                    deleteUserToApi(userId);
+                    if (mIsDelUser)
+                        deleteUserToApi(userId);
                 }
                 else {
                     System.out.println("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");

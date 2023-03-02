@@ -10,7 +10,8 @@
     <string name="font_activity">Шрифт</string>
     <string name="theme_activity">Тема</string>
     <string name="test_activity">Тестирование</string>
-    
+
+    <string name="clear_personal_dictionary">Очистить персональный словарь</string>
     <string name="delete_account">Удалить аккаунт</string>
 
     <string name="sound_checkbox">Звук клавиш</string>
