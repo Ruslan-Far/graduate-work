@@ -79,6 +79,12 @@ public class DatabaseInteraction {
         selectWords();
     }
 
+    public void deleteWords() {
+        mWordRepo.open();
+        mWordRepo.delete();
+        mWordRepo.close();
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void selectCollocations() {
         mCollocationRepo.open();
@@ -117,6 +123,12 @@ public class DatabaseInteraction {
         mCollocationRepo.update(id, collocation);
         mCollocationRepo.close();
         selectCollocations();
+    }
+
+    public void deleteCollocations() {
+        mCollocationRepo.open();
+        mCollocationRepo.delete();
+        mCollocationRepo.close();
     }
 
     public void selectIMESettings() {

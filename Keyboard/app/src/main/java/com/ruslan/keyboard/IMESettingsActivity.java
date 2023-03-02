@@ -294,8 +294,8 @@ public class IMESettingsActivity extends AppCompatActivity implements Removable 
     }
 
     private void localClearPersonalDictionary() {
-//        mDatabaseInteraction.deleteCollocations();
-//        mDatabaseInteraction.deleteWords();
+        mDatabaseInteraction.deleteCollocations();
+        mDatabaseInteraction.deleteWords();
         mDatabaseInteraction.insertWords();
     }
 
