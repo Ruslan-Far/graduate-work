@@ -5,14 +5,16 @@ public class IMESettings extends BaseEntity {
     private Integer sound;
     private Integer vibration;
     private Integer candidates;
+    private Integer learningRate;
 
     public IMESettings() {}
 
-    public IMESettings(Integer id, Integer sound, Integer vibration, Integer candidates) {
+    public IMESettings(Integer id, Integer sound, Integer vibration, Integer candidates, Integer learningRate) {
         super(id);
         this.sound = sound;
         this.vibration = vibration;
         this.candidates = candidates;
+        this.learningRate = learningRate;
     }
 
     public Integer getSound() {
@@ -37,5 +39,13 @@ public class IMESettings extends BaseEntity {
 
     public void setCandidates(Integer candidates) {
         this.candidates = candidates;
+    }
+
+    public Integer getLearningRate() {
+        return learningRate;
+    }
+
+    public void setLearningRate(Integer learningRate) {
+        this.learningRate = learningRate;
     }
 }

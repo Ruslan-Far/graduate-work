@@ -5,6 +5,7 @@
         <item>@string/font_activity</item>
         <item>@string/theme_activity</item>
         <item>@string/test_activity</item>
+        <item>@string/learning_rate_activity</item>
         <item>@string/clear_personal_dictionary</item>
         <item>@string/delete_account</item>
     </string-array>

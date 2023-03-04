@@ -23,7 +23,8 @@ public class IMESettingsRepo extends Repo {
         imeSettings = null;
         columns = new String[] {
                 DatabaseHelper.IME_SETTINGS_COLUMN_ID, DatabaseHelper.IME_SETTINGS_COLUMN_SOUND,
-                DatabaseHelper.IME_SETTINGS_COLUMN_VIBRATION, DatabaseHelper.IME_SETTINGS_COLUMN_CANDIDATES
+                DatabaseHelper.IME_SETTINGS_COLUMN_VIBRATION, DatabaseHelper.IME_SETTINGS_COLUMN_CANDIDATES,
+                DatabaseHelper.IME_SETTINGS_COLUMN_LEARNING_RATE
         };
         cursor = database.query(DatabaseHelper.IME_SETTINGS_TABLE, columns,
                 null, null, null, null, null);
@@ -32,7 +33,8 @@ public class IMESettingsRepo extends Repo {
                     cursor.getInt(cursor.getColumnIndex(DatabaseHelper.IME_SETTINGS_COLUMN_ID)),
                     cursor.getInt(cursor.getColumnIndex(DatabaseHelper.IME_SETTINGS_COLUMN_SOUND)),
                     cursor.getInt(cursor.getColumnIndex(DatabaseHelper.IME_SETTINGS_COLUMN_VIBRATION)),
-                    cursor.getInt(cursor.getColumnIndex(DatabaseHelper.IME_SETTINGS_COLUMN_CANDIDATES))
+                    cursor.getInt(cursor.getColumnIndex(DatabaseHelper.IME_SETTINGS_COLUMN_CANDIDATES)),
+                    cursor.getInt(cursor.getColumnIndex(DatabaseHelper.IME_SETTINGS_COLUMN_LEARNING_RATE))
             );
         }
         cursor.close();
@@ -47,6 +49,7 @@ public class IMESettingsRepo extends Repo {
         cv.put(DatabaseHelper.IME_SETTINGS_COLUMN_SOUND, imeSettings.getSound());
         cv.put(DatabaseHelper.IME_SETTINGS_COLUMN_VIBRATION, imeSettings.getVibration());
         cv.put(DatabaseHelper.IME_SETTINGS_COLUMN_CANDIDATES, imeSettings.getCandidates());
+        cv.put(DatabaseHelper.IME_SETTINGS_COLUMN_LEARNING_RATE, imeSettings.getLearningRate());
         return database.insert(DatabaseHelper.IME_SETTINGS_TABLE, null, cv);
     }
 
@@ -57,6 +60,7 @@ public class IMESettingsRepo extends Repo {
         cv.put(DatabaseHelper.IME_SETTINGS_COLUMN_SOUND, imeSettings.getSound());
         cv.put(DatabaseHelper.IME_SETTINGS_COLUMN_VIBRATION, imeSettings.getVibration());
         cv.put(DatabaseHelper.IME_SETTINGS_COLUMN_CANDIDATES, imeSettings.getCandidates());
+        cv.put(DatabaseHelper.IME_SETTINGS_COLUMN_LEARNING_RATE, imeSettings.getLearningRate());
         return database.update(DatabaseHelper.IME_SETTINGS_TABLE, cv,
                 DatabaseHelper.IME_SETTINGS_COLUMN_ID + "=" + id, null);
     }

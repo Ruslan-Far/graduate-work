@@ -142,6 +142,7 @@ public class DatabaseInteraction {
         imeSettings.setSound(Constants.FALSE);
         imeSettings.setVibration(Constants.FALSE);
         imeSettings.setCandidates(Constants.TRUE);
+        imeSettings.setLearningRate(3);
         mIMESettingsRepo.open();
         mIMESettingsRepo.insert(imeSettings);
         mIMESettingsRepo.close();

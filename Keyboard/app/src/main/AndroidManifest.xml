@@ -52,6 +52,10 @@
             android:name=".TestActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Keyboard" />
+        <activity
+            android:name=".LearningRateActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Keyboard" />
 
     </application>
 </manifest>

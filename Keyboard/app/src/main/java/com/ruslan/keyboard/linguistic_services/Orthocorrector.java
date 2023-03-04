@@ -12,6 +12,7 @@ import com.ruslan.keyboard.Constants;
 import com.ruslan.keyboard.DatabaseInteraction;
 import com.ruslan.keyboard.IME;
 import com.ruslan.keyboard.R;
+import com.ruslan.keyboard.stores.IMESettingsStore;
 import com.ruslan.keyboard.stores.WordStore;
 import com.ruslan.keyboard.clients_impl.WordClientImpl;
 import com.ruslan.keyboard.entities.Word;
@@ -181,7 +182,7 @@ public class Orthocorrector {
 
         for (int i = 0; i < WordStore.words.size(); i++) {
             if (mLastWord.toString().equals(WordStore.words.get(i).getWord())) {
-                if (WordStore.words.get(i).getCount() >= Constants.NEEDED_MAX_WORDS_COUNT)
+                if (WordStore.words.get(i).getCount() >= IMESettingsStore.imeSettings.getLearningRate())
                     return new String[Constants.NUMBER_OF_HINTS];
                 mIndexInWordStore = i;
                 return getApproximateWords();
@@ -255,7 +256,7 @@ public class Orthocorrector {
             return hints;
         copyProcessedWords = getCopyProcessedWords();
         for (int i = 0; i < copyProcessedWords.size(); i++) {
-            if (copyProcessedWords.get(i).getCount() < Constants.NEEDED_MAX_WORDS_COUNT
+            if (copyProcessedWords.get(i).getCount() < IMESettingsStore.imeSettings.getLearningRate()
                     || copyProcessedWords.get(i).getWord().length() == 0
                     || copyProcessedWords.get(i).getWord().equals(Constants.MARK))
                 continue;

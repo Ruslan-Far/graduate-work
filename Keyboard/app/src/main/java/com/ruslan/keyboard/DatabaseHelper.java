@@ -29,6 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String IME_SETTINGS_COLUMN_SOUND = "sound";
     public static final String IME_SETTINGS_COLUMN_VIBRATION = "vibration";
     public static final String IME_SETTINGS_COLUMN_CANDIDATES = "candidates";
+    public static final String IME_SETTINGS_COLUMN_LEARNING_RATE = "learning_rate";
 
     private String createUserQuery =
             "CREATE TABLE " + USER_TABLE +
@@ -60,7 +61,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     IME_SETTINGS_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     IME_SETTINGS_COLUMN_SOUND + " INTEGER NOT NULL," +
                     IME_SETTINGS_COLUMN_VIBRATION + " INTEGER NOT NULL," +
-                    IME_SETTINGS_COLUMN_CANDIDATES + " INTEGER NOT NULL" +
+                    IME_SETTINGS_COLUMN_CANDIDATES + " INTEGER NOT NULL," +
+                    IME_SETTINGS_COLUMN_LEARNING_RATE + " INTEGER NOT NULL" +
                 ")";
 
     public DatabaseHelper(Context context) {

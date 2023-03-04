@@ -12,6 +12,7 @@ import com.ruslan.keyboard.IME;
 import com.ruslan.keyboard.R;
 import com.ruslan.keyboard.clients_impl.WordClientImpl;
 import com.ruslan.keyboard.entities.Word;
+import com.ruslan.keyboard.stores.IMESettingsStore;
 import com.ruslan.keyboard.stores.WordStore;
 
 import java.util.ArrayList;
@@ -115,7 +116,7 @@ public class Addition {
                                 && x.getWord().toLowerCase().charAt(0) <= 'я')
                     .collect(Collectors.toList());
         hints = getWordsWithMaxCount(copyWords.stream()
-                .filter(x -> x.getCount() >= Constants.NEEDED_MAX_WORDS_COUNT)
+                .filter(x -> x.getCount() >= IMESettingsStore.imeSettings.getLearningRate())
                 .collect(Collectors.toList())
         );
         System.out.println("START_AAAAAAAAAAA_HINTS");
@@ -145,7 +146,7 @@ public class Addition {
                 WordStore.words.stream()
                     .filter(x -> x.getWord().startsWith(lastWord)
                             && x.getWord().length() > lastWord.length()
-                            && x.getCount() >= Constants.NEEDED_MAX_WORDS_COUNT)
+                            && x.getCount() >= IMESettingsStore.imeSettings.getLearningRate())
                     .collect(Collectors.toList())
         );
         setupHints(hints);

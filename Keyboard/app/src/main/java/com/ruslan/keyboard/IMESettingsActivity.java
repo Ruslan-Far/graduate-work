@@ -187,6 +187,10 @@ public class IMESettingsActivity extends AppCompatActivity implements Removable 
                     System.out.println(getString(R.string.test_activity));
                     intentActivity = new Intent(IMESettingsActivity.this, TestActivity.class);
                 }
+                else if (selectedItem.equals(getString(R.string.learning_rate_activity))) {
+                    System.out.println(getString(R.string.learning_rate_activity));
+                    intentActivity = new Intent(IMESettingsActivity.this, LearningRateActivity.class);
+                }
                 if (intentActivity != null)
                     startActivity(intentActivity);
                 if (selectedItem.equals(getString(R.string.clear_personal_dictionary))) {
