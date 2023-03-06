@@ -19,6 +19,7 @@ import com.ruslan.keyboard.entities.Collocation;
 import com.ruslan.keyboard.entities.IMESettings;
 import com.ruslan.keyboard.entities.User;
 import com.ruslan.keyboard.entities.Word;
+import com.ruslan.keyboard.stores.CollocationStore;
 import com.ruslan.keyboard.stores.IMESettingsStore;
 import com.ruslan.keyboard.stores.UserStore;
 import com.ruslan.keyboard.stores.WordStore;
@@ -71,6 +72,7 @@ public class IMESettingsActivity extends AppCompatActivity implements Removable 
         Log.d(TAG, "onDestroy");
         UserStore.user = null;
         WordStore.words = null;
+        CollocationStore.collocations = null;
         IMESettingsStore.imeSettings = null;
     }
 
@@ -120,7 +122,8 @@ public class IMESettingsActivity extends AppCompatActivity implements Removable 
                 }
             });
         }
-        mDatabaseInteraction.selectIMESettings();
+        if (IMESettingsStore.imeSettings == null)
+            mDatabaseInteraction.selectIMESettings();
         ListView imeSettingsCheckboxList = findViewById(R.id.imeSettingsCheckboxList);
         ArrayAdapter<String> adapter
                 = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice,

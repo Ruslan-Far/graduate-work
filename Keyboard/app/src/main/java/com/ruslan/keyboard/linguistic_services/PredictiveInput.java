@@ -10,7 +10,6 @@ import androidx.annotation.RequiresApi;
 import com.ruslan.keyboard.Constants;
 import com.ruslan.keyboard.DatabaseInteraction;
 import com.ruslan.keyboard.IME;
-import com.ruslan.keyboard.clients_impl.CollocationClientImpl;
 import com.ruslan.keyboard.entities.Collocation;
 import com.ruslan.keyboard.stores.CollocationStore;
 import com.ruslan.keyboard.stores.IMESettingsStore;
@@ -22,8 +21,6 @@ import java.util.stream.Collectors;
 
 public class PredictiveInput {
 
-    private CollocationClientImpl mCollocationClientImpl;
-
     private Button mBtn;
     private Button mBtn2;
     private Button mBtn3;
@@ -34,9 +31,7 @@ public class PredictiveInput {
 
     private StringBuilder mLastWord;
 
-    public PredictiveInput(CollocationClientImpl collocationClient,
-                           Button btn, Button btn2, Button btn3, DatabaseInteraction databaseInteraction) {
-        mCollocationClientImpl = collocationClient;
+    public PredictiveInput(Button btn, Button btn2, Button btn3, DatabaseInteraction databaseInteraction) {
         mBtn = btn;
         mBtn2 = btn2;
         mBtn3 = btn3;

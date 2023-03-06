@@ -18,8 +18,6 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.RequiresApi;
 
-import com.ruslan.keyboard.clients_impl.CollocationClientImpl;
-import com.ruslan.keyboard.clients_impl.WordClientImpl;
 import com.ruslan.keyboard.entities.IMESettings;
 import com.ruslan.keyboard.linguistic_services.Addition;
 import com.ruslan.keyboard.linguistic_services.Orthocorrector;
@@ -116,14 +114,14 @@ public class IME extends InputMethodService
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void initOrthocorrector() {
-        mOrthocorrector = new Orthocorrector(new WordClientImpl(), mBtn, mBtn2, mBtn3, mDatabaseInteraction);
+        mOrthocorrector = new Orthocorrector(mBtn, mBtn2, mBtn3, mDatabaseInteraction);
         mOrthocorrector.setIc(getCurrentInputConnection());
         mOrthocorrector.process(false);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void initPredictiveInput() {
-        mPredictiveInput = new PredictiveInput(new CollocationClientImpl(), mBtn, mBtn2, mBtn3, mDatabaseInteraction);
+        mPredictiveInput = new PredictiveInput(mBtn, mBtn2, mBtn3, mDatabaseInteraction);
         mPredictiveInput.setIc(getCurrentInputConnection());
         if (sLingServNum == Constants.PRED_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
             mPredictiveInput.process();
@@ -131,7 +129,7 @@ public class IME extends InputMethodService
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void initAddition() {
-        mAddition = new Addition(new WordClientImpl(), mBtn, mBtn2, mBtn3, mDatabaseInteraction);
+        mAddition = new Addition(mBtn, mBtn2, mBtn3, mDatabaseInteraction);
         mAddition.setIc(getCurrentInputConnection());
         if (sLingServNum == Constants.ADDIT_LING_SERV_NUM)
             mAddition.process();
@@ -141,6 +139,7 @@ public class IME extends InputMethodService
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onStartInputView(EditorInfo info, boolean restarting) {
+        System.out.println("3WordStore.words=" + WordStore.words);
         mDatabaseInteraction = new DatabaseInteraction(this);
         mDatabaseInteraction.selectIMESettings();
         if (IMESettingsStore.imeSettings == null) {

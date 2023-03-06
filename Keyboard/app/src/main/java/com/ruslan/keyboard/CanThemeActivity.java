@@ -20,7 +20,8 @@ public class CanThemeActivity extends AppCompatActivity {
         setTitle(R.string.can_theme_activity);
         setContentView(R.layout.activity_can_theme);
         mDatabaseInteraction = new DatabaseInteraction(this);
-        mDatabaseInteraction.selectIMESettings();
+        if (IMESettingsStore.imeSettings == null)
+            mDatabaseInteraction.selectIMESettings();
         initBackgroundColor();
         initTextColor();
         initFont();
@@ -47,7 +48,8 @@ public class CanThemeActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Integer backgroundColor;
 
-                mDatabaseInteraction.selectIMESettings();
+                if (IMESettingsStore.imeSettings == null)
+                    mDatabaseInteraction.selectIMESettings();
                 if (position == 0)
                     backgroundColor = getResources().getColor(R.color.white);
                 else
@@ -92,7 +94,8 @@ public class CanThemeActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Integer additTextColor;
 
-                mDatabaseInteraction.selectIMESettings();
+                if (IMESettingsStore.imeSettings == null)
+                    mDatabaseInteraction.selectIMESettings();
                 if (position == 0)
                     additTextColor = getResources().getColor(R.color.dark_cyan);
                 else if (position == 1)
@@ -133,7 +136,8 @@ public class CanThemeActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Integer orthoTextColor;
 
-                mDatabaseInteraction.selectIMESettings();
+                if (IMESettingsStore.imeSettings == null)
+                    mDatabaseInteraction.selectIMESettings();
                 if (position == 0)
                     orthoTextColor = getResources().getColor(R.color.dark_cyan);
                 else if (position == 1)
@@ -174,7 +178,8 @@ public class CanThemeActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Integer predTextColor;
 
-                mDatabaseInteraction.selectIMESettings();
+                if (IMESettingsStore.imeSettings == null)
+                    mDatabaseInteraction.selectIMESettings();
                 if (position == 0)
                     predTextColor = getResources().getColor(R.color.dark_cyan);
                 else if (position == 1)
@@ -216,7 +221,8 @@ public class CanThemeActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String font;
 
-                mDatabaseInteraction.selectIMESettings();
+                if (IMESettingsStore.imeSettings == null)
+                    mDatabaseInteraction.selectIMESettings();
                 font = values[position];
                 if (IMESettingsStore.imeSettings.getCanFont().equals(font))
                     return;

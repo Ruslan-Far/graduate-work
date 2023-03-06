@@ -52,7 +52,6 @@ public class DatabaseInteraction {
         mUserRepo.open();
         mUserRepo.delete();
         mUserRepo.close();
-        UserStore.user = null;
     }
 
     public void selectWords() {

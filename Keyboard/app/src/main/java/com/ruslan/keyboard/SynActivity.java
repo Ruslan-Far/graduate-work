@@ -64,7 +64,6 @@ public class SynActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mMessage.setText(Constants.EMPTY_SYM);
-                mDatabaseInteraction.selectUser();
                 getWordsFromApi(UserStore.user.getId());
                 System.out.println("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             }
@@ -425,9 +424,6 @@ public class SynActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
-        UserStore.user = null;
-        WordStore.words = null;
-        CollocationStore.collocations = null;
     }
 
     @Override

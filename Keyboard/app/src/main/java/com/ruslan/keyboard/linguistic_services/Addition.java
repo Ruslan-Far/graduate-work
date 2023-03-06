@@ -9,7 +9,6 @@ import androidx.annotation.RequiresApi;
 import com.ruslan.keyboard.Constants;
 import com.ruslan.keyboard.DatabaseInteraction;
 import com.ruslan.keyboard.IME;
-import com.ruslan.keyboard.clients_impl.WordClientImpl;
 import com.ruslan.keyboard.entities.Word;
 import com.ruslan.keyboard.stores.IMESettingsStore;
 import com.ruslan.keyboard.stores.WordStore;
@@ -20,8 +19,6 @@ import java.util.stream.Collectors;
 
 public class Addition {
 
-    private WordClientImpl mWordClientImpl;
-
     private Button mBtn;
     private Button mBtn2;
     private Button mBtn3;
@@ -30,9 +27,7 @@ public class Addition {
 
     private InputConnection mIc;
 
-    public Addition(WordClientImpl wordClientImpl,
-                    Button btn, Button btn2, Button btn3, DatabaseInteraction databaseInteraction) {
-        mWordClientImpl = wordClientImpl;
+    public Addition(Button btn, Button btn2, Button btn3, DatabaseInteraction databaseInteraction) {
         mBtn = btn;
         mBtn2 = btn2;
         mBtn3 = btn3;

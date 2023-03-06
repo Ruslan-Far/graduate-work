@@ -13,7 +13,6 @@ import com.ruslan.keyboard.DatabaseInteraction;
 import com.ruslan.keyboard.IME;
 import com.ruslan.keyboard.stores.IMESettingsStore;
 import com.ruslan.keyboard.stores.WordStore;
-import com.ruslan.keyboard.clients_impl.WordClientImpl;
 import com.ruslan.keyboard.entities.Word;
 
 import java.util.ArrayList;
@@ -21,8 +20,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Orthocorrector {
-
-    private WordClientImpl mWordClientImpl;
 
     private Button mBtn;
     private Button mBtn2;
@@ -36,9 +33,7 @@ public class Orthocorrector {
     private StringBuilder mLastWord;
     private int mIndexInWordStore;
 
-    public Orthocorrector(WordClientImpl wordClientImpl,
-                          Button btn, Button btn2, Button btn3, DatabaseInteraction databaseInteraction) {
-        mWordClientImpl = wordClientImpl;
+    public Orthocorrector(Button btn, Button btn2, Button btn3, DatabaseInteraction databaseInteraction) {
         mBtn = btn;
         mBtn2 = btn2;
         mBtn3 = btn3;

@@ -25,13 +25,15 @@ public class LearningRateActivity extends AppCompatActivity {
         ArrayAdapter<Integer> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, rates);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        mDatabaseInteraction.selectIMESettings();
+        if (IMESettingsStore.imeSettings == null)
+            mDatabaseInteraction.selectIMESettings();
         spinner.setSelection(IMESettingsStore.imeSettings.getLearningRate() - 1);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Integer rate = (Integer) parent.getItemAtPosition(position);
-                mDatabaseInteraction.selectIMESettings();
+                if (IMESettingsStore.imeSettings == null)
+                    mDatabaseInteraction.selectIMESettings();
                 if (IMESettingsStore.imeSettings.getLearningRate().equals(rate)) {
                     System.out.println("LearningRateActivity RETURN");
                     return;
