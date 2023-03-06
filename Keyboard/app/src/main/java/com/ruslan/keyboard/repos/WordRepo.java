@@ -82,8 +82,11 @@ public class WordRepo extends Repo {
         arrWords = words.split("\n");
         for (int i = 0; i < arrWords.length; i++) {
             cv.put(DatabaseHelper.WORDS_COLUMN_WORD, arrWords[i]);
-            if (arrWords[i].equals("Привет") || arrWords[i].equals("Как") || arrWords[i].equals("дела")
-                    || arrWords[i].equals("Hello") || arrWords[i].equals("I") || arrWords[i].equals("am"))
+            if (arrWords[i].equals("Привет") || arrWords[i].equals("Hello"))
+                cv.put(DatabaseHelper.WORDS_COLUMN_COUNT, Constants.NEEDED_MAX_WORDS_COUNT + 3);
+            else if (arrWords[i].equals("Как") || arrWords[i].equals("I"))
+                cv.put(DatabaseHelper.WORDS_COLUMN_COUNT, Constants.NEEDED_MAX_WORDS_COUNT + 2);
+            else if (arrWords[i].equals("дела") || arrWords[i].equals("am"))
                 cv.put(DatabaseHelper.WORDS_COLUMN_COUNT, Constants.NEEDED_MAX_WORDS_COUNT + 1);
             else
                 cv.put(DatabaseHelper.WORDS_COLUMN_COUNT, Constants.NEEDED_MAX_WORDS_COUNT);

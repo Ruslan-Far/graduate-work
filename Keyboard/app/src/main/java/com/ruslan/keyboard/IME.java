@@ -1,6 +1,7 @@
 package com.ruslan.keyboard;
 
 import android.annotation.SuppressLint;
+import android.graphics.Typeface;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
@@ -136,6 +137,7 @@ public class IME extends InputMethodService
             mAddition.process();
     }
 
+    @SuppressLint("ResourceAsColor")
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onStartInputView(EditorInfo info, boolean restarting) {
@@ -152,6 +154,18 @@ public class IME extends InputMethodService
                 && IMESettingsStore.imeSettings.getCandidates() == Constants.FALSE)
             destroyCandidatesView();
         if (mCandidateView != null) {
+            int backgroundColor;
+            String font;
+
+            backgroundColor = IMESettingsStore.imeSettings.getCanBackgroundColor();
+            font = IMESettingsStore.imeSettings.getCanFont();
+            mCandidateView.setBackgroundColor(backgroundColor);
+            mBtn.setBackgroundColor(backgroundColor);
+            mBtn2.setBackgroundColor(backgroundColor);
+            mBtn3.setBackgroundColor(backgroundColor);
+            mBtn.setTypeface(Typeface.create(font, Typeface.NORMAL));
+            mBtn2.setTypeface(Typeface.create(font, Typeface.NORMAL));
+            mBtn3.setTypeface(Typeface.create(font, Typeface.NORMAL));
             mDatabaseInteraction.selectWords();
             if (WordStore.words == null) {
                 mDatabaseInteraction.insertWords();

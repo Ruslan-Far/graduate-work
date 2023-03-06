@@ -9,7 +9,6 @@ import androidx.annotation.RequiresApi;
 import com.ruslan.keyboard.Constants;
 import com.ruslan.keyboard.DatabaseInteraction;
 import com.ruslan.keyboard.IME;
-import com.ruslan.keyboard.R;
 import com.ruslan.keyboard.clients_impl.WordClientImpl;
 import com.ruslan.keyboard.entities.Word;
 import com.ruslan.keyboard.stores.IMESettingsStore;
@@ -58,7 +57,7 @@ public class Addition {
     private void setupColorHints() {
         int color;
 
-        color = mBtn.getResources().getColor(R.color.dark_cyan);
+        color = IMESettingsStore.imeSettings.getCanAdditTextColor();
         mBtn.setTextColor(color);
         mBtn2.setTextColor(color);
         mBtn3.setTextColor(color);

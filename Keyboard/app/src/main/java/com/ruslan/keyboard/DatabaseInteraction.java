@@ -22,12 +22,14 @@ import java.util.stream.Collectors;
 
 public class DatabaseInteraction {
 
+    private Context mContext;
     private UserRepo mUserRepo;
     private WordRepo mWordRepo;
     private CollocationRepo mCollocationRepo;
     private IMESettingsRepo mIMESettingsRepo;
 
     public DatabaseInteraction(Context context) {
+        mContext = context;
         mUserRepo = new UserRepo(context);
         mWordRepo = new WordRepo(context);
         mCollocationRepo = new CollocationRepo(context);
@@ -142,6 +144,11 @@ public class DatabaseInteraction {
         imeSettings.setSound(Constants.FALSE);
         imeSettings.setVibration(Constants.FALSE);
         imeSettings.setCandidates(Constants.TRUE);
+        imeSettings.setCanBackgroundColor(mContext.getResources().getColor(R.color.black));
+        imeSettings.setCanAdditTextColor(mContext.getResources().getColor(R.color.dark_cyan));
+        imeSettings.setCanOrthoTextColor(mContext.getResources().getColor(R.color.green));
+        imeSettings.setCanPredTextColor(mContext.getResources().getColor(R.color.dark_blue));
+        imeSettings.setCanFont("sans-serif");
         imeSettings.setLearningRate(3);
         mIMESettingsRepo.open();
         mIMESettingsRepo.insert(imeSettings);

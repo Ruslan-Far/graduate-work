@@ -29,6 +29,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String IME_SETTINGS_COLUMN_SOUND = "sound";
     public static final String IME_SETTINGS_COLUMN_VIBRATION = "vibration";
     public static final String IME_SETTINGS_COLUMN_CANDIDATES = "candidates";
+    public static final String IME_SETTINGS_COLUMN_CAN_BACKGROUND_COLOR = "can_background_color";
+    public static final String IME_SETTINGS_COLUMN_CAN_ADDIT_TEXT_COLOR = "can_addit_text_color";
+    public static final String IME_SETTINGS_COLUMN_CAN_ORTHO_TEXT_COLOR = "can_ortho_text_color";
+    public static final String IME_SETTINGS_COLUMN_CAN_PRED_TEXT_COLOR = "can_pred_text_color";
+    public static final String IME_SETTINGS_COLUMN_CAN_FONT = "can_font";
     public static final String IME_SETTINGS_COLUMN_LEARNING_RATE = "learning_rate";
 
     private String createUserQuery =
@@ -62,6 +67,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     IME_SETTINGS_COLUMN_SOUND + " INTEGER NOT NULL," +
                     IME_SETTINGS_COLUMN_VIBRATION + " INTEGER NOT NULL," +
                     IME_SETTINGS_COLUMN_CANDIDATES + " INTEGER NOT NULL," +
+                    IME_SETTINGS_COLUMN_CAN_BACKGROUND_COLOR + " INTEGER NOT NULL," +
+                    IME_SETTINGS_COLUMN_CAN_ADDIT_TEXT_COLOR + " INTEGER NOT NULL," +
+                    IME_SETTINGS_COLUMN_CAN_ORTHO_TEXT_COLOR + " INTEGER NOT NULL," +
+                    IME_SETTINGS_COLUMN_CAN_PRED_TEXT_COLOR + " INTEGER NOT NULL," +
+                    IME_SETTINGS_COLUMN_CAN_FONT + " TEXT DEFAULT '' NOT NULL," +
                     IME_SETTINGS_COLUMN_LEARNING_RATE + " INTEGER NOT NULL" +
                 ")";
 

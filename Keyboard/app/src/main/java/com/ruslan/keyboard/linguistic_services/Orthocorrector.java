@@ -11,7 +11,6 @@ import androidx.annotation.RequiresApi;
 import com.ruslan.keyboard.Constants;
 import com.ruslan.keyboard.DatabaseInteraction;
 import com.ruslan.keyboard.IME;
-import com.ruslan.keyboard.R;
 import com.ruslan.keyboard.stores.IMESettingsStore;
 import com.ruslan.keyboard.stores.WordStore;
 import com.ruslan.keyboard.clients_impl.WordClientImpl;
@@ -73,7 +72,7 @@ public class Orthocorrector {
     private void setupColorHints() {
         int color;
 
-        color = mBtn.getResources().getColor(R.color.green);
+        color = IMESettingsStore.imeSettings.getCanOrthoTextColor();
         mBtn.setTextColor(color);
         mBtn2.setTextColor(color);
         mBtn3.setTextColor(color);

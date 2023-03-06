@@ -3,12 +3,15 @@
 
     <string name="subtype_en_US">English</string>
     <string name="subtype_ru_RU">Русский</string>
-    
+
+    <string name="addit">Сервис Дополнение</string>
+    <string name="ortho">Сервис Орфокорректор</string>
+    <string name="pred">Сервис Предиктивный ввод</string>
+
     <string name="ime_settings_activity">Настройки</string>
     <string name="auth_reg_activity">Вход в систему</string>
     <string name="synchronization_activity">Синхронизация</string>
-    <string name="font_activity">Шрифт</string>
-    <string name="theme_activity">Тема</string>
+    <string name="can_theme_activity">Тема подсказок</string>
     <string name="test_activity">Тестирование</string>
     <string name="learning_rate_activity">Скорость обучения</string>
 
@@ -35,4 +38,10 @@
     <string name="number_test">Поле для ввода чисел</string>
     <string name="email_test">Поле для ввода адреса электронной почты</string>
     <string name="learning_rate">Выберите скорость обучения, где 1 - самая быстрая скорость, а 10 - самая низкая</string>
+    <string name="background_color">Цвет фона</string>
+    <string name="text_color">Цвет текста</string>
+    <string name="font">Шрифт</string>
+    <string name="select_background_color">Выберите цвет фона</string>
+    <string name="select_text_color">Выберите цвет текста для каждого сервиса</string>
+    <string name="select_font">Выберите шрифт</string>
 </resources>

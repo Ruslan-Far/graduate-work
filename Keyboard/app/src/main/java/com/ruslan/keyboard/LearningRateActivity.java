@@ -32,8 +32,11 @@ public class LearningRateActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Integer rate = (Integer) parent.getItemAtPosition(position);
                 mDatabaseInteraction.selectIMESettings();
-                if (IMESettingsStore.imeSettings.getLearningRate() - 1 == rate)
+                if (IMESettingsStore.imeSettings.getLearningRate().equals(rate)) {
+                    System.out.println("LearningRateActivity RETURN");
                     return;
+                }
+                System.out.println("LearningRateActivity NOT RETURN");
                 IMESettingsStore.imeSettings.setLearningRate(rate);
                 mDatabaseInteraction.updateIMESettings(IMESettingsStore.imeSettings.getId(),
                         IMESettingsStore.imeSettings);

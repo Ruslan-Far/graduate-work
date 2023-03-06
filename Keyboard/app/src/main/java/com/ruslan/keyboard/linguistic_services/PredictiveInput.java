@@ -10,10 +10,10 @@ import androidx.annotation.RequiresApi;
 import com.ruslan.keyboard.Constants;
 import com.ruslan.keyboard.DatabaseInteraction;
 import com.ruslan.keyboard.IME;
-import com.ruslan.keyboard.R;
 import com.ruslan.keyboard.clients_impl.CollocationClientImpl;
 import com.ruslan.keyboard.entities.Collocation;
 import com.ruslan.keyboard.stores.CollocationStore;
+import com.ruslan.keyboard.stores.IMESettingsStore;
 import com.ruslan.keyboard.stores.WordStore;
 
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class PredictiveInput {
     private void setupColorHints() {
         int color;
 
-        color = mBtn.getResources().getColor(R.color.dark_blue);
+        color = IMESettingsStore.imeSettings.getCanPredTextColor();
         mBtn.setTextColor(color);
         mBtn2.setTextColor(color);
         mBtn3.setTextColor(color);

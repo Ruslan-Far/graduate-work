@@ -5,15 +5,27 @@ public class IMESettings extends BaseEntity {
     private Integer sound;
     private Integer vibration;
     private Integer candidates;
+    private Integer canBackgroundColor;
+    private Integer canAdditTextColor;
+    private Integer canOrthoTextColor;
+    private Integer canPredTextColor;
+    private String canFont;
     private Integer learningRate;
 
     public IMESettings() {}
 
-    public IMESettings(Integer id, Integer sound, Integer vibration, Integer candidates, Integer learningRate) {
+    public IMESettings(Integer id, Integer sound, Integer vibration, Integer candidates,
+                       Integer canBackgroundColor, Integer canAdditTextColor, Integer canOrthoTextColor,
+                       Integer canPredTextColor, String canFont, Integer learningRate) {
         super(id);
         this.sound = sound;
         this.vibration = vibration;
         this.candidates = candidates;
+        this.canBackgroundColor = canBackgroundColor;
+        this.canAdditTextColor = canAdditTextColor;
+        this.canOrthoTextColor = canOrthoTextColor;
+        this.canPredTextColor = canPredTextColor;
+        this.canFont = canFont;
         this.learningRate = learningRate;
     }
 
@@ -39,6 +51,46 @@ public class IMESettings extends BaseEntity {
 
     public void setCandidates(Integer candidates) {
         this.candidates = candidates;
+    }
+
+    public Integer getCanBackgroundColor() {
+        return canBackgroundColor;
+    }
+
+    public void setCanBackgroundColor(Integer canBackgroundColor) {
+        this.canBackgroundColor = canBackgroundColor;
+    }
+
+    public Integer getCanAdditTextColor() {
+        return canAdditTextColor;
+    }
+
+    public void setCanAdditTextColor(Integer canAdditTextColor) {
+        this.canAdditTextColor = canAdditTextColor;
+    }
+
+    public Integer getCanOrthoTextColor() {
+        return canOrthoTextColor;
+    }
+
+    public void setCanOrthoTextColor(Integer canOrthoTextColor) {
+        this.canOrthoTextColor = canOrthoTextColor;
+    }
+
+    public Integer getCanPredTextColor() {
+        return canPredTextColor;
+    }
+
+    public void setCanPredTextColor(Integer canPredTextColor) {
+        this.canPredTextColor = canPredTextColor;
+    }
+
+    public String getCanFont() {
+        return canFont;
+    }
+
+    public void setCanFont(String canFont) {
+        this.canFont = canFont;
     }
 
     public Integer getLearningRate() {

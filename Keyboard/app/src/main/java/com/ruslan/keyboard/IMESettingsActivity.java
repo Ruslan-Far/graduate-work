@@ -177,11 +177,9 @@ public class IMESettingsActivity extends AppCompatActivity implements Removable 
                     System.out.println(getString(R.string.synchronization_activity));
                     intentActivity = new Intent(IMESettingsActivity.this, SynActivity.class);
                 }
-                else if (selectedItem.equals(getString(R.string.font_activity))) {
-                    System.out.println(getString(R.string.font_activity));
-                }
-                else if (selectedItem.equals(getString(R.string.theme_activity))) {
-                    System.out.println(getString(R.string.theme_activity));
+                else if (selectedItem.equals(getString(R.string.can_theme_activity))) {
+                    System.out.println(getString(R.string.can_theme_activity));
+                    intentActivity = new Intent(IMESettingsActivity.this, CanThemeActivity.class);
                 }
                 else if (selectedItem.equals(getString(R.string.test_activity))) {
                     System.out.println(getString(R.string.test_activity));
