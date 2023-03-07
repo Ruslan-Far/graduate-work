@@ -38,26 +38,32 @@
 
         <activity
             android:name=".AuthActivity"
+            android:parentActivityName=".IMESettingsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Keyboard" />
         <activity
             android:name=".RegActivity"
+            android:parentActivityName=".AuthActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Keyboard" />
         <activity
             android:name=".SynActivity"
+            android:parentActivityName=".IMESettingsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Keyboard" />
         <activity
             android:name=".TestActivity"
+            android:parentActivityName=".IMESettingsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Keyboard" />
         <activity
             android:name=".LearningRateActivity"
+            android:parentActivityName=".IMESettingsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Keyboard" />
         <activity
             android:name=".CanThemeActivity"
+            android:parentActivityName=".IMESettingsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Keyboard" />
 
