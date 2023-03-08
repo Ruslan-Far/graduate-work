@@ -43,10 +43,9 @@ public class CollocationsRepository implements IRestRepository<Collocation>
             "RETURNING \"id\", \"prevId\", \"nextId\", \"count\"";
 
     private static String deleteByUserIdQuery = "DELETE FROM \"collocations\" " +
-            "INNER JOIN \"words\" " +
-            "ON \"collocations\".\"prevId\" = \"words\".\"id\" " +
-            "WHERE \"userId\" = ? " +
-            "ORDER BY \"collocations\".\"count\" DESC";
+            "USING \"words\" " +
+            "WHERE \"collocations\".\"prevId\" = \"words\".\"id\" AND \"words\".\"userId\" = ? " +
+            "RETURNING \"collocations\".\"id\", \"collocations\".\"prevId\", \"collocations\".\"nextId\", \"collocations\".\"count\"";
 
     public CollocationsRepository(JdbcOperations jdbcOperations) { this.jdbcOperations = jdbcOperations; }
 

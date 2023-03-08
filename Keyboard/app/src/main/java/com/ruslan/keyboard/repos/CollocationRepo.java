@@ -60,6 +60,6 @@ public class CollocationRepo extends Repo {
         database.delete(DatabaseHelper.COLLOCATIONS_TABLE, null, null);
         cv = new ContentValues();
         cv.put("seq", 0);
-        database.update("sqlite_sequence", cv, "name=" + DatabaseHelper.COLLOCATIONS_TABLE, null);
+        database.update("sqlite_sequence", cv, "name=\"" + DatabaseHelper.COLLOCATIONS_TABLE + "\"", null);
     }
 }

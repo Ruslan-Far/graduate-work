@@ -132,6 +132,6 @@ public class WordRepo extends Repo {
         database.delete(DatabaseHelper.WORDS_TABLE, null, null);
         cv = new ContentValues();
         cv.put("seq", 0);
-        database.update("sqlite_sequence", cv, "name=" + DatabaseHelper.WORDS_TABLE, null);
+        database.update("sqlite_sequence", cv, "name=\"" + DatabaseHelper.WORDS_TABLE + "\"", null);
     }
 }

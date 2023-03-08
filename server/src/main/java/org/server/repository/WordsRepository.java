@@ -37,7 +37,7 @@ public class WordsRepository implements IRestRepository<Word>
 
     private static String deleteByUserIdQuery = "DELETE FROM \"words\" " +
             "WHERE \"userId\" = ? " +
-            "ORDER BY \"id\"";
+            "RETURNING \"id\", \"userId\", \"word\", \"count\"";
 
     public WordsRepository(JdbcOperations jdbcOperations) { this.jdbcOperations = jdbcOperations; }
 
