@@ -30,7 +30,7 @@
     
     <string name="synchronize">Синхронизировать</string>
     <string name="syn_warning">После начала синхронизации дождитесь ее окончания</string>
-    <string name="test">Здесь можно протестировать клавиатуру на разных полях ввода</string>
+    <string name="test">Здесь можно протестировать клавиатуру</string>
     <string name="text_test">Поле для ввода текста</string>
     <string name="number_test">Поле для ввода чисел</string>
     <string name="email_test">Поле для ввода адреса электронной почты</string>
