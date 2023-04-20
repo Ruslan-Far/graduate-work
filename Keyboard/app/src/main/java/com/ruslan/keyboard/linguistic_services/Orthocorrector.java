@@ -84,11 +84,15 @@ public class Orthocorrector {
             return;
         if (!Character.isLetter(textBeforeCursor.charAt(textBeforeCursor.length() - 1))) {
             String oldLastWord = mLastWord.toString();
+            int copyIndexInWordStore = mIndexInWordStore;
             searchLastWordAndOther(textBeforeCursor);
+            mIndexInWordStore = copyIndexInWordStore;
             if (mLastWord.length() == 0 || oldLastWord.equals(mLastWord.toString())) {
                 System.out.println("ORTHOCORRECTOR");
                 System.out.println("mLastWord:" + mLastWord + "len:" + mLastWord.length());
                 System.out.println("oldLastWord:" + oldLastWord + "len:" + oldLastWord.length());
+                System.out.println("mLastOther:" + mLastOther + "len:" + mLastOther.length());
+                System.out.println("++++++++++++++++++++++++++++++++++++mIndexInWordStore=" + mIndexInWordStore);
                 return;
             }
             hints = checkForSpelling();
@@ -118,6 +122,7 @@ public class Orthocorrector {
             }
         }
         else if (!isDel && mLastWord.length() != 0 && mLastOther.length() != 0) {
+            System.out.println("-----------------------------------mIndexInWordStore=" + mIndexInWordStore);
             if (mIndexInWordStore == -1) {
                 Word word = prepareForPost();
                 mDatabaseInteraction.insertWord(word);
@@ -133,6 +138,7 @@ public class Orthocorrector {
             resetFields();
             clearHints();
         }
+        System.out.println("mIndexInWordStore=" + mIndexInWordStore);
     }
 
     private Word prepareForPost() {

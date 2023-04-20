@@ -6,6 +6,10 @@ import static androidx.test.espresso.action.ViewActions.*;
 import static androidx.test.espresso.assertion.ViewAssertions.*;
 import static androidx.test.espresso.matcher.ViewMatchers.*;
 
+import android.inputmethodservice.Keyboard;
+import android.view.KeyEvent;
+import android.view.KeyboardShortcutGroup;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.Rule;
@@ -24,16 +28,70 @@ public class EspressoTest {
 
     @Test
     public void clickItemTest() {
+
         onView(withText(R.string.test_activity)).perform(click()).check(matches(isDisplayed()));
 
         onView(withId(R.id.editText)).perform(click()).check(matches(isDisplayed()));
-//        onView(withId(R.id.editText)).perform(typeText("Hello"));
-        onView(withId(R.id.editText)).perform(pressKey(97));
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        for (int i = 0; i < 2; i++) {
+//            onView(withId(R.id.editText)).perform(typeText("Hel"));
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            onView(withId(R.id.editText)).perform(typeText("lo "));
+            onView(withId(R.id.editText)).perform(typeText(i + " todo "));
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 //    @Test
 //    public void printText() {
 ////        onView(withId(R.id.editText)).perform(typeText("Привет"));
 //        onView(withId(R.id.editText)).perform(click()).check(matches(isDisplayed()));
+//    }
+
+//    @Test
+//    public void clickItemTest() {
+//        onView(withText(R.string.test_activity)).perform(click()).check(matches(isDisplayed()));
+//
+//        onView(withId(R.id.editText)).perform(click()).check(matches(isDisplayed()));
+//
+//        try {
+//            Thread.sleep(3000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+//        for (int i = 29; i <= 30; i++) {
+//            onView(withId(R.id.editText)).perform(pressKey(i));
+////            onView(withId(R.id.testEdit)).perform(typeText(i + " code"));
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        try {
+//            Thread.sleep(3000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 //    }
 }

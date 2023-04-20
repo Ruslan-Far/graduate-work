@@ -44,7 +44,8 @@ public class IME extends InputMethodService
 
     private Constants.KEYS_TYPE mPreviousLocale;
 
-    private boolean mIsCapsOn = true;
+    private boolean mIsCapsOn = false;
+    private boolean mIsDel;
 
     private LinearLayout mCandidateView;
     private Button mBtn;
@@ -122,7 +123,7 @@ public class IME extends InputMethodService
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void initPredictiveInput() {
         mPredictiveInput = new PredictiveInput(mBtn, mBtn2, mBtn3, mDatabaseInteraction);
-        mPredictiveInput.setIc(getCurrentInputConnection());
+        mPredictiveInput.setIc(mOrthocorrector.getIc());
         if (sLingServNum == Constants.PRED_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
             mPredictiveInput.process();
     }
@@ -130,7 +131,7 @@ public class IME extends InputMethodService
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void initAddition() {
         mAddition = new Addition(mBtn, mBtn2, mBtn3, mDatabaseInteraction);
-        mAddition.setIc(getCurrentInputConnection());
+        mAddition.setIc(mOrthocorrector.getIc());
         if (sLingServNum == Constants.ADDIT_LING_SERV_NUM)
             mAddition.process();
     }
@@ -139,7 +140,6 @@ public class IME extends InputMethodService
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onStartInputView(EditorInfo info, boolean restarting) {
-        System.out.println("3WordStore.words=" + WordStore.words);
         mDatabaseInteraction = new DatabaseInteraction(this);
         mDatabaseInteraction.selectIMESettings();
         if (IMESettingsStore.imeSettings == null) {
@@ -281,27 +281,29 @@ public class IME extends InputMethodService
                 break;
             default:
                 if (primaryCode == Keyboard.KEYCODE_DELETE) {
+                    mIsDel = true;
                     ic.deleteSurroundingText(1, 0);
-                    if (mCandidateView != null)
-                        if (sLingServNum == Constants.ORTHO_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
-                            mOrthocorrector.process(true);
+//                    if (mCandidateView != null)
+//                        if (sLingServNum == Constants.ORTHO_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
+//                            mOrthocorrector.process(true);
                 }
                 else {
+                    mIsDel = false;
                     char code = (char) primaryCode;
                     if (Character.isLetter(code) && mIsCapsOn) {
                         code = Character.toUpperCase(code);
                     }
                     ic.commitText(String.valueOf(code), 1);
-                    if (mCandidateView != null)
-                        if (sLingServNum == Constants.ORTHO_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
-                            mOrthocorrector.process(false);
+//                    if (mCandidateView != null)
+//                        if (sLingServNum == Constants.ORTHO_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
+//                            mOrthocorrector.process(false);
                 }
-                if (mCandidateView != null)
-                    if (sLingServNum == Constants.PRED_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
-                        mPredictiveInput.process();
-                if (mCandidateView != null)
-                    if (sLingServNum == Constants.ADDIT_LING_SERV_NUM)
-                        mAddition.process();
+//                if (mCandidateView != null)
+//                    if (sLingServNum == Constants.PRED_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
+//                        mPredictiveInput.process();
+//                if (mCandidateView != null)
+//                    if (sLingServNum == Constants.ADDIT_LING_SERV_NUM)
+//                        mAddition.process();
                 break;
         }
     }
@@ -361,5 +363,24 @@ public class IME extends InputMethodService
         mKeyboardView.setKeyboard(mKeyboard);
         mKeyboard.setShifted(mIsCapsOn);
         mKeyboardView.invalidateAllKeys();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void onUpdateSelection (int oldSelStart,
+                                   int oldSelEnd,
+                                   int newSelStart,
+                                   int newSelEnd,
+                                   int candidatesStart,
+                                   int candidatesEnd) {
+        System.out.println("555555555555555555555555555555555555onUpdateSelection");
+        if (mCandidateView != null)
+        {
+            if (sLingServNum == Constants.ORTHO_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
+                mOrthocorrector.process(mIsDel);
+            if (sLingServNum == Constants.PRED_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
+                mPredictiveInput.process();
+            if (sLingServNum == Constants.ADDIT_LING_SERV_NUM)
+                mAddition.process();
+        }
     }
 }
