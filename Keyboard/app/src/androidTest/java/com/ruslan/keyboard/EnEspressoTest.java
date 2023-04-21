@@ -16,7 +16,7 @@ import org.junit.Rule;
 import androidx.test.rule.ActivityTestRule;
 
 @RunWith(AndroidJUnit4.class)
-public class EspressoTest {
+public class EnEspressoTest {
 
     @Rule
     public ActivityTestRule<IMESettingsActivity> mActivityRule = new ActivityTestRule<>(IMESettingsActivity.class);
@@ -27,7 +27,7 @@ public class EspressoTest {
 //    }
 
     @Test
-    public void clickItemTest() {
+    public void printText() {
 
         onView(withText(R.string.test_activity)).perform(click()).check(matches(isDisplayed()));
 
@@ -39,15 +39,19 @@ public class EspressoTest {
             e.printStackTrace();
         }
 
-        for (int i = 0; i < 2; i++) {
-//            onView(withId(R.id.editText)).perform(typeText("Hel"));
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            onView(withId(R.id.editText)).perform(typeText("lo "));
-            onView(withId(R.id.editText)).perform(typeText(i + " todo "));
+        for (int i = 0; i < 3; i++) {
+            if (i == 0) {
+                onView(withId(R.id.editText)).perform(typeText("ac"));
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                onView(withId(R.id.editText)).perform(typeText("cess "));
+            }
+            else {
+                onView(withId(R.id.editText)).perform(typeText("access "));
+            }
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {

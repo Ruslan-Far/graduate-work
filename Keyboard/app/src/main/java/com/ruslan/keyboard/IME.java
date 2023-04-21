@@ -62,7 +62,7 @@ public class IME extends InputMethodService
     @Override
     public View onCreateInputView() {
         mKeyboardView = (KeyboardView) getLayoutInflater().inflate(R.layout.keyboard, null);
-        currentLocale = Constants.KEYS_TYPE.RUSSIAN;
+        currentLocale = Constants.KEYS_TYPE.ENGLISH;
         mKeyboard = getKeyboard(currentLocale);
         mKeyboard.setShifted(mIsCapsOn);
         mKeyboardView.setKeyboard(mKeyboard);
@@ -283,9 +283,6 @@ public class IME extends InputMethodService
                 if (primaryCode == Keyboard.KEYCODE_DELETE) {
                     mIsDel = true;
                     ic.deleteSurroundingText(1, 0);
-//                    if (mCandidateView != null)
-//                        if (sLingServNum == Constants.ORTHO_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
-//                            mOrthocorrector.process(true);
                 }
                 else {
                     mIsDel = false;
@@ -294,16 +291,7 @@ public class IME extends InputMethodService
                         code = Character.toUpperCase(code);
                     }
                     ic.commitText(String.valueOf(code), 1);
-//                    if (mCandidateView != null)
-//                        if (sLingServNum == Constants.ORTHO_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
-//                            mOrthocorrector.process(false);
                 }
-//                if (mCandidateView != null)
-//                    if (sLingServNum == Constants.PRED_LING_SERV_NUM || sLingServNum == Constants.ADDIT_LING_SERV_NUM)
-//                        mPredictiveInput.process();
-//                if (mCandidateView != null)
-//                    if (sLingServNum == Constants.ADDIT_LING_SERV_NUM)
-//                        mAddition.process();
                 break;
         }
     }
@@ -382,5 +370,6 @@ public class IME extends InputMethodService
             if (sLingServNum == Constants.ADDIT_LING_SERV_NUM)
                 mAddition.process();
         }
+        mIsDel = false;
     }
 }

@@ -24,7 +24,7 @@ import androidx.test.rule.ServiceTestRule;
 import java.util.concurrent.TimeoutException;
 
 @RunWith(AndroidJUnit4.class)
-public class EspressoTest2 {
+public class ServEspressoTest {
 
     @Rule
     public ActivityTestRule<IMESettingsActivity> mActivityRule = new ActivityTestRule<>(IMESettingsActivity.class);
@@ -56,27 +56,27 @@ public class EspressoTest2 {
 //        IME ime1 =
     }
 
-//    @Test
-//    public void testWithBoundService() throws TimeoutException {
-//
-//        onView(withText(R.string.test_activity)).perform(click()).check(matches(isDisplayed()));
-//
-//        onView(withId(R.id.editText)).perform(click()).check(matches(isDisplayed()));
-//
-//        // Create the service Intent.
+    @Test
+    public void testWithBoundService() throws TimeoutException {
+
+        onView(withText(R.string.test_activity)).perform(click()).check(matches(isDisplayed()));
+
+        onView(withId(R.id.editText)).perform(click()).check(matches(isDisplayed()));
+
+        // Create the service Intent.
 //        Intent serviceIntent =
 //                new Intent(ApplicationProvider.getApplicationContext(), LocalService.class);
-//
-//        // Data can be passed to the service via the Intent.
-////        serviceIntent.putExtra(LocalService.SEED_KEY, 42L);
-//
-//        // Bind the service and grab a reference to the binder.
+
+        // Data can be passed to the service via the Intent.
+//        serviceIntent.putExtra(LocalService.SEED_KEY, 42L);
+
+        // Bind the service and grab a reference to the binder.
 //        IBinder binder = mServiceTestRule.bindService(serviceIntent);
-//
-//        // Get the reference to the service, or you can call public methods on the binder directly.
+
+        // Get the reference to the service, or you can call public methods on the binder directly.
 //        LocalService service = ((LocalService.LocalBinder) binder).getService();
-//
-//        // Verify that the service is working correctly.
-////        assertThat(service.getRandomInt(), is(any(Integer.class)));
-//    }
+
+        // Verify that the service is working correctly.
+//        assertThat(service.getRandomInt(), is(any(Integer.class)));
+    }
 }

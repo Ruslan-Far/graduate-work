@@ -36,7 +36,7 @@ import static org.hamcrest.Matchers.is;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class IMESettingsActivityTest {
+public class RusEspressoTest {
 
     @Rule
     public ActivityTestRule<IMESettingsActivity> mActivityTestRule = new ActivityTestRule<>(IMESettingsActivity.class);
