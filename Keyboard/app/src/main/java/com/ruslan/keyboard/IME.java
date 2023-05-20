@@ -1,6 +1,7 @@
 package com.ruslan.keyboard;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
@@ -216,24 +217,23 @@ public class IME extends InputMethodService
     }
 
     private void playClick(int keyCode) {
-        AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
+        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        int sound = AudioManager.FX_KEYPRESS_STANDARD;
         switch (keyCode) {
             case Constants.KeyCode.SPACE:
-                am.playSoundEffect(AudioManager.FX_KEYPRESS_SPACEBAR);
+                sound = AudioManager.FX_KEYPRESS_SPACEBAR;
                 break;
             case Keyboard.KEYCODE_DONE:
-                am.playSoundEffect(AudioManager.FX_KEYPRESS_RETURN);
+                sound = AudioManager.FX_KEYPRESS_RETURN;
                 break;
             case Constants.KeyCode.RETURN:
-                am.playSoundEffect(AudioManager.FX_KEYPRESS_RETURN);
+                sound = AudioManager.FX_KEYPRESS_RETURN;
                 break;
             case Keyboard.KEYCODE_DELETE:
-                am.playSoundEffect(AudioManager.FX_KEYPRESS_DELETE);
-                break;
-            default:
-                am.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD);
+                sound = AudioManager.FX_KEYPRESS_DELETE;
                 break;
         }
+        am.playSoundEffect(sound, -1.0f);
     }
 
     private void vibrate() {
